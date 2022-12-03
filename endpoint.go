@@ -18,7 +18,7 @@ func callEndpoint(url string, request proto.Message, response proto.Message) *Er
 		ParentID: 0,
 		Time:     time.Now(),
 		Path:     url,
-		Type:     TRACE_SERVICE,
+		Type:     TRACE_ENDPOINT,
 	}
 	return callEndpoint_(&trace, url, request, response)
 }

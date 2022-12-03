@@ -8,41 +8,41 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type serviceTest struct {
+type endpointTest struct {
 	url      string
 	request  proto.Message
 	response proto.Message
 	status   int32
 }
 
-func ServiceTest(url string) *serviceTest {
-	return &serviceTest{url: url}
+func EndpointTest(url string) *endpointTest {
+	return &endpointTest{url: url}
 }
 
-func (t *serviceTest) WithRequest(request proto.Message) *serviceTest {
+func (t *endpointTest) WithRequest(request proto.Message) *endpointTest {
 	t.request = request
 	return t
 }
 
-func (t *serviceTest) ExpectError(err *scyna.Error) *serviceTest {
+func (t *endpointTest) ExpectError(err *scyna.Error) *endpointTest {
 	t.status = 400
 	t.response = err
 	return t
 }
 
-func (t *serviceTest) ExpectSuccess() *serviceTest {
+func (t *endpointTest) ExpectSuccess() *endpointTest {
 	t.status = 200
 	return t
 }
 
-func (t *serviceTest) ExpectResponse(response proto.Message) *serviceTest {
+func (t *endpointTest) ExpectResponse(response proto.Message) *endpointTest {
 	t.status = 200
 	t.response = response
 	return t
 }
 
-func (st *serviceTest) Run(t *testing.T, response ...proto.Message) {
-	var res = st.callService(t)
+func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
+	var res = st.callEndpoint(t)
 	if st.status != res.Code {
 		t.Fatalf("Expect status %d but actually %d with response %s", st.status, res.Code, string(res.Body))
 	}
@@ -67,13 +67,13 @@ func (st *serviceTest) Run(t *testing.T, response ...proto.Message) {
 	}
 }
 
-func (st *serviceTest) callService(t *testing.T) *scyna.Response {
+func (st *endpointTest) callEndpoint(t *testing.T) *scyna.Response {
 	context := scyna.Trace{
 		ID:       scyna.ID.Next(),
 		ParentID: 0,
 		Time:     time.Now(),
 		Path:     st.url,
-		Type:     scyna.TRACE_SERVICE,
+		Type:     scyna.TRACE_ENDPOINT,
 		Source:   "scyna.test",
 	}
 	defer context.Record()

@@ -45,7 +45,7 @@ func (ctx *Context) CallService(url string, request proto.Message, response prot
 		ParentID: ctx.ID,
 		Time:     time.Now(),
 		Path:     url,
-		Type:     TRACE_SERVICE,
+		Type:     TRACE_ENDPOINT,
 		Source:   context,
 	}
 	return callEndpoint_(&trace, url, request, response)
