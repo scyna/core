@@ -818,7 +818,7 @@ func (x *TagCreatedSignal) GetValue() string {
 	return ""
 }
 
-type ServiceDoneSignal struct {
+type EnpointDoneSignal struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -827,8 +827,8 @@ type ServiceDoneSignal struct {
 	Response string `protobuf:"bytes,2,opt,name=Response,proto3" json:"Response,omitempty"`
 }
 
-func (x *ServiceDoneSignal) Reset() {
-	*x = ServiceDoneSignal{}
+func (x *EnpointDoneSignal) Reset() {
+	*x = EnpointDoneSignal{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_engine_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -836,13 +836,13 @@ func (x *ServiceDoneSignal) Reset() {
 	}
 }
 
-func (x *ServiceDoneSignal) String() string {
+func (x *EnpointDoneSignal) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ServiceDoneSignal) ProtoMessage() {}
+func (*EnpointDoneSignal) ProtoMessage() {}
 
-func (x *ServiceDoneSignal) ProtoReflect() protoreflect.Message {
+func (x *EnpointDoneSignal) ProtoReflect() protoreflect.Message {
 	mi := &file_engine_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -854,19 +854,19 @@ func (x *ServiceDoneSignal) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ServiceDoneSignal.ProtoReflect.Descriptor instead.
-func (*ServiceDoneSignal) Descriptor() ([]byte, []int) {
+// Deprecated: Use EnpointDoneSignal.ProtoReflect.Descriptor instead.
+func (*EnpointDoneSignal) Descriptor() ([]byte, []int) {
 	return file_engine_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *ServiceDoneSignal) GetTraceID() uint64 {
+func (x *EnpointDoneSignal) GetTraceID() uint64 {
 	if x != nil {
 		return x.TraceID
 	}
 	return 0
 }
 
-func (x *ServiceDoneSignal) GetResponse() string {
+func (x *EnpointDoneSignal) GetResponse() string {
 	if x != nil {
 		return x.Response
 	}
@@ -1729,7 +1729,7 @@ var file_engine_proto_rawDesc = []byte{
 	0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x54, 0x72, 0x61, 0x63, 0x65, 0x49, 0x44, 0x12, 0x10, 0x0a,
 	0x03, 0x4b, 0x65, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x4b, 0x65, 0x79, 0x12,
 	0x14, 0x0a, 0x05, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05,
-	0x56, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x49, 0x0a, 0x11, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x56, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x49, 0x0a, 0x11, 0x45, 0x6e, 0x70, 0x6f, 0x69, 0x6e, 0x74,
 	0x44, 0x6f, 0x6e, 0x65, 0x53, 0x69, 0x67, 0x6e, 0x61, 0x6c, 0x12, 0x18, 0x0a, 0x07, 0x54, 0x72,
 	0x61, 0x63, 0x65, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x54, 0x72, 0x61,
 	0x63, 0x65, 0x49, 0x44, 0x12, 0x1a, 0x0a, 0x08, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
@@ -1838,7 +1838,7 @@ var file_engine_proto_goTypes = []interface{}{
 	(*LogCreatedSignal)(nil),      // 9: scyna.LogCreatedSignal
 	(*TraceCreatedSignal)(nil),    // 10: scyna.TraceCreatedSignal
 	(*TagCreatedSignal)(nil),      // 11: scyna.TagCreatedSignal
-	(*ServiceDoneSignal)(nil),     // 12: scyna.ServiceDoneSignal
+	(*EnpointDoneSignal)(nil),     // 12: scyna.EnpointDoneSignal
 	(*WriteSettingRequest)(nil),   // 13: scyna.WriteSettingRequest
 	(*ReadSettingRequest)(nil),    // 14: scyna.ReadSettingRequest
 	(*ReadSettingResponse)(nil),   // 15: scyna.ReadSettingResponse
@@ -2012,7 +2012,7 @@ func file_engine_proto_init() {
 			}
 		}
 		file_engine_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ServiceDoneSignal); i {
+			switch v := v.(*EnpointDoneSignal); i {
 			case 0:
 				return &v.state
 			case 1:

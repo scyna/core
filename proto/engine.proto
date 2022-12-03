@@ -87,7 +87,7 @@ message TagCreatedSignal {
   string Value = 3;
 }
 
-message ServiceDoneSignal {
+message EnpointDoneSignal {
   uint64 TraceID = 1;
   string Response = 2;
 }

@@ -14,6 +14,7 @@ const (
 	TRACE_SIGNAL   TraceType = 3
 	TRACE_SYNC     TraceType = 4
 	TRACE_TASK     TraceType = 5
+	TRACE_COMMAND  TraceType = 6
 )
 
 type Trace struct {
