@@ -8,14 +8,14 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type Service struct {
+type Endpoint struct {
 	Context
 	Request Request
 	Reply   string
 	request proto.Message
 }
 
-func (ctx *Service) Error(e *Error) {
+func (ctx *Endpoint) Error(e *Error) {
 	response := Response{Code: 400}
 
 	var err error
@@ -33,7 +33,7 @@ func (ctx *Service) Error(e *Error) {
 	ctx.tag(uint32(response.Code), e)
 }
 
-func (ctx *Service) Done(r proto.Message) {
+func (ctx *Endpoint) Done(r proto.Message) {
 	response := Response{Code: 200}
 
 	var err error
@@ -51,7 +51,7 @@ func (ctx *Service) Done(r proto.Message) {
 	ctx.tag(uint32(response.Code), r)
 }
 
-func (ctx *Service) AuthDone(r proto.Message, token string, expired uint64) {
+func (ctx *Endpoint) AuthDone(r proto.Message, token string, expired uint64) {
 	response := Response{Code: 200, Token: token, Expired: expired}
 
 	var err error
@@ -69,7 +69,7 @@ func (ctx *Service) AuthDone(r proto.Message, token string, expired uint64) {
 	ctx.tag(200, r)
 }
 
-func (ctx *Service) flush(response *Response) {
+func (ctx *Endpoint) flush(response *Response) {
 	response.SessionID = Session.ID()
 	bytes, err := proto.Marshal(response)
 	if err != nil {
@@ -82,7 +82,7 @@ func (ctx *Service) flush(response *Response) {
 	}
 }
 
-func (ctx *Service) tag(code uint32, response proto.Message) {
+func (ctx *Endpoint) tag(code uint32, response proto.Message) {
 	if ctx.ID == 0 {
 		return
 	}

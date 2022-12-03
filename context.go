@@ -48,7 +48,7 @@ func (ctx *Context) CallService(url string, request proto.Message, response prot
 		Type:     TRACE_SERVICE,
 		Source:   context,
 	}
-	return callService_(&trace, url, request, response)
+	return callEndpoint_(&trace, url, request, response)
 }
 
 func (ctx *Context) Tag(key string, value string) {
