@@ -1,6 +1,6 @@
 package user
 
-import "github.com/scyna/go/example/contacts/proto"
+import "github.com/scyna/core/example/contacts/proto"
 
 type User struct {
 	ID       uint64 `db:"id"`

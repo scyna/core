@@ -3,10 +3,10 @@ package user_test
 import (
 	"testing"
 
-	"github.com/scyna/go/example/contacts/proto"
-	"github.com/scyna/go/example/contacts/user"
-	"github.com/scyna/go/scyna"
-	scyna_test "github.com/scyna/go/scyna/testing"
+	scyna "github.com/scyna/core"
+	"github.com/scyna/core/example/contacts/proto"
+	"github.com/scyna/core/example/contacts/user"
+	scyna_test "github.com/scyna/core/testing"
 )
 
 func TestCreateShouldReturnSuccess(t *testing.T) {

@@ -3,8 +3,8 @@ package user
 import (
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
-	"github.com/scyna/go/example/contacts/proto"
-	"github.com/scyna/go/scyna"
+	scyna "github.com/scyna/core"
+	"github.com/scyna/core/example/contacts/proto"
 )
 
 func ListFriend(c *scyna.Service, request *proto.ListFriendRequest) {

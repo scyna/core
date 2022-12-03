@@ -1,9 +1,8 @@
 package user
 
 import (
-	"github.com/scylladb/gocqlx/v2"
 	"github.com/scylladb/gocqlx/v2/qb"
-	"github.com/scyna/go/scyna"
+	scyna "github.com/scyna/core"
 )
 
 type repository struct {

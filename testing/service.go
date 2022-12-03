@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/scyna/go/scyna"
+	scyna "github.com/scyna/core"
 	"google.golang.org/protobuf/proto"
 )
 

@@ -1,8 +1,8 @@
 package hello
 
 import (
-	"github.com/scyna/go/example/hello/proto"
-	"github.com/scyna/go/scyna"
+	scyna "github.com/scyna/core"
+	"github.com/scyna/core/example/hello/proto"
 )
 
 func Add(s *scyna.Service, request *proto.AddRequest) {

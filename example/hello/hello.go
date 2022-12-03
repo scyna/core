@@ -2,8 +2,8 @@ package hello
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation"
-	"github.com/scyna/go/example/hello/proto"
-	"github.com/scyna/go/scyna"
+	scyna "github.com/scyna/core"
+	"github.com/scyna/core/example/hello/proto"
 )
 
 func Hello(s *scyna.Service, request *proto.HelloRequest) {

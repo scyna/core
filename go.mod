@@ -1,6 +1,6 @@
-module github.com/scyna/go/scyna
+module github.com/scyna/core
 
-go 1.18
+go 1.19
 
 require (
 	github.com/gocql/gocql v1.0.0

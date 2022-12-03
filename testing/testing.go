@@ -3,7 +3,7 @@ package scyna_test
 import (
 	"log"
 
-	"github.com/scyna/go/scyna"
+	scyna "github.com/scyna/core"
 )
 
 func Init() {

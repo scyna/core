@@ -3,9 +3,9 @@ package hello_test
 import (
 	"testing"
 
-	"github.com/scyna/go/example/hello"
-	"github.com/scyna/go/example/hello/proto"
-	scyna_test "github.com/scyna/go/scyna/testing"
+	"github.com/scyna/core/example/hello"
+	"github.com/scyna/core/example/hello/proto"
+	scyna_test "github.com/scyna/core/testing"
 )
 
 func TestAddSuccess(t *testing.T) {

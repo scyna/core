@@ -1,9 +1,6 @@
 package main
 
-import (
-	"github.com/scyna/go/example/contacts/user"
-	"github.com/scyna/go/scyna"
-)
+import scyna "github.com/scyna/core"
 
 const MODULE_CODE = "nats"
 

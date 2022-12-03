@@ -1,6 +1,6 @@
 package hello
 
-import "github.com/scyna/go/scyna"
+import scyna "github.com/scyna/core"
 
 const (
 	HELLO_URL = "/example/hello/hello"

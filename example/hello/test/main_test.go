@@ -4,9 +4,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/scyna/go/example/hello"
-	"github.com/scyna/go/scyna"
-	scyna_test "github.com/scyna/go/scyna/testing"
+	scyna "github.com/scyna/core"
+	"github.com/scyna/core/example/hello"
+	scyna_test "github.com/scyna/core/testing"
 )
 
 func TestMain(m *testing.M) {
