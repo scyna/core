@@ -7,7 +7,7 @@ replace github.com/scyna/core => ../
 require (
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/scylladb/gocqlx/v2 v2.7.0
-	github.com/scyna/core v1.0.0
+	github.com/scyna/core v0.0.0-00010101000000-000000000000
 	google.golang.org/protobuf v1.28.0
 )
 
