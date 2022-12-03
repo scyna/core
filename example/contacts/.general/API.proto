@@ -1,0 +1,47 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option csharp_namespace = "proto";
+option  go_package = ".;proto";
+
+message User {
+  uint64 id = 1;
+  string email = 2;
+  string name = 3;
+  string password = 4;
+}
+
+/*CREATE*/
+//message CreateUserRequest = User
+message CreateUserResponse {
+  uint64 id = 1;
+}
+
+message UserCreated{
+  uint64 id = 1;
+  string email = 2;
+  string name = 3;
+}
+
+/*UPDATE*/
+//message UpdateUserRequest = User
+//message UpdateUserResponse = Nothing
+
+/*GET*/
+message GetUserByEmailRequest {
+  string email = 1;
+}
+//message GetUserByEmailResponse = User
+
+message GetUserByIDRequest {
+  uint64 id = 1;
+}
+//message GetUserByIDResponse = User
+
+/*LIST*/
+message ListFriendRequest {
+  string email = 1;
+}
+
+message ListFriendResponse {
+  repeated User items = 1;
+}

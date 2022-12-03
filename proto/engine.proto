@@ -1,0 +1,170 @@
+syntax = "proto3";
+
+package scyna;
+option  java_package = "io.scyna.proto";
+option  java_multiple_files = true;
+option  csharp_namespace = "scyna.proto";
+option  optimize_for = CODE_SIZE;
+option  go_package = "./;scyna";
+
+message Configuration {
+  string NatsUrl = 1;
+  string NatsUsername = 2;
+  string NatsPassword = 3;
+  string DBHost = 4;
+  string DBUsername = 5;
+  string DBPassword = 6;
+  string DBLocation = 7;
+}
+
+/*session*/
+message CreateSessionRequest {
+  string Context = 1;
+  string Secret = 2;
+}
+
+message CreateSessionResponse {
+  uint64        SessionID = 1;
+  Configuration Config = 5;
+}
+
+message EndSessionSignal {
+  uint64 ID = 1;
+  string Code = 2;
+  string Context = 3;
+}
+
+message UpdateSessionSignal {
+  uint64 ID = 1;
+  string Context = 2;
+}
+
+/*GENERATOR*/
+message GetIDRequest {
+}
+
+message GetIDResponse {
+  uint32 prefix = 1;
+  uint64 start = 2;
+  uint64 end = 3;
+}
+
+message GetSNRequest {
+  string key = 1;
+}
+
+message GetSNResponse {
+  uint32 prefix = 1;
+  uint64 start = 2;
+  uint64 end = 3;
+}
+
+/*LOG*/
+message LogCreatedSignal {
+  uint64 Time = 1;
+  uint32 Level = 2;
+  string Text = 3;
+  uint64 ID = 4;
+  uint64 SEQ = 5;
+  bool   Session = 6;
+}
+
+message TraceCreatedSignal {
+  uint64 ID = 1;
+  uint64 ParentID = 2;
+  uint32 Type = 3;
+  uint64 Time = 4;
+  uint64 Duration = 5;
+  string Path = 6;
+  string Source = 7;
+  uint64 SessionID = 8;
+  int32  Status = 9;
+}
+
+message TagCreatedSignal {
+  uint64 TraceID = 1;
+  string Key = 2;
+  string Value = 3;
+}
+
+message ServiceDoneSignal {
+  uint64 TraceID = 1;
+  string Response = 2;
+}
+
+/*SETTING*/
+message WriteSettingRequest {
+  string Context = 1;
+  string Key = 2;
+  string Value = 3;
+}
+
+message ReadSettingRequest {
+  string Context = 1;
+  string Key = 2;
+}
+
+message ReadSettingResponse {
+  string Value = 1;
+}
+
+message SettingUpdatedSignal {
+  string Context = 1;
+  string Key = 2;
+  string Value = 3;
+}
+
+message SettingRemovedSignal {
+  string Context = 1;
+  string Key = 2;
+}
+
+message RemoveSettingRequest {
+  string Context = 1;
+  string Key = 2;
+}
+
+/*CALL*/
+message WriteCallSignal {
+  uint64 id = 1;
+  string source = 2;
+  string caller_id = 3;
+  uint64 session_id = 4;
+  uint32 duration = 5;
+  bytes  request = 6;
+  bytes  response = 7;
+  uint32 status = 8;
+  uint64 time = 9;
+  uint32 day = 10;
+}
+
+/*Authentication*/
+message CreateAuthRequest {
+  string          Organization = 1;
+  string          Secret = 2;
+  string          UserID = 3;
+  repeated string Apps = 4;
+}
+
+message CreateAuthResponse {
+  string Token = 1;
+  uint64 Expired = 2;
+}
+
+message GetAuthRequest {
+  string Token = 1;
+  string App = 2;
+}
+
+message GetAuthResponse {
+  string Token = 1;
+  uint64 Expired = 2;
+  string UserID = 3;
+}
+
+message LogoutRequest {
+  string Organization = 1;
+  string Secret = 2;
+  string UserID = 3;
+  string Token = 4;
+}
