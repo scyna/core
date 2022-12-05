@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/example/hello"
+	hello "github.com/scyna/core/example/hello/service"
 	scyna_test "github.com/scyna/core/testing"
 )
 
