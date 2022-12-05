@@ -23,4 +23,14 @@
 
 ## 3. Use case and example
 
+### 3.1 Microservice basic
+### 3.2 Microservice advanced
+### 3.3 Scheduler
+### 3.4 API Proxy
+### 3.5 ID generator
+### 3.6 Validation
+### 3.7 Log/Trace
+### 3.8 CQRS
+### 3.9 EventSourcing + CQRS
+
 [TODO]
