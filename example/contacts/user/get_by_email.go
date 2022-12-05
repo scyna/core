@@ -5,7 +5,7 @@ import (
 	"github.com/scyna/core/example/contacts/proto"
 )
 
-func GetUserByEmail(s *scyna.Service, request *proto.GetUserByEmailRequest) {
+func GetUserByEmail(s *scyna.Endpoint, request *proto.GetUserByEmailRequest) {
 	s.Logger.Info("Receive GetUserRequest")
 	if err, user := Repository.GetByEmail(s.Logger, request.Email); err != nil {
 		s.Error(err)

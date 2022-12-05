@@ -2,6 +2,7 @@ package user
 
 import (
 	scyna "github.com/scyna/core"
+	"github.com/scyna/core/example/contacts/proto"
 )
 
 const CreateUserUrl = "/scyna.example/user/create"

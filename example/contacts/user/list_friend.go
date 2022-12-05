@@ -7,7 +7,7 @@ import (
 	"github.com/scyna/core/example/contacts/proto"
 )
 
-func ListFriend(c *scyna.Service, request *proto.ListFriendRequest) {
+func ListFriend(c *scyna.Endpoint, request *proto.ListFriendRequest) {
 	c.Logger.Info("Receive ListFriendRequest")
 
 	if validation.Validate(request.Email, validation.Required, is.Email) != nil {

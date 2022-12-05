@@ -12,8 +12,8 @@ import (
 func TestMain(m *testing.M) {
 	scyna_test.Init()
 
-	scyna.RegisterService(hello.HELLO_URL, hello.Hello)
-	scyna.RegisterService(hello.ADD_URL, hello.Add)
+	scyna.RegisterEndpoint(hello.HELLO_URL, hello.Hello)
+	scyna.RegisterEndpoint(hello.ADD_URL, hello.Add)
 
 	exitVal := m.Run()
 	scyna_test.Release()

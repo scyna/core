@@ -5,7 +5,7 @@ import (
 	"github.com/scyna/core/example/hello/proto"
 )
 
-func Add(s *scyna.Service, request *proto.AddRequest) {
+func Add(s *scyna.Endpoint, request *proto.AddRequest) {
 	s.Logger.Info("Receive AddRequest")
 
 	sum := request.A + request.B

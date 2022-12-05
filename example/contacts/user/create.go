@@ -7,7 +7,7 @@ import (
 	"github.com/scyna/core/example/contacts/proto"
 )
 
-func CreateUser(s *scyna.Service, request *proto.User) {
+func CreateUser(s *scyna.Endpoint, request *proto.User) {
 	s.Logger.Info("Receive CreateUserRequest")
 	if err := validateCreateUserRequest(request); err != nil {
 		s.Error(scyna.REQUEST_INVALID)
