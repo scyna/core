@@ -9,25 +9,25 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type ServiceHandler[R proto.Message] func(ctx *Service, request R)
-type ServiceLiteHandler func(ctx *Service)
+type EndpointHandler[R proto.Message] func(ctx *Endpoint, request R)
+type EndpointLiteHandler func(ctx *Endpoint)
 
-func callService(url string, request proto.Message, response proto.Message) *Error {
+func callEndpoint(url string, request proto.Message, response proto.Message) *Error {
 	trace := Trace{
 		ID:       ID.Next(),
 		ParentID: 0,
 		Time:     time.Now(),
 		Path:     url,
-		Type:     TRACE_SERVICE,
+		Type:     TRACE_ENDPOINT,
 	}
-	return callService_(&trace, url, request, response)
+	return callEndpoint_(&trace, url, request, response)
 }
 
-func RegisterService[R proto.Message](url string, handler ServiceHandler[R]) {
-	log.Println("Register Service: ", url)
+func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
+	log.Println("Register Endpoint: ", url)
 	var request R
 
-	ctx := Service{
+	ctx := Endpoint{
 		Context: Context{Logger{session: false}},
 		request: request,
 	}
@@ -67,9 +67,9 @@ func RegisterService[R proto.Message](url string, handler ServiceHandler[R]) {
 	}
 }
 
-func RegisterServiceLite(url string, handler ServiceLiteHandler) {
-	log.Println("Register Command:", url)
-	ctx := Service{
+func RegisterEndpointLite(url string, handler EndpointLiteHandler) {
+	log.Println("Register EndpointLite:", url)
+	ctx := Endpoint{
 		Context: Context{Logger{session: false}},
 	}
 
@@ -90,7 +90,7 @@ func RegisterServiceLite(url string, handler ServiceLiteHandler) {
 	}
 }
 
-func callService_(trace *Trace, url string, request proto.Message, response proto.Message) *Error {
+func callEndpoint_(trace *Trace, url string, request proto.Message, response proto.Message) *Error {
 	defer trace.Record()
 
 	req := Request{TraceID: trace.ID, JSON: false}

@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/scylladb/gocqlx/v2"
 	"github.com/scylladb/gocqlx/v2/qb"
 	scyna "github.com/scyna/core"
 )

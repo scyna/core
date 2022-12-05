@@ -1,1 +1,1 @@
-protoc -I=. --go_out=. API.proto
+protoc -I=. --go_out=. hello.proto

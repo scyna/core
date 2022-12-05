@@ -42,7 +42,7 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 		}
 		trace.Time = time.Now()
 		trace.ID = ID.Next()
-		trace.ParentID = msg.ParentID
+		trace.ParentID = msg.TraceID
 
 		context := Context{
 			Logger{ID: trace.ID, session: false},

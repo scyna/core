@@ -1,7 +1,10 @@
 package user
 
 import (
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 	scyna "github.com/scyna/core"
+	"github.com/scyna/core/example/contacts/proto"
 )
 
 const CreateUserUrl = "/scyna.example/user/create"
@@ -31,4 +34,11 @@ func CreateUserHandler(cmd *scyna.Command, request *proto.User) {
 			Id:    user.ID,
 			Name:  user.Name,
 			Email: user.Email})
+}
+
+func validateCreateUserRequest(user *proto.User) error {
+	return validation.ValidateStruct(user,
+		validation.Field(&user.Email, validation.Required, is.Email),
+		validation.Field(&user.Password, validation.Required, validation.Length(5, 10)),
+		validation.Field(&user.Name, validation.Required, validation.Length(1, 100)))
 }

@@ -52,7 +52,7 @@ func RegisterSync[R proto.Message](channel string, receiver string, handler Sync
 			}
 			trace.Time = time.Now()
 			trace.ID = ID.Next()
-			trace.ParentID = msg.ParentID
+			trace.ParentID = msg.TraceID
 
 			context := Context{
 				Logger{ID: trace.ID, session: false},

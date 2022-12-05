@@ -15,7 +15,7 @@ func TestMain(m *testing.M) {
 
 	/*register services*/
 	scyna.RegisterCommand(user.CREATE_USER_URL, user.CreateUserHandler)
-	scyna.RegisterService(user.GET_USER_URL, user.GetUserByEmail)
+	scyna.RegisterEndpoint(user.GET_USER_URL, user.GetUserByEmail)
 
 	exitVal := m.Run()
 	cleanup()

@@ -6,7 +6,7 @@ import (
 	"github.com/scyna/core/example/hello/proto"
 )
 
-func Hello(s *scyna.Service, request *proto.HelloRequest) {
+func Hello(s *scyna.Endpoint, request *proto.HelloRequest) {
 	s.Logger.Info("Receive HelloRequest")
 
 	if err := validateHelloRequest(request); err != nil {

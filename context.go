@@ -13,7 +13,7 @@ type Context struct {
 
 func (ctx *Context) PostEvent(channel string, data proto.Message) { // account_created
 	subject := context + "." + channel
-	msg := Event{ParentID: ctx.ID}
+	msg := Event{TraceID: ctx.ID}
 	if data, err := proto.Marshal(data); err == nil {
 		msg.Body = data
 	}
@@ -45,10 +45,10 @@ func (ctx *Context) CallService(url string, request proto.Message, response prot
 		ParentID: ctx.ID,
 		Time:     time.Now(),
 		Path:     url,
-		Type:     TRACE_SERVICE,
+		Type:     TRACE_ENDPOINT,
 		Source:   context,
 	}
-	return callService_(&trace, url, request, response)
+	return callEndpoint_(&trace, url, request, response)
 }
 
 func (ctx *Context) Tag(key string, value string) {
