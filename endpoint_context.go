@@ -88,7 +88,7 @@ func (ctx *Endpoint) tag(code uint32, response proto.Message) {
 	}
 	res, _ := json.Marshal(response)
 
-	EmitSignal(ENDPOINT_DONE_CHANNEL, &EnpointDoneSignal{
+	EmitSignal(ENDPOINT_DONE_CHANNEL, &EndpointDoneSignal{
 		TraceID:  ctx.ID,
 		Response: string(res),
 	})
