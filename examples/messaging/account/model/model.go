@@ -1,6 +1,6 @@
-package account
+package model
 
-import "github.com/scyna/core/example/messaging/proto"
+import "github.com/scyna/core/examples/messaging/account/proto"
 
 type User struct {
 	ID       uint64 `db:"id"`
@@ -9,13 +9,11 @@ type User struct {
 	Password string `db:"password"`
 }
 
-func FromDTO(user *proto.User) *User {
-	return &User{
-		ID:       user.Id,
-		Name:     user.Name,
-		Email:    user.Email,
-		Password: user.Password,
-	}
+func (u *User) FromDTO(user *proto.User) {
+	u.ID = user.Id
+	u.Name = user.Name
+	u.Email = user.Email
+	u.Password = user.Password
 }
 
 func (u *User) ToDTO() *proto.User {

@@ -4,7 +4,8 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/example/messaging/proto"
+	"github.com/scyna/core/examples/messaging/account/model"
+	"github.com/scyna/core/examples/messaging/account/proto"
 )
 
 func ListFriend(c *scyna.Endpoint, request *proto.ListFriendRequest) {
@@ -15,10 +16,10 @@ func ListFriend(c *scyna.Endpoint, request *proto.ListFriendRequest) {
 		return
 	}
 
-	if err, user := Repository.GetByEmail(c.Logger, request.Email); err != nil {
-		c.Error(USER_NOT_EXISTED)
+	if err, user := model.Repository.GetByEmail(c.Logger, request.Email); err != nil {
+		c.Error(model.USER_NOT_EXISTED)
 	} else {
-		if err, users := Repository.ListFriend(c.Logger, user.ID); err != nil {
+		if err, users := model.Repository.ListFriend(c.Logger, user.ID); err != nil {
 			c.Error(err)
 		} else {
 			result := make([]*proto.User, len(users))

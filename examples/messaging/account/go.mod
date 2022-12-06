@@ -1,8 +1,8 @@
-module github.com/scyna/core/example/messaging
+module github.com/scyna/core/examples/messaging/account
 
 go 1.18
 
-replace github.com/scyna/core => ../..
+replace github.com/scyna/core => ../../..
 
 require (
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible

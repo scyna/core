@@ -1,4 +1,4 @@
-package account
+package model
 
 import (
 	scyna "github.com/scyna/core"

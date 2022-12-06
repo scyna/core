@@ -4,7 +4,8 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/example/messaging/proto"
+	"github.com/scyna/core/examples/messaging/account/model"
+	"github.com/scyna/core/examples/messaging/account/proto"
 )
 
 const CreateUserUrl = "/scyna.example/user/create"
@@ -16,16 +17,17 @@ func CreateUserHandler(cmd *scyna.Command, request *proto.User) {
 		return
 	}
 
-	if err, _ := Repository.GetByEmail(cmd.Logger, request.Email); err == nil {
-		cmd.Error(USER_EXISTED)
+	if err, _ := model.Repository.GetByEmail(cmd.Logger, request.Email); err == nil {
+		cmd.Error(model.USER_EXISTED)
 		return
 
 	}
 
-	user := FromDTO(request)
+	var user model.User
+	user.FromDTO(request)
 	user.ID = scyna.ID.Next()
 
-	Repository.PrepareCreate(cmd, user)
+	model.Repository.PrepareCreate(cmd, &user)
 
 	cmd.Done(&proto.CreateUserResponse{Id: user.ID},
 		user.ID,
