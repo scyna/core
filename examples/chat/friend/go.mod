@@ -1,4 +1,4 @@
-module github.com/scyna/core/examples/messaging
+module github.com/scyna/core/chat/messaging
 
 go 1.18
 

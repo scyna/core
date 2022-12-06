@@ -4,8 +4,8 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/examples/messaging/account/model"
-	"github.com/scyna/core/examples/messaging/account/proto"
+	"github.com/scyna/core/examples/chat/account/model"
+	"github.com/scyna/core/examples/chat/account/proto"
 )
 
 const CreateUserUrl = "/scyna.example/user/create"

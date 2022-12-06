@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	CREATE_USER_URL = "/example/user/create"
-	GET_USER_URL    = "/example/user/get"
+	CREATE_USER_URL = "/chat/account/create"
+	GET_USER_URL    = "/chat/account/get"
 )
 
 var (

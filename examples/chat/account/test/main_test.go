@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/examples/messaging/account/model"
-	account "github.com/scyna/core/examples/messaging/account/service"
+	"github.com/scyna/core/examples/chat/account/model"
+	account "github.com/scyna/core/examples/chat/account/service"
 	scyna_test "github.com/scyna/core/testing"
 )
 

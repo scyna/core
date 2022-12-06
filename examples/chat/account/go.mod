@@ -1,4 +1,4 @@
-module github.com/scyna/core/examples/messaging/account
+module github.com/scyna/core/examples/chat/account
 
 go 1.18
 

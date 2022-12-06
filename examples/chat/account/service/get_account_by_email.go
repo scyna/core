@@ -2,8 +2,8 @@ package account
 
 import (
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/examples/messaging/account/model"
-	"github.com/scyna/core/examples/messaging/account/proto"
+	"github.com/scyna/core/examples/chat/account/model"
+	"github.com/scyna/core/examples/chat/account/proto"
 )
 
 func GetUserByEmail(s *scyna.Endpoint, request *proto.GetUserByEmailRequest) {

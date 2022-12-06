@@ -1,6 +1,6 @@
 package model
 
-import "github.com/scyna/core/examples/messaging/account/proto"
+import "github.com/scyna/core/examples/chat/account/proto"
 
 type User struct {
 	ID       uint64 `db:"id"`
