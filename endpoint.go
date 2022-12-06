@@ -63,7 +63,7 @@ func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 	})
 
 	if err != nil {
-		Fatal("Can not register service:", url)
+		Fatal("Can not register endpoint:", url)
 	}
 }
 
