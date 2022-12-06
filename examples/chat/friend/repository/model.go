@@ -2,8 +2,6 @@ package repository
 
 import "github.com/scyna/core/examples/chat/account/proto"
 
-const ACCOUNT_TABLE_NAME = "chat_account.account"
-
 type User struct {
 	ID       uint64 `db:"id"`
 	Name     string `db:"name"`
