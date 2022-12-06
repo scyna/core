@@ -1,11 +1,12 @@
-package user_test
+package account_test
 
 import (
 	"os"
 	"testing"
 
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/example/contacts/user"
+	"github.com/scyna/core/examples/messaging/account/model"
+	account "github.com/scyna/core/examples/messaging/account/service"
 	scyna_test "github.com/scyna/core/testing"
 )
 
@@ -14,8 +15,8 @@ func TestMain(m *testing.M) {
 	scyna.InitEventStore("ex")
 
 	/*register services*/
-	scyna.RegisterCommand(user.CREATE_USER_URL, user.CreateUserHandler)
-	scyna.RegisterEndpoint(user.GET_USER_URL, user.GetUserByEmail)
+	scyna.RegisterCommand(model.CREATE_USER_URL, account.CreateUserHandler)
+	scyna.RegisterEndpoint(model.GET_USER_URL, account.GetUserByEmail)
 
 	exitVal := m.Run()
 	cleanup()
