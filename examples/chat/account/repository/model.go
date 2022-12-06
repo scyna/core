@@ -1,4 +1,4 @@
-package model
+package repository
 
 import "github.com/scyna/core/examples/chat/account/proto"
 

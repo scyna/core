@@ -1,18 +1,13 @@
-package model
+package repository
 
 import (
 	"github.com/scylladb/gocqlx/v2"
 	"github.com/scylladb/gocqlx/v2/qb"
 	scyna "github.com/scyna/core"
+	"github.com/scyna/core/examples/chat/account/model"
 )
 
-type repository struct {
-	GetQueries *scyna.QueryPool /*for high frequence queries*/
-}
-
-var Repository *repository = &repository{GetQueries: scyna.NewQueryPool(newGetQuery)}
-
-func (r *repository) PrepareCreate(cmd *scyna.Command, user *User) {
+func PrepareCreate(cmd *scyna.Command, user *User) {
 	cmd.Batch.Query("INSERT INTO ex.user(id, name, email, password) VALUES(?,?,?,?)",
 		user.ID,
 		user.Name,
@@ -20,7 +15,7 @@ func (r *repository) PrepareCreate(cmd *scyna.Command, user *User) {
 		user.Password)
 }
 
-func (r *repository) Create(LOG scyna.Logger, user *User) *scyna.Error {
+func Create(LOG scyna.Logger, user *User) *scyna.Error {
 	if err := qb.Insert("ex.user").
 		Columns("id", "name", "email", "password").
 		Query(scyna.DB).
@@ -40,7 +35,7 @@ func newGetQuery() *gocqlx.Queryx {
 		Query(scyna.DB)
 }
 
-func (r *repository) GetByEmail(LOG scyna.Logger, email string) (*scyna.Error, *User) {
+func GetByEmail(LOG scyna.Logger, email string) (*scyna.Error, *User) {
 	var user User
 	if err := qb.Select("ex.user").
 		Columns("id", "name", "email", "password").
@@ -48,12 +43,12 @@ func (r *repository) GetByEmail(LOG scyna.Logger, email string) (*scyna.Error, *
 		Limit(1).
 		Query(scyna.DB).Bind(email).Get(&user); err != nil {
 		LOG.Error(err.Error())
-		return USER_NOT_EXISTED, nil
+		return model.USER_NOT_EXISTED, nil
 	}
 	return nil, &user
 }
 
-func (r *repository) ListFriend(LOG scyna.Logger, uid uint64) (*scyna.Error, []*User) {
+func ListFriend(LOG scyna.Logger, uid uint64) (*scyna.Error, []*User) {
 	var friends []uint64
 	var ret []*User
 
