@@ -5,8 +5,9 @@ import (
 )
 
 const (
-	CREATE_USER_URL = "/chat/account/create"
-	GET_USER_URL    = "/chat/account/get"
+	CREATE_USER_URL         = "/chat/account/create"
+	GET_USER_URL            = "/chat/account/get"
+	ACCOUNT_CREATED_CHANNEL = "chat.account.user_created"
 )
 
 var (

@@ -5,9 +5,9 @@ import (
 	scyna "github.com/scyna/core"
 )
 
-func ListFriend(LOG scyna.Logger, uid uint64) (*scyna.Error, []*User) {
+func ListFriendByEmail(LOG scyna.Logger, uid uint64) (*scyna.Error, []*Account) {
 	var friends []uint64
-	var ret []*User
+	var ret []*Account
 
 	if err := qb.Select("ex.has_friend").
 		Columns("friend_id").
@@ -21,7 +21,7 @@ func ListFriend(LOG scyna.Logger, uid uint64) (*scyna.Error, []*User) {
 		return nil, ret
 	}
 
-	ret = make([]*User, len(friends))
+	ret = make([]*Account, len(friends))
 
 	qSelect := qb.Select("ex.user").
 		Columns("id", "name", "email").

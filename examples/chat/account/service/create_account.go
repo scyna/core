@@ -9,7 +9,7 @@ import (
 	"github.com/scyna/core/examples/chat/account/repository"
 )
 
-func CreateAccountHandler(cmd *scyna.Command, request *proto.User) {
+func CreateAccountHandler(cmd *scyna.Command, request *proto.Account) {
 	cmd.Logger.Info("Receive CreateUserRequest")
 	if err := validateCreateUserRequest(request); err != nil {
 		cmd.Error(scyna.REQUEST_INVALID)
@@ -22,22 +22,22 @@ func CreateAccountHandler(cmd *scyna.Command, request *proto.User) {
 
 	}
 
-	var user repository.User
-	user.FromDTO(request)
-	user.ID = scyna.ID.Next()
+	var account repository.Account
+	account.FromDTO(request)
+	account.ID = scyna.ID.Next()
 
-	repository.PrepareCreate(cmd, &user)
+	repository.PrepareCreate(cmd, &account)
 
-	cmd.Done(&proto.CreateUserResponse{Id: user.ID},
-		user.ID,
-		"ex.user.user_created",
+	cmd.Done(&proto.CreateUserResponse{Id: account.ID},
+		account.ID,
+		model.ACCOUNT_CREATED_CHANNEL,
 		&proto.UserCreated{
-			Id:    user.ID,
-			Name:  user.Name,
-			Email: user.Email})
+			Id:    account.ID,
+			Name:  account.Name,
+			Email: account.Email})
 }
 
-func validateCreateUserRequest(user *proto.User) error {
+func validateCreateUserRequest(user *proto.Account) error {
 	return validation.ValidateStruct(user,
 		validation.Field(&user.Email, validation.Required, is.Email),
 		validation.Field(&user.Password, validation.Required, validation.Length(5, 10)),

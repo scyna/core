@@ -5,8 +5,8 @@ import (
 	scyna "github.com/scyna/core"
 )
 
-func Create(LOG scyna.Logger, user *User) *scyna.Error {
-	if err := qb.Insert(ACCOUNT_TABLE_NAME).
+func Create(LOG scyna.Logger, user *Account) *scyna.Error {
+	if err := qb.Insert(ACCOUNT_TABLE).
 		Columns("id", "name", "email", "password").
 		Query(scyna.DB).
 		BindStruct(user).

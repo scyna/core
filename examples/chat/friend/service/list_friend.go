@@ -2,7 +2,7 @@ package friend
 
 import (
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/examples/chat/account/proto"
+	"github.com/scyna/core/examples/chat/friend/proto"
 )
 
 func ListFriend(c *scyna.Endpoint, request *proto.ListFriendRequest) {

@@ -12,7 +12,7 @@ import (
 func TestCreateShouldReturnSuccess(t *testing.T) {
 	cleanup()
 	scyna_test.EndpointTest(model.CREATE_USER_URL).
-		WithRequest(&proto.User{
+		WithRequest(&proto.Account{
 			Email:    "a@gmail.com",
 			Name:     "Nguyen Van A",
 			Password: "1234565",
@@ -24,7 +24,7 @@ func TestCreateThenGet(t *testing.T) {
 	cleanup()
 	var response proto.CreateUserResponse
 	scyna_test.EndpointTest(model.CREATE_USER_URL).
-		WithRequest(&proto.User{
+		WithRequest(&proto.Account{
 			Email:    "a@gmail.com",
 			Name:     "Nguyen Van A",
 			Password: "1234565",
@@ -33,7 +33,7 @@ func TestCreateThenGet(t *testing.T) {
 
 	scyna_test.EndpointTest(model.GET_USER_URL).
 		WithRequest(&proto.GetUserByEmailRequest{Email: "a@gmail.com"}).
-		ExpectResponse(&proto.User{
+		ExpectResponse(&proto.Account{
 			Id:       response.Id,
 			Email:    "a@gmail.com",
 			Name:     "Nguyen Van A",
@@ -44,7 +44,7 @@ func TestCreateThenGet(t *testing.T) {
 func TestCreateBadEmail(t *testing.T) {
 	cleanup()
 	scyna_test.EndpointTest(model.CREATE_USER_URL).
-		WithRequest(&proto.User{
+		WithRequest(&proto.Account{
 			Email:    "a+gmail.com",
 			Name:     "Nguyen Van A",
 			Password: "1234565",

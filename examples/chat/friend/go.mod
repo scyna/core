@@ -1,4 +1,4 @@
-module github.com/scyna/core/chat/messaging
+module github.com/scyna/core/examples/chat/friend
 
 go 1.18
 
