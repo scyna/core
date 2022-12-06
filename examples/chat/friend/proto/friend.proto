@@ -3,28 +3,27 @@ option java_multiple_files = true;
 option csharp_namespace = "proto";
 option  go_package = ".;proto";
 
-message Account {
+message Account 
+{
   uint64 id = 1;
   string email = 2;
   string name = 3;
 }
 
 /*ADD FRIEND*/
-message AddFriendRequest{
-  string email = 1;
-  string friend = 2; //email of friend
+message AddFriendRequest
+{
+  uint64 id = 1;
+  uint64 friend = 2;
 }
-//message AddFriendResponse = Nothing
 
 /*LIST*/
-message ListFriendByIDRequest {
+message ListFriendRequest 
+{
   uint64 id = 1;
 }
 
-message ListFriendRequest {
-  string email = 1;
-}
-
-message ListFriendResponse {
+message ListFriendResponse 
+{
   repeated Account items = 1;
 }
