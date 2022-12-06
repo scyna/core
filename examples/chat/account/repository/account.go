@@ -11,18 +11,18 @@ type Account struct {
 	Password string `db:"password"`
 }
 
-func (u *Account) FromDTO(user *proto.Account) {
-	u.ID = user.Id
-	u.Name = user.Name
-	u.Email = user.Email
-	u.Password = user.Password
+func (acc *Account) FromDTO(account *proto.Account) {
+	acc.ID = account.Id
+	acc.Name = account.Name
+	acc.Email = account.Email
+	acc.Password = account.Password
 }
 
-func (u *Account) ToDTO() *proto.Account {
+func (acc *Account) ToDTO() *proto.Account {
 	return &proto.Account{
-		Id:       u.ID,
-		Name:     u.Name,
-		Email:    u.Email,
-		Password: u.Password,
+		Id:       acc.ID,
+		Name:     acc.Name,
+		Email:    acc.Email,
+		Password: acc.Password,
 	}
 }
