@@ -25,7 +25,7 @@ func (ctx *Context) PostEvent(channel string, data proto.Message) { // account_c
 
 func (ctx *Context) Schedule(task string, start time.Time, interval int64, data []byte, loop uint64) (*Error, uint64) {
 	var response StartTaskResponse
-	if err := ctx.CallService(START_TASK_URL, &StartTaskRequest{
+	if err := ctx.CallEndpoint(START_TASK_URL, &StartTaskRequest{
 		Context:  context,
 		Topic:    fmt.Sprintf("%s.task.%s", context, task),
 		Data:     data,
@@ -39,7 +39,7 @@ func (ctx *Context) Schedule(task string, start time.Time, interval int64, data 
 	return nil, response.Id
 }
 
-func (ctx *Context) CallService(url string, request proto.Message, response proto.Message) *Error {
+func (ctx *Context) CallEndpoint(url string, request proto.Message, response proto.Message) *Error {
 	trace := Trace{
 		ID:       ID.Next(),
 		ParentID: ctx.ID,
