@@ -15,8 +15,8 @@ func TestMain(m *testing.M) {
 	scyna.InitEventStore("ex")
 
 	/*register services*/
-	scyna.RegisterCommand(model.CREATE_USER_URL, account.CreateUserHandler)
-	scyna.RegisterEndpoint(model.GET_USER_URL, account.GetUserByEmail)
+	scyna.RegisterCommand(model.CREATE_USER_URL, account.CreateAccountHandler)
+	scyna.RegisterEndpoint(model.GET_USER_URL, account.GetAccountByEmail)
 
 	exitVal := m.Run()
 	cleanup()

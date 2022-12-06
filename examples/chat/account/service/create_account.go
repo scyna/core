@@ -9,9 +9,7 @@ import (
 	"github.com/scyna/core/examples/chat/account/repository"
 )
 
-const CreateUserUrl = "/scyna.example/user/create"
-
-func CreateUserHandler(cmd *scyna.Command, request *proto.User) {
+func CreateAccountHandler(cmd *scyna.Command, request *proto.User) {
 	cmd.Logger.Info("Receive CreateUserRequest")
 	if err := validateCreateUserRequest(request); err != nil {
 		cmd.Error(scyna.REQUEST_INVALID)
