@@ -1,10 +1,10 @@
-package user
+package account
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/example/contacts/proto"
+	"github.com/scyna/core/example/messaging/proto"
 )
 
 const CreateUserUrl = "/scyna.example/user/create"

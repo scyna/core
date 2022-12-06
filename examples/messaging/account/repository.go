@@ -1,4 +1,4 @@
-package user
+package account
 
 import (
 	"github.com/scylladb/gocqlx/v2"

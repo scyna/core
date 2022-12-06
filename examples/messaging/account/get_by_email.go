@@ -1,8 +1,8 @@
-package user
+package account
 
 import (
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/example/contacts/proto"
+	"github.com/scyna/core/example/messaging/proto"
 )
 
 func GetUserByEmail(s *scyna.Endpoint, request *proto.GetUserByEmailRequest) {
