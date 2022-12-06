@@ -37,6 +37,13 @@ message GetUserByIDRequest {
 }
 //message GetUserByIDResponse = User
 
+/*ADD FRIEND*/
+message AddFriendRequest{
+  string email = 1;
+  string friend = 2; //email of friend
+}
+//message AddFriendResponse = Nothing
+
 /*LIST*/
 message ListFriendRequest {
   string email = 1;

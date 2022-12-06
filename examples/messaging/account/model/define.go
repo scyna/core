@@ -1,7 +1,12 @@
-package user
+package model
 
 import (
 	scyna "github.com/scyna/core"
+)
+
+const (
+	CREATE_USER_URL = "/example/user/create"
+	GET_USER_URL    = "/example/user/get"
 )
 
 var (
