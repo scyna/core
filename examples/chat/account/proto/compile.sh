@@ -1,1 +1,1 @@
-protoc -I=. --go_out=. user.proto
+protoc -I=. --go_out=. account.proto
