@@ -9,9 +9,9 @@ func ListFriendByEmail(LOG scyna.Logger, uid uint64) (*scyna.Error, []*Account) 
 	var friends []uint64
 	var ret []*Account
 
-	if err := qb.Select("ex.has_friend").
+	if err := qb.Select(FRIEND_TABLE).
 		Columns("friend_id").
-		Where(qb.Eq("user_id")).
+		Where(qb.Eq("account_id")).
 		Limit(1).
 		Query(scyna.DB).Bind(uid).SelectRelease(friends); err != nil {
 		return scyna.SERVER_ERROR, ret
@@ -23,7 +23,7 @@ func ListFriendByEmail(LOG scyna.Logger, uid uint64) (*scyna.Error, []*Account) 
 
 	ret = make([]*Account, len(friends))
 
-	qSelect := qb.Select("ex.user").
+	qSelect := qb.Select(ACCOUNT_TABLE).
 		Columns("id", "name", "email").
 		Where(qb.Eq("id")).
 		Limit(1).

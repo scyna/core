@@ -10,7 +10,7 @@ message Account
   string name = 3;
 }
 
-/*ADD FRIEND*/
+/*ADD*/
 message AddFriendRequest
 {
   uint64 id = 1;
@@ -26,4 +26,11 @@ message ListFriendRequest
 message ListFriendResponse 
 {
   repeated Account items = 1;
+}
+
+/*LIST SHARED FRIEND*/
+message ListSharedFriendRequest 
+{
+  uint64 ID = 1;
+  uint64 otherID = 2;
 }

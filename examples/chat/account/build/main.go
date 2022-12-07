@@ -5,7 +5,7 @@ import (
 	"github.com/scyna/core/example/contacts/user"
 )
 
-const MODULE_CODE = "nats"
+const MODULE_CODE = "chat_account"
 
 func main() {
 	scyna.RemoteInit(scyna.RemoteConfig{

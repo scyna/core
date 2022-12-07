@@ -8,5 +8,9 @@ CREATE TABLE chat_account.account
     email        text,
     name         text,
     password     text,
+    avatar       text,
+    dob          text,
+    gender       smallint,
+    tel          text,
 );
 CREATE INDEX ON chat_account.account (email);

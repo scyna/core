@@ -7,6 +7,7 @@ CREATE TABLE chat_friend.account
     id              bigint,
     email           text,
     name            text,
+    avatar          text,
 );
 
 DROP TABLE IF EXISTS chat_friend.has_friend;
