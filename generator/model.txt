@@ -2,8 +2,8 @@ context account;
 
 entity account {
     model{
-        id: int64 PK
-        email: string index
+        id: int64 KEY
+        email: string INDEX
         name: string
         avatar: string
         password: string
@@ -14,31 +14,30 @@ entity account {
     from Account{email, name, dob: birthday}
     to GetAccountResponse{email, name, dob: birthday}
 
-    get AccountByEmail(email) => (id, email, name, avatar, dob)
-    get AccountByID(id) => (id, email, name, avatar, dob)
-    set Account(id) => (email, name, password)
-    set Password(id) => (password)
-    create Account(id, email, name, password)
+    GetAccountByEmail: SELECT(id, email, name, avatar, dob) WHERE(email)
+    GetAccountByID: SELECT(id, email, name, avatar, dob) WHERE(id)
+    UpdateAccount: UPDATE(email, name, password) WHERE(id)
+    UpdatePassword(id,password): UPDATE(password) WHERE(id)
+    CreateAccount: INSERT(id, email, name, password)
 }
 
 entity setting{
     model{
-        key: string PK
+        key: string KEY
         value: string
     }
 
-    get Setting(key) => {value}
-    set Setting(key) => {value}
+    GetSetting: GET(value) WHERE(key)
+    SetSetting: SET(value) WHERE(key)
 }
 
 relationship account_has_setting{
     model{
-        account_id: int64
-        key: string
+        account_id: int64 FROM
+        key: string TO
         active: bool
-        PK(account_id,key)
     }
 
-    list SettingByAccount(account_id) => {key}
-    list ActiveSettingByAccount(account_id, active=true) => {key}
+    ListSettingByAccount: LIST(key) WHERE(account_id)
+    ListActiveSettingByAccount: LIST(key) WHERE(account_id, active=true)
 }
