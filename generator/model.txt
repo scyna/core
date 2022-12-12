@@ -1,41 +1,44 @@
 context account;
 
-model account {
-    data{
-        id: int64
+entity account {
+    model{
+        id: int64 PK
         email: string index
         name: string
         avatar: string
         password: string
         dob: string
-        PK(id)
     }
 
     from CreateAccountRequest{email, name, dob: birthday}
-    from Account{}
-    to GetAccountResponse{}
+    from Account{email, name, dob: birthday}
+    to GetAccountResponse{email, name, dob: birthday}
 
-    get AccountByEmail(email) => {id, email, name, avatar, dob}
-    get Account() => {id, email, name, avatar, dob}
-    set Account() => {email, name, password}
-    set Password() => {password}
+    get AccountByEmail(email) => (id, email, name, avatar, dob)
+    get AccountByID(id) => (id, email, name, avatar, dob)
+    set Account(id) => (email, name, password)
+    set Password(id) => (password)
+    create Account(id, email, name, password)
 }
 
-model setting{
-    data{
-        key: string
+entity setting{
+    model{
+        key: string PK
         value: string
-        PK(key)
     }
+
+    get Setting(key) => {value}
+    set Setting(key) => {value}
 }
 
-model has_setting{
-    data{
+relationship account_has_setting{
+    model{
         account_id: int64
         key: string
         active: bool
         PK(account_id,key)
     }
 
-    list ActiveKey(account_id, active=true)=>{key}
+    list SettingByAccount(account_id) => {key}
+    list ActiveSettingByAccount(account_id, active=true) => {key}
 }

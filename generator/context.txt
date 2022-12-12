@@ -1,7 +1,12 @@
 context account;
 
 type Account{
-
+    id: int64
+    name: string
+    email: string
+    password: string
+    dob: string
+    avatar: string
 }
 
 event AccountCreated{
@@ -19,7 +24,7 @@ event AccountUpdated{
 
 command RegisterAccount{
     request {
-        email: string
+        email: string `required, is_email`
         name: string
         password: string
     }
@@ -29,7 +34,10 @@ command RegisterAccount{
 }
 
 command CreateAccount{
-    request: Account
+    request: Account validate{
+        email `required, is_email`
+        name `required, len(1,100)`
+    }
     response {
         id: int64
     }
