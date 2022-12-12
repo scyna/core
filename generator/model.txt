@@ -1,0 +1,41 @@
+context account;
+
+model account {
+    data{
+        id: int64
+        email: string index
+        name: string
+        avatar: string
+        password: string
+        dob: string
+        PK(id)
+    }
+
+    from CreateAccountRequest{email, name, dob: birthday}
+    from Account{}
+    to GetAccountResponse{}
+
+    get AccountByEmail(email) => {id, email, name, avatar, dob}
+    get Account() => {id, email, name, avatar, dob}
+    set Account() => {email, name, password}
+    set Password() => {password}
+}
+
+model setting{
+    data{
+        key: string
+        value: string
+        PK(key)
+    }
+}
+
+model has_setting{
+    data{
+        account_id: int64
+        key: string
+        active: bool
+        PK(account_id,key)
+    }
+
+    list ActiveKey(account_id, active=true)=>{key}
+}

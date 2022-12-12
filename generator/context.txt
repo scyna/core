@@ -1,0 +1,48 @@
+context account;
+
+type Account{
+
+}
+
+event AccountCreated{
+    id: int64
+    name: string
+    email: string
+    password: string
+}
+
+event AccountUpdated{
+    id: int64
+    name: string
+    email: string
+}
+
+command RegisterAccount{
+    request {
+        email: string
+        name: string
+        password: string
+    }
+    response {
+        id: int64
+    }
+}
+
+command CreateAccount{
+    request: Account
+    response {
+        id: int64
+    }
+}
+
+query GetAccount{
+    request {
+        email: string
+    }
+    response: Account 
+}
+
+error{
+    ACCOUNT_NOT_EXISTS = 100 `Account Not Exists`
+    ACCOUNT_EXISTS = 100 `Account Exists`
+}
