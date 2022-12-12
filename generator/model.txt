@@ -14,11 +14,12 @@ entity account {
     from Account{email, name, dob: birthday}
     to GetAccountResponse{email, name, dob: birthday}
 
-    GetAccountByEmail: SELECT(id, email, name, avatar, dob) WHERE(email)
-    GetAccountByID: SELECT(id, email, name, avatar, dob) WHERE(id)
-    UpdateAccount: UPDATE(email, name, password) WHERE(id)
-    UpdatePassword(id,password): UPDATE(password) WHERE(id)
+    GetAccountByEmail: GET(id, email, name, avatar, dob) WHERE(email)
+    GetAccountByID: GET(id, email, name, avatar, dob) WHERE(id)
+    UpdateAccount: SET(email, name, password) WHERE(id)
+    UpdatePassword(id, password): SET(password) WHERE(id)
     CreateAccount: INSERT(id, email, name, password)
+    UpsertAccount: UPSERT(id, email, name, password)
 }
 
 entity setting{
