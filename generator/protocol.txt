@@ -24,7 +24,7 @@ event AccountUpdated{
 
 command RegisterAccount{
     request {
-        email: string `required, is_email`
+        email: string `required,is_email`
         name: string
         password: string
     }
@@ -35,8 +35,8 @@ command RegisterAccount{
 
 command CreateAccount{
     request: Account validate{
-        email `required, is_email`
-        name `required, len(1,100)`
+        email `required,is_email`
+        name  `required,max=200`
     }
     response {
         id: int64
@@ -51,6 +51,6 @@ query GetAccount{
 }
 
 error{
-    ACCOUNT_NOT_EXISTS = 100 `Account Not Exists`
-    ACCOUNT_EXISTS = 100 `Account Exists`
+    ACCOUNT_NOT_EXISTS = 100    `Account Not Exists`
+    ACCOUNT_EXISTS = 100        `Account Exists`
 }

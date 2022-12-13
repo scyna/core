@@ -1,0 +1,14 @@
+context account;
+
+task SendEmail{
+    email: string
+    account_id: int64
+}
+
+sync SyncVehicleToLoyalty{
+    vin_number: string    
+}
+
+handle id::IdentityCreated
+handle id::IdentityDeleted
+handle id::IdentityUpdated

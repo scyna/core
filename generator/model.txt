@@ -1,42 +1,45 @@
 context account;
 
-entity account {
+entity Account {
     model{
-        id: int64 KEY
-        email: string INDEX
-        name: string
-        avatar: string
-        password: string
-        dob: string
+        id:         int64   KEY
+        email:      string  INDEX
+        name:       string
+        avatar:     string
+        password:   string
+        dob:        string
     }
 
-    from CreateAccountRequest{email, name, dob: birthday}
-    from Account{email, name, dob: birthday}
-    to GetAccountResponse{email, name, dob: birthday}
+    CreateAccountRequest => {
+        email, name, dob:birthday
+    }
+
+    Account => {email, name, dob:birthday}
+    GetAccountResponse <= {email, name, dob:birthday}
 
     GetAccountByEmail: GET(id, email, name, avatar, dob) WHERE(email)
     GetAccountByID: GET(id, email, name, avatar, dob) WHERE(id)
-    UpdateAccount: SET(email, name, password) WHERE(id)
-    UpdatePassword(id, password): SET(password) WHERE(id)
+    UpdateAccount: UPDATE(email, name, password) WHERE(id)
+    UpdatePassword(id, password): UPDATE(password) WHERE(id)
     CreateAccount: INSERT(id, email, name, password)
     UpsertAccount: UPSERT(id, email, name, password)
 }
 
-entity setting{
+entity Setting{
     model{
-        key: string KEY
-        value: string
+        key:    string  KEY
+        value:  string
     }
 
     GetSetting: GET(value) WHERE(key)
-    SetSetting: SET(value) WHERE(key)
+    SetSetting: UPDATE(value) WHERE(key)
 }
 
-relationship account_has_setting{
+relationship AccountHasSetting{
     model{
-        account_id: int64 FROM
-        key: string TO
-        active: bool
+        account_id: int64   FROM
+        key:        string  TO
+        active:     bool
     }
 
     ListSettingByAccount: LIST(key) WHERE(account_id)
