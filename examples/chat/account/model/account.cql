@@ -1,5 +1,5 @@
 DROP KEYSPACE IF EXISTS chat_account;
-CREATE KEYSPACE msg_account WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+CREATE KEYSPACE chat_account WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
 
 DROP TABLE IF EXISTS chat_account.account;
 CREATE TABLE chat_account.account

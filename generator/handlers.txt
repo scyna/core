@@ -9,6 +9,8 @@ sync SyncVehicleToLoyalty{
     vin_number: string    
 }
 
-handle id::IdentityCreated
-handle id::IdentityDeleted
-handle id::IdentityUpdated
+handle {
+    id::IdentityCreated, 
+    id::IdentityDeleted, 
+    id::IdentityUpdated,
+}

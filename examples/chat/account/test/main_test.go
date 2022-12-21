@@ -12,7 +12,7 @@ import (
 
 func TestMain(m *testing.M) {
 	scyna_test.Init()
-	scyna.InitEventStore("ex")
+	scyna.InitEventStore("chat")
 
 	/*register services*/
 	scyna.RegisterCommand(model.CREATE_USER_URL, account.CreateAccountHandler)
@@ -25,5 +25,5 @@ func TestMain(m *testing.M) {
 }
 
 func cleanup() {
-	scyna.DB.Query("TRUNCATE ex.user", nil).ExecRelease()
+	scyna.DB.Query("TRUNCATE chat_account.account", nil).ExecRelease()
 }
