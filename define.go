@@ -23,11 +23,6 @@ const (
 	AUTH_LOGOUT_URL        = "/scyna/auth/logout"
 	START_TASK_URL         = "/scyna/task/start"
 	STOP_TASK_URL          = "/scyna/task/stop"
-
-	CREATE_DOMAIN_URL   = "/scyna/domain/create"
-	CREATE_CONTEXT_URL  = "/scyna/context/create"
-	CREATE_CLIENT_URL   = "/scyna/client/create"
-	CREATE_ENDPOINT_URL = "/scyna/endpoint/create"
 )
 
 var (
