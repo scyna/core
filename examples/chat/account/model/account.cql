@@ -14,3 +14,13 @@ CREATE TABLE chat_account.account
     tel          text,
 );
 CREATE INDEX ON chat_account.account (email);
+
+DROP TABLE IF EXISTS chat_account.event_store;
+CREATE TABLE chat_account.event_store
+(
+    event_id        bigint,
+    entity_id       bigint,
+    channel         text,
+    data            blob,
+    PRIMARY KEY(event_id)
+);

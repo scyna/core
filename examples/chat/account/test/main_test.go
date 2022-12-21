@@ -12,7 +12,7 @@ import (
 
 func TestMain(m *testing.M) {
 	scyna_test.Init()
-	scyna.InitEventStore("chat")
+	scyna.InitEventStore("chat_account")
 
 	/*register services*/
 	scyna.RegisterCommand(model.CREATE_USER_URL, account.CreateAccountHandler)

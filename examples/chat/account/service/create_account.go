@@ -19,7 +19,6 @@ func CreateAccountHandler(cmd *scyna.Command, request *proto.Account) {
 	if err, _ := repository.GetByEmail(cmd.Logger, request.Email); err == nil {
 		cmd.Error(model.USER_EXISTED)
 		return
-
 	}
 
 	var account repository.Account

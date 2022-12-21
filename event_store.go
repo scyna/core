@@ -2,7 +2,6 @@ package scyna
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/scylladb/gocqlx/v2/qb"
 	"google.golang.org/protobuf/proto"
@@ -22,14 +21,15 @@ func InitEventStore(keyspace string) {
 		Max("event_id").
 		Query(DB).
 		GetRelease(&version); err != nil {
-		log.Fatal("Can not init EventStore")
+		version = 1
+		//log.Fatal("Can not init EventStore")
 	}
 
 	/*TODO: push last event*/
 
 	EventStore = &eventStore{
 		version: version,
-		esQuery: fmt.Sprintf("INSERT INTO %s.event_store(event_id, entity_id, channel, data) VALUES(?,?,?,?)", keyspace),
+		esQuery: fmt.Sprintf("INSERT INTO %s.event_store(event_id, entity_id, channel, data) VALUES(?,?,?,?) ", keyspace),
 	}
 }
 
