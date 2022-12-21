@@ -31,8 +31,7 @@ message CreateEndpointRequest{
   string Name = 3;
 }
 
-message CreateEventRequest{
-  string Context = 1;
-  string Channel = 2;
-  string Name = 3;
+message CreateConsumerRequest{
+  string Sender = 1; /* sender context */
+  string Receiver = 2; /* receiver context */
 }
