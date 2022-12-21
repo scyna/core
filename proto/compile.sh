@@ -2,4 +2,5 @@ protoc -I=. --go_out=.. scyna.proto
 protoc -I=. --go_out=.. error.proto
 protoc -I=. --go_out=.. engine.proto
 protoc -I=. --go_out=.. scheduler.proto
+protoc -I=. --go_out=.. admin.proto
 
