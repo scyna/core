@@ -12,7 +12,7 @@ func GetByEmail(LOG scyna.Logger, email string) (*scyna.Error, *Account) {
 		Columns("id", "name", "email", "password").
 		Where(qb.Eq("email")).
 		Limit(1).
-		Query(scyna.DB).Bind(email).Get(&user); err != nil {
+		Query(scyna.DB).Bind(email).GetRelease(&user); err != nil {
 		LOG.Error(err.Error())
 		return model.USER_NOT_EXISTED, nil
 	}
