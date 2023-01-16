@@ -6,15 +6,15 @@ import (
 	"github.com/scyna/core/example/hello/proto"
 )
 
-func Hello(s *scyna.Endpoint, request *proto.HelloRequest) {
+func Hello(s *scyna.Endpoint, request *proto.HelloRequest) scyna.Error {
 	s.Logger.Info("Receive HelloRequest")
 
 	if err := validateHelloRequest(request); err != nil {
-		s.Error(scyna.REQUEST_INVALID)
-		return
+		return scyna.REQUEST_INVALID
 	}
 
 	s.Done(&proto.HelloResponse{Content: "Hello " + request.Name})
+	return scyna.OK
 }
 
 func validateHelloRequest(request *proto.HelloRequest) error {

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -44,14 +45,14 @@ func ConvertDateByInt(timestamp uint64) string {
 }
 
 func Fatal(v ...any) {
-	if data, err := proto.Marshal(&EndSessionSignal{ID: Session.ID(), Code: "1", Context: context}); err == nil {
+	if data, err := proto.Marshal(&scyna_proto.EndSessionSignal{ID: Session.ID(), Code: "1", Context: context}); err == nil {
 		Connection.Publish(SESSION_END_CHANNEL, data)
 	}
 	log.Fatal(v)
 }
 
 func Fatalf(format string, v ...any) {
-	if data, err := proto.Marshal(&EndSessionSignal{ID: Session.ID(), Code: "1", Context: context}); err == nil {
+	if data, err := proto.Marshal(&scyna_proto.EndSessionSignal{ID: Session.ID(), Code: "1", Context: context}); err == nil {
 		Connection.Publish(SESSION_END_CHANNEL, data)
 	}
 	log.Fatalf(format, v)

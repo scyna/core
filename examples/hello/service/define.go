@@ -8,5 +8,5 @@ const (
 )
 
 var (
-	ADD_RESULT_TOO_BIG = &scyna.Error{Code: 100, Message: "Too Big"}
+	ADD_RESULT_TOO_BIG = scyna.NewError(100, "Too Big")
 )

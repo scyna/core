@@ -5,7 +5,7 @@ import (
 	scyna "github.com/scyna/core"
 )
 
-func ListFriendByEmail(LOG scyna.Logger, uid uint64) (*scyna.Error, []*Account) {
+func ListFriendByEmail(LOG scyna.Logger, uid uint64) (scyna.Error, []*Account) {
 	var friends []uint64
 	var ret []*Account
 

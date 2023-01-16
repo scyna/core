@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -13,16 +14,22 @@ type Endpoint struct {
 	Request Request
 	Reply   string
 	request proto.Message
+	flushed bool
 }
 
-func (ctx *Endpoint) Error(e *Error) {
-	response := Response{Code: 400}
+func (ctx *Endpoint) flushError(code int32, e Error) {
+	response := Response{Code: code}
+
+	e_ := &scyna_proto.Error{
+		Code:    e.Code(),
+		Message: e.Message(),
+	}
 
 	var err error
 	if ctx.Request.JSON {
-		response.Body, err = json.Marshal(e)
+		response.Body, err = json.Marshal(e_)
 	} else {
-		response.Body, err = proto.Marshal(e)
+		response.Body, err = proto.Marshal(e_)
 	}
 
 	if err != nil {
@@ -30,7 +37,14 @@ func (ctx *Endpoint) Error(e *Error) {
 		response.Body = []byte(err.Error())
 	}
 	ctx.flush(&response)
-	ctx.tag(uint32(response.Code), e)
+	ctx.tag(uint32(response.Code), e_)
+}
+
+func (ctx *Endpoint) DoneEmpty() {
+	ctx.Done(&scyna_proto.Error{
+		Code:    OK.Code(),
+		Message: OK.Message(),
+	})
 }
 
 func (ctx *Endpoint) Done(r proto.Message) {
@@ -70,6 +84,9 @@ func (ctx *Endpoint) AuthDone(r proto.Message, token string, expired uint64) {
 }
 
 func (ctx *Endpoint) flush(response *Response) {
+	defer func() {
+		ctx.flushed = true
+	}()
 	response.SessionID = Session.ID()
 	bytes, err := proto.Marshal(response)
 	if err != nil {
@@ -88,7 +105,7 @@ func (ctx *Endpoint) tag(code uint32, response proto.Message) {
 	}
 	res, _ := json.Marshal(response)
 
-	EmitSignal(ENDPOINT_DONE_CHANNEL, &EndpointDoneSignal{
+	EmitSignal(ENDPOINT_DONE_CHANNEL, &scyna_proto.EndpointDoneSignal{
 		TraceID:  ctx.ID,
 		Response: string(res),
 	})

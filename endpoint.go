@@ -6,13 +6,14 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go"
+	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
 
-type EndpointHandler[R proto.Message] func(ctx *Endpoint, request R)
-type EndpointLiteHandler func(ctx *Endpoint)
+type EndpointHandler[R proto.Message] func(ctx *Endpoint, request R) Error
+type EndpointLiteHandler func(ctx *Endpoint) Error
 
-func callEndpoint(url string, request proto.Message, response proto.Message) *Error {
+func callEndpoint(url string, request proto.Message, response proto.Message) Error {
 	trace := Trace{
 		ID:       ID.Next(),
 		ParentID: 0,
@@ -38,6 +39,7 @@ func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 			return
 		}
 
+		ctx.flushed = false
 		ctx.ID = ctx.Request.TraceID
 		ctx.Reply = m.Reply
 		ctx.Reset(ctx.ID)
@@ -47,17 +49,22 @@ func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 		if ctx.Request.JSON {
 			if err := json.Unmarshal(ctx.Request.Body, request); err != nil {
 				log.Print("Bad Request: " + err.Error())
-				ctx.Error(BAD_REQUEST)
-			} else {
-				handler(&ctx, request)
+				ctx.flushError(400, BAD_REQUEST)
 			}
 
 		} else {
 			if err := proto.Unmarshal(ctx.Request.Body, request); err != nil {
 				log.Print("Bad Request: " + err.Error())
-				ctx.Error(BAD_REQUEST)
+				ctx.flushError(400, BAD_REQUEST)
+			}
+		}
+
+		e := handler(&ctx, request)
+		if !ctx.flushed {
+			if e == OK {
+				ctx.flushError(200, OK)
 			} else {
-				handler(&ctx, request)
+				ctx.flushError(400, e)
 			}
 		}
 	})
@@ -82,7 +89,15 @@ func RegisterEndpointLite(url string, handler EndpointLiteHandler) {
 		ctx.ID = ctx.Request.TraceID
 		ctx.Reply = m.Reply
 		ctx.Reset(ctx.ID)
-		handler(&ctx)
+
+		e := handler(&ctx)
+		if !ctx.flushed {
+			if e == OK {
+				ctx.flushError(200, OK)
+			} else {
+				ctx.flushError(400, e)
+			}
+		}
 	})
 
 	if err != nil {
@@ -90,7 +105,7 @@ func RegisterEndpointLite(url string, handler EndpointLiteHandler) {
 	}
 }
 
-func callEndpoint_(trace *Trace, url string, request proto.Message, response proto.Message) *Error {
+func callEndpoint_(trace *Trace, url string, request proto.Message, response proto.Message) Error {
 	defer trace.Record()
 
 	req := Request{TraceID: trace.ID, JSON: false}
@@ -122,9 +137,9 @@ func callEndpoint_(trace *Trace, url string, request proto.Message, response pro
 			return OK
 		}
 	} else {
-		var ret Error
+		var ret scyna_proto.Error
 		if err := proto.Unmarshal(res.Body, &ret); err == nil {
-			return &ret
+			return NewError(ret.Code, ret.Message)
 		}
 	}
 	return SERVER_ERROR

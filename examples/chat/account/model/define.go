@@ -11,6 +11,6 @@ const (
 )
 
 var (
-	USER_EXISTED     = &scyna.Error{Code: 100, Message: "User Existed"}
-	USER_NOT_EXISTED = &scyna.Error{Code: 101, Message: "User NOT Existed"}
+	USER_EXISTED     = scyna.NewError(100, "User Existed")
+	USER_NOT_EXISTED = scyna.NewError(101, "User NOT Existed")
 )

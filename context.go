@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -23,23 +24,23 @@ func (ctx *Context) PostEvent(channel string, data proto.Message) { // account_c
 	}
 }
 
-func (ctx *Context) Schedule(task string, start time.Time, interval int64, data []byte, loop uint64) (*Error, uint64) {
-	var response StartTaskResponse
-	if err := ctx.CallEndpoint(START_TASK_URL, &StartTaskRequest{
+func (ctx *Context) Schedule(task string, start time.Time, interval int64, data []byte, loop uint64) (Error, uint64) {
+	var response scyna_proto.StartTaskResponse
+	if err := ctx.CallEndpoint(START_TASK_URL, &scyna_proto.StartTaskRequest{
 		Context:  context,
 		Topic:    fmt.Sprintf("%s.task.%s", context, task),
 		Data:     data,
 		Time:     start.Unix(),
 		Interval: interval,
 		Loop:     loop,
-	}, &response); err.Code != OK.Code {
+	}, &response); err != OK {
 		return err, 0
 	}
 
 	return nil, response.Id
 }
 
-func (ctx *Context) CallEndpoint(url string, request proto.Message, response proto.Message) *Error {
+func (ctx *Context) CallEndpoint(url string, request proto.Message, response proto.Message) Error {
 	trace := Trace{
 		ID:       ID.Next(),
 		ParentID: ctx.ID,
@@ -55,7 +56,7 @@ func (ctx *Context) Tag(key string, value string) {
 	if ctx.ID == 0 {
 		return
 	}
-	EmitSignal(TAG_CREATED_CHANNEL, &TagCreatedSignal{
+	EmitSignal(TAG_CREATED_CHANNEL, &scyna_proto.TagCreatedSignal{
 		TraceID: ctx.ID,
 		Key:     key,
 		Value:   value,

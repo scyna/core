@@ -5,6 +5,7 @@ import (
 	"time"
 
 	scyna "github.com/scyna/core"
+	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -24,9 +25,13 @@ func (t *endpointTest) WithRequest(request proto.Message) *endpointTest {
 	return t
 }
 
-func (t *endpointTest) ExpectError(err *scyna.Error) *endpointTest {
+func (t *endpointTest) ExpectError(err scyna.Error) *endpointTest {
+	e_ := scyna_proto.Error{
+		Code:    err.Code(),
+		Message: err.Message(),
+	}
 	t.status = 400
-	t.response = err
+	t.response = &e_
 	return t
 }
 

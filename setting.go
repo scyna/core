@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"strconv"
 	"sync"
+
+	scyna_proto "github.com/scyna/core/proto/generated"
 )
 
 type settings struct {
@@ -12,9 +14,9 @@ type settings struct {
 }
 
 func (s *settings) Remove(key string) bool {
-	request := RemoveSettingRequest{Context: context, Key: key}
-	var response Error
-	if err := callEndpoint(SETTING_REMOVE_URL, &request, &response); err.Code == OK.GetCode() {
+	request := scyna_proto.RemoveSettingRequest{Context: context, Key: key}
+	var response scyna_proto.Error
+	if err := callEndpoint(SETTING_REMOVE_URL, &request, &response); err.Code() == OK.Code() {
 		s.removed(key)
 		return true
 	}
@@ -22,9 +24,9 @@ func (s *settings) Remove(key string) bool {
 }
 
 func (s *settings) Write(key string, value string) bool {
-	request := WriteSettingRequest{Context: context, Key: key, Value: value}
-	var response Error
-	if err := callEndpoint(SETTING_WRITE_URL, &request, &response); err.Code == OK.GetCode() {
+	request := scyna_proto.WriteSettingRequest{Context: context, Key: key, Value: value}
+	var response scyna_proto.Error
+	if err := callEndpoint(SETTING_WRITE_URL, &request, &response); err.Code() == OK.Code() {
 		s.updated(key, value)
 		return true
 	}
@@ -41,9 +43,9 @@ func (s *settings) ReadString(key string) (bool, string) {
 	s.mutex.Unlock()
 
 	/*from manager*/
-	request := ReadSettingRequest{Context: context, Key: key}
-	var response ReadSettingResponse
-	if err := callEndpoint(SETTING_READ_URL, &request, &response); err.Code == OK.GetCode() {
+	request := scyna_proto.ReadSettingRequest{Context: context, Key: key}
+	var response scyna_proto.ReadSettingResponse
+	if err := callEndpoint(SETTING_READ_URL, &request, &response); err.Code() == OK.Code() {
 		s.updated(key, response.Value)
 		return true, response.Value
 	}
@@ -77,13 +79,13 @@ func (s *settings) ReadObject(key string, value interface{}) bool {
 	return false
 }
 
-func UpdateSettingHandler(data *SettingUpdatedSignal) {
+func UpdateSettingHandler(data *scyna_proto.SettingUpdatedSignal) {
 	if data.Context == context {
 		Settings.updated(data.Key, data.Value)
 	}
 }
 
-func RemoveSettingHandler(data *SettingRemovedSignal) {
+func RemoveSettingHandler(data *scyna_proto.SettingRemovedSignal) {
 	if data.Context == context {
 		Settings.removed(data.Key)
 	}

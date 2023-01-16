@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/scylladb/gocqlx/v2/qb"
+	scyna_proto "github.com/scyna/core/proto/generated"
 )
 
 type LogLevel int
@@ -67,7 +68,7 @@ func UseRemoteLog(count int) {
 		go func() {
 			for l := range logQueue {
 				time_ := time.Now().UnixMicro()
-				event := LogCreatedSignal{
+				event := scyna_proto.LogCreatedSignal{
 					Time:    uint64(time_),
 					ID:      l.ID,
 					Level:   uint32(l.Level),

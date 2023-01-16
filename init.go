@@ -13,6 +13,8 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/scylladb/gocqlx/v2"
 	"google.golang.org/protobuf/proto"
+
+	scyna_proto "github.com/scyna/core/proto/generated"
 )
 
 type RemoteConfig struct {
@@ -23,7 +25,7 @@ type RemoteConfig struct {
 
 func RemoteInit(config RemoteConfig) {
 
-	request := CreateSessionRequest{
+	request := scyna_proto.CreateSessionRequest{
 		Context: config.Name,
 		Secret:  config.Secret,
 	}
@@ -52,7 +54,7 @@ func RemoteInit(config RemoteConfig) {
 		log.Fatal("Can not read response body:", err)
 	}
 
-	var response CreateSessionResponse
+	var response scyna_proto.CreateSessionResponse
 	if err := proto.Unmarshal(resBody, &response); err != nil {
 		log.Fatal("Authenticate error")
 	}
@@ -61,7 +63,7 @@ func RemoteInit(config RemoteConfig) {
 	DirectInit(config.Name, response.Config)
 }
 
-func DirectInit(name string, c *Configuration) {
+func DirectInit(name string, c *scyna_proto.Configuration) {
 	context = name
 	var err error
 	var nats_ []string

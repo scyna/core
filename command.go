@@ -10,7 +10,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type CommandHandler[R proto.Message] func(ctx *Command, request R)
+type CommandHandler[R proto.Message] func(ctx *Command, request R) Error
 
 func RegisterCommand[R proto.Message](url string, handler CommandHandler[R]) {
 	log.Println("Register Command: ", url)
@@ -32,22 +32,27 @@ func RegisterCommand[R proto.Message](url string, handler CommandHandler[R]) {
 
 		ctx.ID = ctx.Request.TraceID
 		ctx.Reply = m.Reply
+		ctx.flushed = false
 		ctx.Reset(ctx.ID)
 
 		if ctx.Request.JSON {
 			if err := json.Unmarshal(ctx.Request.Body, request); err != nil {
 				log.Print("Bad Request: " + err.Error())
-				ctx.Error(BAD_REQUEST)
-			} else {
-				handler(&ctx, request)
+				ctx.flushError(400, BAD_REQUEST)
 			}
-
 		} else {
 			if err := proto.Unmarshal(ctx.Request.Body, request); err != nil {
 				log.Print("Bad Request: " + err.Error())
-				ctx.Error(BAD_REQUEST)
+				ctx.flushError(400, BAD_REQUEST)
+			}
+		}
+
+		e := handler(&ctx, request)
+		if !ctx.flushed {
+			if e == OK {
+				ctx.flushError(200, OK)
 			} else {
-				handler(&ctx, request)
+				ctx.flushError(400, e)
 			}
 		}
 	})

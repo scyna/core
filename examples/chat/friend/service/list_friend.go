@@ -7,12 +7,11 @@ import (
 	"github.com/scyna/core/examples/chat/friend/proto"
 )
 
-func ListFriend(c *scyna.Endpoint, request *proto.ListFriendRequest) {
+func ListFriend(c *scyna.Endpoint, request *proto.ListFriendRequest) scyna.Error {
 	c.Logger.Info("Receive ListFriendRequest")
 
 	if validation.Validate(request.Email, validation.Required, is.Email) != nil {
-		c.Error(scyna.REQUEST_INVALID)
-		return
+		return scyna.REQUEST_INVALID
 	}
 
 	// if err, user := model.Repository.GetByEmail(c.Logger, request.Email); err != nil {
@@ -30,4 +29,5 @@ func ListFriend(c *scyna.Endpoint, request *proto.ListFriendRequest) {
 	// 		})
 	// 	}
 	// }
+	return scyna.OK
 }

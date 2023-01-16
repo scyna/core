@@ -3,6 +3,8 @@ package scyna
 import (
 	"fmt"
 	"sync"
+
+	scyna_proto "github.com/scyna/core/proto/generated"
 )
 
 type serialNumber struct {
@@ -29,9 +31,9 @@ func (sn *serialNumber) Next() string {
 	if sn.next < sn.last {
 		sn.next++
 	} else {
-		request := GetSNRequest{Key: sn.key}
-		var response GetSNResponse
-		if r := callEndpoint(GEN_GET_SN_URL, &request, &response); r.Code == 0 {
+		request := scyna_proto.GetSNRequest{Key: sn.key}
+		var response scyna_proto.GetSNResponse
+		if r := callEndpoint(GEN_GET_SN_URL, &request, &response); r.Code() == 0 {
 			sn.prefix = response.Prefix
 			sn.next = response.Start
 			sn.last = response.End

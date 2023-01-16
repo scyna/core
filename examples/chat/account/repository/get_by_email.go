@@ -6,7 +6,7 @@ import (
 	"github.com/scyna/core/examples/chat/account/model"
 )
 
-func GetByEmail(LOG scyna.Logger, email string) (*scyna.Error, *Account) {
+func GetByEmail(LOG scyna.Logger, email string) (scyna.Error, *Account) {
 	var user Account
 	if err := qb.Select(ACCOUNT_TABLE).
 		Columns("id", "name", "email", "password").

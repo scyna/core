@@ -4,6 +4,7 @@ import (
 	"sync"
 	"time"
 
+	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -44,7 +45,7 @@ func (g *generator) getID() bool {
 		if msg, err := Connection.Request(PublishURL(GEN_GET_ID_URL), data, REQUEST_TIMEOUT*time.Second); err == nil {
 			if err := proto.Unmarshal(msg.Data, &res); err == nil {
 				if res.Code == 200 {
-					var response GetIDResponse
+					var response scyna_proto.GetIDResponse
 					if err := proto.Unmarshal(res.Body, &response); err == nil {
 						g.prefix = response.Prefix
 						g.next = response.Start

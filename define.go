@@ -26,10 +26,10 @@ const (
 )
 
 var (
-	OK                 = &Error{Code: 0, Message: "Success"}
-	SERVER_ERROR       = &Error{Code: 1, Message: "Server Error"}
-	BAD_REQUEST        = &Error{Code: 2, Message: "Bad Request"}
-	PERMISSION_ERROR   = &Error{Code: 4, Message: "Permission Error"}
-	REQUEST_INVALID    = &Error{Code: 5, Message: "Request Invalid"}
-	MODULE_NOT_EXISTED = &Error{Code: 6, Message: "Module Not Existed"}
+	OK                 = NewError(0, "Success")
+	SERVER_ERROR       = NewError(1, "Server Error")
+	BAD_REQUEST        = NewError(2, "Bad Request")
+	PERMISSION_ERROR   = NewError(4, "Permission Error")
+	REQUEST_INVALID    = NewError(5, "Request Invalid")
+	MODULE_NOT_EXISTED = NewError(6, "Module Not Existed")
 )

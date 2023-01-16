@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/gocql/gocql"
+	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -15,16 +16,22 @@ type Command struct {
 	Reply   string
 	request proto.Message
 	Batch   *gocql.Batch
+	flushed bool
 }
 
-func (ctx *Command) Error(e *Error) {
-	response := Response{Code: 400}
+func (ctx *Command) flushError(code int32, e Error) {
+	response := Response{Code: code}
+
+	e_ := &scyna_proto.Error{
+		Code:    e.Code(),
+		Message: e.Message(),
+	}
 
 	var err error
 	if ctx.Request.JSON {
-		response.Body, err = json.Marshal(e)
+		response.Body, err = json.Marshal(e_)
 	} else {
-		response.Body, err = proto.Marshal(e)
+		response.Body, err = proto.Marshal(e_)
 	}
 
 	if err != nil {
@@ -32,7 +39,7 @@ func (ctx *Command) Error(e *Error) {
 		response.Body = []byte(err.Error())
 	}
 	ctx.flush(&response)
-	ctx.tag(uint32(response.Code), e)
+	ctx.tag(uint32(response.Code), e_)
 }
 
 func (ctx *Command) Done(r proto.Message, aggregate uint64, channel string, event proto.Message) {
@@ -50,7 +57,7 @@ func (ctx *Command) Done(r proto.Message, aggregate uint64, channel string, even
 		response.Body = []byte(err.Error())
 	} else {
 		if !EventStore.Add(ctx, aggregate, channel, event) {
-			ctx.Error(SERVER_ERROR)
+			ctx.flushError(400, SERVER_ERROR)
 			return
 		}
 		ctx.PostEvent(channel, event)
@@ -61,6 +68,9 @@ func (ctx *Command) Done(r proto.Message, aggregate uint64, channel string, even
 }
 
 func (ctx *Command) flush(response *Response) {
+	defer func() {
+		ctx.flushed = true
+	}()
 	response.SessionID = Session.ID()
 	bytes, err := proto.Marshal(response)
 	if err != nil {
@@ -79,7 +89,7 @@ func (ctx *Command) tag(code uint32, response proto.Message) {
 	}
 	res, _ := json.Marshal(response)
 
-	EmitSignal(ENDPOINT_DONE_CHANNEL, &EndpointDoneSignal{
+	EmitSignal(ENDPOINT_DONE_CHANNEL, &scyna_proto.EndpointDoneSignal{
 		TraceID:  ctx.ID,
 		Response: string(res),
 	})

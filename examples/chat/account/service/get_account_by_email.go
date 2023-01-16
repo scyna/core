@@ -6,12 +6,12 @@ import (
 	"github.com/scyna/core/examples/chat/account/repository"
 )
 
-func GetAccountByEmail(s *scyna.Endpoint, request *proto.GetUserByEmailRequest) {
+func GetAccountByEmail(s *scyna.Endpoint, request *proto.GetUserByEmailRequest) scyna.Error {
 	s.Logger.Info("Receive GetUserRequest")
 	if err, user := repository.GetByEmail(s.Logger, request.Email); err != nil {
-		s.Error(err)
-		return
+		return err
 	} else {
 		s.Done(user.ToDTO())
+		return scyna.OK
 	}
 }
