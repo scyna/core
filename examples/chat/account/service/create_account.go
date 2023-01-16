@@ -9,16 +9,14 @@ import (
 	"github.com/scyna/core/examples/chat/account/repository"
 )
 
-func CreateAccountHandler(cmd *scyna.Command, request *proto.Account) {
+func CreateAccountHandler(cmd *scyna.Command, request *proto.Account) scyna.Error {
 	cmd.Logger.Info("Receive CreateUserRequest")
 	if err := validateCreateUserRequest(request); err != nil {
-		cmd.Error(scyna.REQUEST_INVALID)
-		return
+		return scyna.REQUEST_INVALID
 	}
 
 	if err, _ := repository.GetByEmail(cmd.Logger, request.Email); err == nil {
-		cmd.Error(model.USER_EXISTED)
-		return
+		return model.USER_EXISTED
 	}
 
 	var account repository.Account
@@ -34,6 +32,8 @@ func CreateAccountHandler(cmd *scyna.Command, request *proto.Account) {
 			Id:    account.ID,
 			Name:  account.Name,
 			Email: account.Email})
+
+	return scyna.OK
 }
 
 func validateCreateUserRequest(user *proto.Account) error {
