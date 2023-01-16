@@ -15,7 +15,7 @@ func (e *errorValue) Code() int32 {
 }
 
 func (e *errorValue) Message() string {
-	return e.Message()
+	return e.message
 }
 
 func NewError(code int32, message string) Error {
