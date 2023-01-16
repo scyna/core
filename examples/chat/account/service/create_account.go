@@ -4,7 +4,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/examples/chat/account/model"
+	model "github.com/scyna/core/examples/chat/account/domain"
 	"github.com/scyna/core/examples/chat/account/proto"
 	"github.com/scyna/core/examples/chat/account/repository"
 )

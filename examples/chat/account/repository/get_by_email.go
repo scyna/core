@@ -3,7 +3,7 @@ package repository
 import (
 	"github.com/scylladb/gocqlx/v2/qb"
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/examples/chat/account/model"
+	model "github.com/scyna/core/examples/chat/account/domain"
 )
 
 func GetByEmail(LOG scyna.Logger, email string) (scyna.Error, *Account) {

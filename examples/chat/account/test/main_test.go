@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/examples/chat/account/model"
+	"github.com/scyna/core/examples/chat/account/domain"
 	account "github.com/scyna/core/examples/chat/account/service"
 	scyna_test "github.com/scyna/core/testing"
 )
@@ -15,8 +15,8 @@ func TestMain(m *testing.M) {
 	scyna.InitEventStore("chat_account")
 
 	/*register services*/
-	scyna.RegisterCommand(model.CREATE_USER_URL, account.CreateAccountHandler)
-	scyna.RegisterEndpoint(model.GET_USER_URL, account.GetAccountByEmail)
+	scyna.RegisterCommand(domain.CREATE_USER_URL, account.CreateAccountHandler)
+	scyna.RegisterEndpoint(domain.GET_USER_URL, account.GetAccountByEmail)
 
 	exitVal := m.Run()
 	cleanup()
