@@ -1,16 +1,14 @@
 package scyna
 
 import (
-	"bytes"
-	"errors"
-	"io"
-	"net/http"
 	"sync"
+
+	scyna_proto "github.com/scyna/core/proto/generated"
 )
 
 type HttpContext struct {
-	Request  Request
-	Response Response
+	Request  scyna_proto.Request
+	Response scyna_proto.Response
 }
 
 type HttpContextPool struct {
@@ -27,11 +25,11 @@ func (ctx *HttpContext) reset() {
 
 func newHttpContext() *HttpContext {
 	return &HttpContext{
-		Request: Request{
+		Request: scyna_proto.Request{
 			Body:    make([]byte, 4096),
 			TraceID: 0,
 		},
-		Response: Response{
+		Response: scyna_proto.Response{
 			Body:      make([]byte, 0),
 			SessionID: 0,
 			Code:      200,
@@ -54,24 +52,4 @@ func NewContextPool() HttpContextPool {
 		sync.Pool{
 			New: func() interface{} { return newHttpContext() },
 		}}
-}
-
-func (r *Request) Build(req *http.Request) error {
-	if req == nil {
-		return errors.New("natsproxy: Request cannot be nil")
-	}
-
-	buf := bytes.NewBuffer(r.Body)
-	buf.Reset()
-	if req.Body != nil {
-		if _, err := io.Copy(buf, req.Body); err != nil {
-			return err
-		}
-		if err := req.Body.Close(); err != nil {
-			return err
-		}
-	}
-
-	r.Body = buf.Bytes()
-	return nil
 }

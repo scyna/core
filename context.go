@@ -14,7 +14,7 @@ type Context struct {
 
 func (ctx *Context) PostEvent(channel string, data proto.Message) { // account_created
 	subject := context + "." + channel
-	msg := Event{TraceID: ctx.ID}
+	msg := scyna_proto.Event{TraceID: ctx.ID}
 	if data, err := proto.Marshal(data); err == nil {
 		msg.Body = data
 	}

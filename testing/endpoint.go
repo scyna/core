@@ -72,7 +72,7 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 	}
 }
 
-func (st *endpointTest) callEndpoint(t *testing.T) *scyna.Response {
+func (st *endpointTest) callEndpoint(t *testing.T) *scyna_proto.Response {
 	context := scyna.Trace{
 		ID:       scyna.ID.Next(),
 		ParentID: 0,
@@ -83,8 +83,8 @@ func (st *endpointTest) callEndpoint(t *testing.T) *scyna.Response {
 	}
 	defer context.Record()
 
-	req := scyna.Request{TraceID: context.ID, JSON: false}
-	res := scyna.Response{}
+	req := scyna_proto.Request{TraceID: context.ID, JSON: false}
+	res := scyna_proto.Response{}
 
 	if st.request != nil {
 		var err error

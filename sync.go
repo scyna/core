@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go"
+	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -44,7 +45,7 @@ func RegisterSync[R proto.Message](channel string, receiver string, handler Sync
 			}
 			m := messages[0]
 
-			var msg Event
+			var msg scyna_proto.Event
 			if err := proto.Unmarshal(m.Data, &msg); err != nil {
 				log.Print("Register unmarshal error response data:", err.Error())
 				m.Ack()

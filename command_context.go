@@ -12,7 +12,7 @@ import (
 
 type Command struct {
 	Context
-	Request Request
+	Request scyna_proto.Request
 	Reply   string
 	request proto.Message
 	Batch   *gocql.Batch
@@ -20,7 +20,7 @@ type Command struct {
 }
 
 func (ctx *Command) flushError(code int32, e Error) {
-	response := Response{Code: code}
+	response := scyna_proto.Response{Code: code}
 
 	e_ := &scyna_proto.Error{
 		Code:    e.Code(),
@@ -43,7 +43,7 @@ func (ctx *Command) flushError(code int32, e Error) {
 }
 
 func (ctx *Command) Done(r proto.Message, aggregate uint64, channel string, event proto.Message) {
-	response := Response{Code: 200}
+	response := scyna_proto.Response{Code: 200}
 
 	var err error
 	if ctx.Request.JSON {
@@ -67,7 +67,7 @@ func (ctx *Command) Done(r proto.Message, aggregate uint64, channel string, even
 	ctx.tag(uint32(response.Code), r)
 }
 
-func (ctx *Command) flush(response *Response) {
+func (ctx *Command) flush(response *scyna_proto.Response) {
 	defer func() {
 		ctx.flushed = true
 	}()

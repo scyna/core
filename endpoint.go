@@ -108,8 +108,8 @@ func RegisterEndpointLite(url string, handler EndpointLiteHandler) {
 func callEndpoint_(trace *Trace, url string, request proto.Message, response proto.Message) Error {
 	defer trace.Record()
 
-	req := Request{TraceID: trace.ID, JSON: false}
-	res := Response{}
+	req := scyna_proto.Request{TraceID: trace.ID, JSON: false}
+	res := scyna_proto.Response{}
 
 	if request != nil {
 		var err error

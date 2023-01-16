@@ -38,8 +38,8 @@ func (g *generator) Next() uint64 {
 }
 
 func (g *generator) getID() bool {
-	req := Request{TraceID: 0, JSON: false}
-	res := Response{}
+	req := scyna_proto.Request{TraceID: 0, JSON: false}
+	res := scyna_proto.Response{}
 
 	if data, err := proto.Marshal(&req); err == nil {
 		if msg, err := Connection.Request(PublishURL(GEN_GET_ID_URL), data, REQUEST_TIMEOUT*time.Second); err == nil {

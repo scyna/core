@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go"
+	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -35,7 +36,7 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 	}
 
 	stream.executors[subject] = func(m *nats.Msg) {
-		var msg Event
+		var msg scyna_proto.Event
 		if err := proto.Unmarshal(m.Data, &msg); err != nil {
 			log.Print("Register unmarshal error response data:", err.Error())
 			return

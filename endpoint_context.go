@@ -11,14 +11,14 @@ import (
 
 type Endpoint struct {
 	Context
-	Request Request
+	Request scyna_proto.Request
 	Reply   string
 	request proto.Message
 	flushed bool
 }
 
 func (ctx *Endpoint) flushError(code int32, e Error) {
-	response := Response{Code: code}
+	response := scyna_proto.Response{Code: code}
 
 	e_ := &scyna_proto.Error{
 		Code:    e.Code(),
@@ -48,7 +48,7 @@ func (ctx *Endpoint) DoneEmpty() {
 }
 
 func (ctx *Endpoint) Done(r proto.Message) {
-	response := Response{Code: 200}
+	response := scyna_proto.Response{Code: 200}
 
 	var err error
 	if ctx.Request.JSON {
@@ -66,7 +66,7 @@ func (ctx *Endpoint) Done(r proto.Message) {
 }
 
 func (ctx *Endpoint) AuthDone(r proto.Message, token string, expired uint64) {
-	response := Response{Code: 200, Token: token, Expired: expired}
+	response := scyna_proto.Response{Code: 200, Token: token, Expired: expired}
 
 	var err error
 	if ctx.Request.JSON {
@@ -83,7 +83,7 @@ func (ctx *Endpoint) AuthDone(r proto.Message, token string, expired uint64) {
 	ctx.tag(200, r)
 }
 
-func (ctx *Endpoint) flush(response *Response) {
+func (ctx *Endpoint) flush(response *scyna_proto.Response) {
 	defer func() {
 		ctx.flushed = true
 	}()
