@@ -42,7 +42,7 @@ func (ctx *Command) flushError(code int32, e Error) {
 	ctx.tag(uint32(response.Code), e_)
 }
 
-func (ctx *Command) Done(r proto.Message, aggregate uint64, channel string, event proto.Message) {
+func (ctx *Command) Commit(r proto.Message, aggregate uint64, channel string, event proto.Message) {
 	response := scyna_proto.Response{Code: 200}
 
 	var err error

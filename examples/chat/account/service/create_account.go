@@ -1,44 +1,47 @@
 package account
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation"
-	"github.com/go-ozzo/ozzo-validation/is"
 	scyna "github.com/scyna/core"
-	model "github.com/scyna/core/examples/chat/account/domain"
+	"github.com/scyna/core/examples/chat/account/domain"
+	"github.com/scyna/core/examples/chat/account/model"
 	"github.com/scyna/core/examples/chat/account/proto"
 	"github.com/scyna/core/examples/chat/account/repository"
 )
 
 func CreateAccountHandler(cmd *scyna.Command, request *proto.Account) scyna.Error {
 	cmd.Logger.Info("Receive CreateUserRequest")
-	if err := validateCreateUserRequest(request); err != nil {
-		return scyna.REQUEST_INVALID
+	repository := repository.LoadAccountRepository(cmd.Logger)
+	var ret scyna.Error
+
+	email, ret := model.ParseEmail(request.Email)
+	if ret != nil {
+		return ret
 	}
 
-	if err, _ := repository.GetByEmail(cmd.Logger, request.Email); err == nil {
-		return model.USER_EXISTED
+	if ret = domain.CheckAccountExists(repository, email); ret != nil {
+		return ret
 	}
 
-	var account repository.Account
-	account.FromDTO(request)
-	account.ID = scyna.ID.Next()
+	account := model.Account{
+		LOG:   cmd.Logger,
+		ID:    scyna.ID.Next(),
+		Email: email,
+		Name:  request.Name, /*TODO: check name*/
+	}
 
-	repository.PrepareCreate(cmd, &account)
+	if account.Password, ret = model.ParsePassword(request.Password); ret != nil {
+		return ret
+	}
 
-	cmd.Done(&proto.CreateUserResponse{Id: account.ID},
+	repository.CreateAccount(cmd, &account)
+
+	cmd.Commit(&proto.CreateUserResponse{Id: account.ID},
 		account.ID,
-		model.ACCOUNT_CREATED_CHANNEL,
+		domain.ACCOUNT_CREATED_CHANNEL,
 		&proto.UserCreated{
 			Id:    account.ID,
 			Name:  account.Name,
-			Email: account.Email})
+			Email: account.Email.ToString()})
 
 	return scyna.OK
-}
-
-func validateCreateUserRequest(user *proto.Account) error {
-	return validation.ValidateStruct(user,
-		validation.Field(&user.Email, validation.Required, is.Email),
-		validation.Field(&user.Password, validation.Required, validation.Length(5, 10)),
-		validation.Field(&user.Name, validation.Required, validation.Length(1, 100)))
 }

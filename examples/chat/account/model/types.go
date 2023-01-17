@@ -46,3 +46,7 @@ func ParsePassword(password string) (Password, scyna.Error) {
 	/*TODO*/
 	return Password{password: password}, nil
 }
+
+func (e EmailAddress) ToString() string {
+	return e.addr
+}
