@@ -10,7 +10,7 @@ import (
 func GetAccountByEmail(s *scyna.Endpoint, request *proto.GetUserByEmailRequest) scyna.Error {
 	s.Logger.Info("Receive GetUserRequest")
 
-	repository := domain.LoadAccountRepository(s.Logger)
+	repository := domain.LoadRepository(s.Logger)
 
 	email, ret := model.ParseEmail(request.Email)
 	if ret != nil {

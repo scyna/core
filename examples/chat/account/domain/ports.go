@@ -14,7 +14,7 @@ type RepositoryCreator func(LOG scyna.Logger) IRepository
 
 var repositoryCreator RepositoryCreator
 
-func LoadAccountRepository(LOG scyna.Logger) IRepository {
+func LoadRepository(LOG scyna.Logger) IRepository {
 	if repositoryCreator == nil {
 		panic("No RepositoryCreator attached")
 	}
