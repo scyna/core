@@ -11,6 +11,6 @@ type accountRepository struct {
 	LOG scyna.Logger
 }
 
-func LoadAccountRepository(LOG scyna.Logger) domain.IRepository {
+func NewRepository(LOG scyna.Logger) domain.IRepository {
 	return &accountRepository{LOG: LOG}
 }

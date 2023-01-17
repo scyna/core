@@ -5,7 +5,6 @@ go 1.18
 replace github.com/scyna/core => ../../..
 
 require (
-	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/scylladb/gocqlx/v2 v2.7.0
 	github.com/scyna/core v0.0.0-00010101000000-000000000000
 	github.com/scyna/core/example v0.0.0-20221206012752-ddfcaffcdd2e
@@ -14,6 +13,7 @@ require (
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
+	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible // indirect
 	github.com/gocql/gocql v1.0.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/hailocab/go-hostpool v0.0.0-20160125115350-e80d13ce29ed // indirect

@@ -5,13 +5,13 @@ import (
 	"github.com/scyna/core/examples/chat/account/domain"
 	"github.com/scyna/core/examples/chat/account/model"
 	"github.com/scyna/core/examples/chat/account/proto"
-	"github.com/scyna/core/examples/chat/account/repository"
 )
 
 func CreateAccountHandler(cmd *scyna.Command, request *proto.Account) scyna.Error {
 	cmd.Logger.Info("Receive CreateUserRequest")
-	repository := repository.LoadAccountRepository(cmd.Logger)
+
 	var ret scyna.Error
+	repository := domain.LoadAccountRepository(cmd.Logger)
 
 	email, ret := model.ParseEmail(request.Email)
 	if ret != nil {
