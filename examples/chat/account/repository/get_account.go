@@ -8,14 +8,32 @@ import (
 )
 
 func (r *accountRepository) GetAccount(email model.EmailAddress) (*model.Account, scyna.Error) {
-	var user model.Account
+
+	var account struct {
+		ID    uint64 `db:"id"`
+		Email string `db:"email"`
+		Name  string `db:"name"`
+	}
+
 	if err := qb.Select(ACCOUNT_TABLE).
-		Columns("id", "name", "email", "password").
+		Columns("id", "name", "email").
 		Where(qb.Eq("email")).
 		Limit(1).
-		Query(scyna.DB).Bind(email).GetRelease(&user); err != nil {
+		Query(scyna.DB).Bind(email).GetRelease(&account); err != nil {
 		r.LOG.Error(err.Error())
 		return nil, domain.USER_NOT_EXISTED
 	}
-	return &user, nil
+
+	ret := &model.Account{
+		LOG:  r.LOG,
+		ID:   account.ID,
+		Name: account.Name,
+	}
+
+	var err scyna.Error
+	if ret.Email, err = model.ParseEmail(account.Email); err != nil {
+		return nil, domain.BAD_EMAIL
+	}
+
+	return ret, nil
 }
