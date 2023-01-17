@@ -15,18 +15,3 @@ var (
 	USER_NOT_EXISTED = scyna.NewError(101, "User NOT Existed")
 	BAD_EMAIL        = scyna.NewError(102, "Bad Email")
 )
-
-type RepositoryCreator func(LOG scyna.Logger) IRepository
-
-var repositoryCreator RepositoryCreator
-
-func LoadAccountRepository(LOG scyna.Logger) IRepository {
-	if repositoryCreator == nil {
-		panic("No RepositoryCreator attached")
-	}
-	return repositoryCreator(LOG)
-}
-
-func AttachRepositoryCreator(rc RepositoryCreator) {
-	repositoryCreator = rc
-}
