@@ -3,6 +3,8 @@ package main
 import (
 	scyna "github.com/scyna/core"
 	"github.com/scyna/core/example/contacts/user"
+	"github.com/scyna/core/examples/chat/account/domain"
+	"github.com/scyna/core/examples/chat/account/repository"
 )
 
 const MODULE_CODE = "chat_account"
@@ -14,6 +16,8 @@ func main() {
 		Secret:     "123456789aA@#",
 	})
 	defer scyna.Release()
+
+	domain.AttachRepositoryCreator(repository.NewRepository)
 
 	scyna.RegisterCommand("/scyna.example/user/create", user.CreateUserHandler)
 	scyna.Start()
