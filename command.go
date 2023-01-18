@@ -19,8 +19,10 @@ func RegisterCommand[R proto.Message](url string, handler CommandHandler[R]) {
 	request = ref.Interface().(R)
 
 	ctx := Command{
-		//Context: Context{Logger{session: false}},
-		//request: request,
+		Endpoint: Endpoint{
+			Context: Context{Logger{session: false}},
+			request: request,
+		},
 		Batch: DB.NewBatch(gocql.UnloggedBatch),
 	}
 
