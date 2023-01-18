@@ -10,7 +10,7 @@ type Command struct {
 	Batch *gocql.Batch
 }
 
-func (ctx *Command) Commit(aggregate uint64, channel string, event proto.Message) Error {
+func (ctx *Command) StoreEvent(aggregate uint64, channel string, event proto.Message) Error {
 
 	if !EventStore.Add(ctx, aggregate, channel, event) {
 		return SERVER_ERROR

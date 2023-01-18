@@ -7,10 +7,10 @@ import (
 	"github.com/scyna/core/examples/chat/account/proto"
 )
 
-func GetAccountByEmail(s *scyna.Endpoint, request *proto.GetAccountByEmailRequest) scyna.Error {
-	s.Logger.Info("Receive GetUserRequest")
+func GetAccountByEmail(ctx *scyna.Endpoint, request *proto.GetAccountByEmailRequest) scyna.Error {
+	ctx.Logger.Info("Receive GetUserRequest")
 
-	repository := domain.LoadRepository(s.Logger)
+	repository := domain.LoadRepository(ctx.Logger)
 
 	email, ret := model.ParseEmail(request.Email)
 	if ret != nil {
@@ -22,7 +22,7 @@ func GetAccountByEmail(s *scyna.Endpoint, request *proto.GetAccountByEmailReques
 		return ret
 	}
 
-	s.Response(&proto.Account{
+	ctx.Response(&proto.Account{
 		Email: account.Email.ToString(),
 		Name:  account.Name,
 		/*TODO*/

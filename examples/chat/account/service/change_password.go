@@ -6,10 +6,10 @@ import (
 	"github.com/scyna/core/examples/chat/account/proto"
 )
 
-func ChangePasswordHandler(cmd *scyna.Command, request *proto.ChangePasswordRequest) scyna.Error {
-	cmd.Logger.Info("Receive ChangePasswordRequest")
+func ChangePasswordHandler(ctx *scyna.Command, request *proto.ChangePasswordRequest) scyna.Error {
+	ctx.Logger.Info("Receive ChangePasswordRequest")
 
-	repository := domain.LoadRepository(cmd.Logger)
+	repository := domain.LoadRepository(ctx.Logger)
 	account, ret := repository.GetAccountByID(request.Id)
 	if ret != nil {
 		return ret
@@ -23,11 +23,11 @@ func ChangePasswordHandler(cmd *scyna.Command, request *proto.ChangePasswordRequ
 		return ret
 	}
 
-	if ret = repository.UpdatePassword(cmd, account); ret != nil {
+	if ret = repository.UpdatePassword(ctx, account); ret != nil {
 		return ret
 	}
 
-	if ret = cmd.Commit(account.ID,
+	if ret = ctx.StoreEvent(account.ID,
 		domain.PASSWORD_CHANGED_CHANNEL,
 		&proto.PasswordChanged{
 			Id:      account.ID,
