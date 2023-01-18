@@ -20,7 +20,7 @@ message CreateAccountResponse {
   uint64 id = 1;
 }
 
-message UserCreated{
+message AccountCreated{
   uint64 id = 1;
   string email = 2;
   string name = 3;
