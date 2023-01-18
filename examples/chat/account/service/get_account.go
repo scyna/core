@@ -14,7 +14,7 @@ func GetAccountByEmail(s *scyna.Endpoint, request *proto.GetAccountByEmailReques
 
 	email, ret := model.ParseEmail(request.Email)
 	if ret != nil {
-		return scyna.REQUEST_INVALID
+		return ret
 	}
 
 	account, ret := repository.GetAccount(email)

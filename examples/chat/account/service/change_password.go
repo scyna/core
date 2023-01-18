@@ -12,7 +12,7 @@ func ChangePasswordHandler(cmd *scyna.Command, request *proto.ChangePasswordRequ
 	repository := domain.LoadRepository(cmd.Logger)
 	account, ret := repository.GetAccountByID(request.Id)
 	if ret != nil {
-		return domain.USER_NOT_EXISTED
+		return ret
 	}
 
 	if ret = repository.LoadPassword(account); ret != nil {
