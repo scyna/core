@@ -17,7 +17,7 @@ func GetAccountByEmail(s *scyna.Endpoint, request *proto.GetAccountByEmailReques
 		return ret
 	}
 
-	account, ret := repository.GetAccount(email)
+	account, ret := repository.GetAccountByEmail(email)
 	if ret != nil {
 		return ret
 	}
