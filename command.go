@@ -10,6 +10,11 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+type Command struct {
+	Endpoint
+	Batch *gocql.Batch
+}
+
 type CommandHandler[R proto.Message] func(ctx *Command, request R) Error
 
 func RegisterCommand[R proto.Message](url string, handler CommandHandler[R]) {
@@ -62,4 +67,13 @@ func RegisterCommand[R proto.Message](url string, handler CommandHandler[R]) {
 	if err != nil {
 		log.Fatal("Can not register command:", url)
 	}
+}
+
+func (ctx *Command) StoreEvent(aggregate uint64, channel string, event proto.Message) Error {
+
+	if !EventStore.Add(ctx, aggregate, channel, event) {
+		return SERVER_ERROR
+	}
+	ctx.PostEvent(channel, event)
+	return nil
 }
