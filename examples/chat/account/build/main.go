@@ -2,9 +2,9 @@ package main
 
 import (
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/example/contacts/user"
 	"github.com/scyna/core/examples/chat/account/domain"
 	"github.com/scyna/core/examples/chat/account/repository"
+	account "github.com/scyna/core/examples/chat/account/service"
 )
 
 const MODULE_CODE = "chat_account"
@@ -19,6 +19,6 @@ func main() {
 
 	domain.AttachRepositoryCreator(repository.NewRepository)
 
-	scyna.RegisterCommand("/scyna.example/user/create", user.CreateUserHandler)
+	scyna.RegisterCommand("/scyna.example/user/create", account.CreateAccountHandler)
 	scyna.Start()
 }
