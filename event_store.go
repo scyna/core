@@ -11,6 +11,7 @@ type eventStore struct {
 	version     uint64
 	storeQuery  string
 	outboxQuery string
+	publishing  bool
 }
 
 var EventStore *eventStore
@@ -28,6 +29,7 @@ func InitEventStore(keyspace string) {
 
 	EventStore = &eventStore{
 		version:     version,
+		publishing:  false,
 		storeQuery:  fmt.Sprintf("INSERT INTO %s.event_store(event_id, entity_id, channel, data) VALUES(?,?,?,?) ", keyspace),
 		outboxQuery: fmt.Sprintf("INSERT INTO %s.outbox(event_id, trace_id) VALUES(?,?) ", keyspace),
 	}
@@ -51,8 +53,23 @@ func (events *eventStore) Append(ctx *Command, aggregate uint64, channel string,
 
 	if err := DB.ExecuteBatch(ctx.Batch); err == nil {
 		events.version = id
+		events.publish()
 		return true
 	}
 
 	return false
+}
+
+func (events *eventStore) publish() {
+	if events.publishing {
+		return
+	}
+
+	go func() {
+		events.publishing = true
+
+		/*TODO: publish*/
+
+		events.publishing = false
+	}()
 }
