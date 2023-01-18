@@ -2,10 +2,6 @@ package model
 
 import scyna "github.com/scyna/core"
 
-type EmailAddress struct {
-	addr string
-}
-
 type PhoneNumber struct {
 	number string
 }
@@ -27,11 +23,6 @@ func ParseGender(gender string) (Gender, scyna.Error) {
 	return Gender{gender: gender}, nil
 }
 
-func ParseEmail(addr string) (EmailAddress, scyna.Error) {
-	/*TODO: validate addr*/
-	return EmailAddress{addr: addr}, nil
-}
-
 func ParsePhoneNumber(number string) (PhoneNumber, scyna.Error) {
 	/*TODO: validate number*/
 	return PhoneNumber{number: number}, nil
@@ -45,8 +36,4 @@ func ParseDate(date string) (Date, scyna.Error) {
 func ParsePassword(password string) (Password, scyna.Error) {
 	/*TODO*/
 	return Password{password: password}, nil
-}
-
-func (e EmailAddress) ToString() string {
-	return e.addr
 }

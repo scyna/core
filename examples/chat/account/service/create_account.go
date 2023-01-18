@@ -10,7 +10,6 @@ import (
 func CreateAccountHandler(cmd *scyna.Command, request *proto.Account) scyna.Error {
 	cmd.Logger.Info("Receive CreateUserRequest")
 
-	var ret scyna.Error
 	repository := domain.LoadRepository(cmd.Logger)
 
 	email, ret := model.ParseEmail(request.Email)
