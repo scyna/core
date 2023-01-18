@@ -8,9 +8,10 @@ import (
 type IRepository interface {
 	GetAccountByEmail(email model.EmailAddress) (*model.Account, scyna.Error)
 	GetAccountByID(ID uint64) (*model.Account, scyna.Error)
-	CreateAccount(cmd *scyna.Command, account *model.Account)
 	LoadPassword(acc *model.Account) scyna.Error
-	UpdatePassword(acc *model.Account) scyna.Error
+
+	CreateAccount(cmd *scyna.Command, account *model.Account)
+	UpdatePassword(cmd *scyna.Command, account *model.Account) scyna.Error
 }
 
 type RepositoryCreator func(LOG scyna.Logger) IRepository

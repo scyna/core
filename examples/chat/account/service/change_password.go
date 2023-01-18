@@ -7,7 +7,7 @@ import (
 )
 
 func ChangePasswordHandler(cmd *scyna.Command, request *proto.ChangePasswordRequest) scyna.Error {
-	cmd.Logger.Info("Receive ChangePaswordRequest")
+	cmd.Logger.Info("Receive ChangePasswordRequest")
 
 	repository := domain.LoadRepository(cmd.Logger)
 	account, ret := repository.GetAccountByID(request.Id)
@@ -23,7 +23,16 @@ func ChangePasswordHandler(cmd *scyna.Command, request *proto.ChangePasswordRequ
 		return ret
 	}
 
-	if ret = repository.UpdatePassword(account); ret != nil {
+	if ret = repository.UpdatePassword(cmd, account); ret != nil {
+		return ret
+	}
+
+	if ret = cmd.Commit(account.ID,
+		domain.PASSWORD_CHANGED_CHANNEL,
+		&proto.PasswordChanged{
+			Id:      account.ID,
+			Current: request.Current,
+			Future:  request.Future}); ret != nil {
 		return ret
 	}
 

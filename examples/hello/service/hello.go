@@ -13,7 +13,7 @@ func Hello(s *scyna.Endpoint, request *proto.HelloRequest) scyna.Error {
 		return scyna.REQUEST_INVALID
 	}
 
-	s.Done(&proto.HelloResponse{Content: "Hello " + request.Name})
+	s.Response(&proto.HelloResponse{Content: "Hello " + request.Name})
 	return scyna.OK
 }
 

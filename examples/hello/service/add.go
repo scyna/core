@@ -13,6 +13,6 @@ func Add(s *scyna.Endpoint, request *proto.AddRequest) scyna.Error {
 		return ADD_RESULT_TOO_BIG
 	}
 
-	s.Done(&proto.AddResponse{Sum: sum})
+	s.Response(&proto.AddResponse{Sum: sum})
 	return scyna.OK
 }

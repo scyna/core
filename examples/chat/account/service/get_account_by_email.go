@@ -22,7 +22,7 @@ func GetAccountByEmail(s *scyna.Endpoint, request *proto.GetAccountByEmailReques
 		return ret
 	}
 
-	s.Done(&proto.Account{
+	s.Response(&proto.Account{
 		Email: account.Email.ToString(),
 		Name:  account.Name,
 		/*TODO*/

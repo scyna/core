@@ -34,13 +34,15 @@ func CreateAccountHandler(cmd *scyna.Command, request *proto.CreateAccountReques
 
 	repository.CreateAccount(cmd, &account)
 
-	cmd.Commit(&proto.CreateAccountResponse{Id: account.ID},
-		account.ID,
-		domain.ACCOUNT_CREATED_CHANNEL,
+	if ret = cmd.Commit(account.ID, domain.ACCOUNT_CREATED_CHANNEL,
 		&proto.UserCreated{
 			Id:    account.ID,
 			Name:  account.Name,
-			Email: account.Email.ToString()})
+			Email: account.Email.ToString()}); ret != nil {
+		return ret
+	}
+
+	cmd.Response(&proto.CreateAccountResponse{Id: account.ID})
 
 	return scyna.OK
 }

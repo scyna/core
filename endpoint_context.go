@@ -40,14 +40,7 @@ func (ctx *Endpoint) flushError(code int32, e Error) {
 	ctx.tag(uint32(response.Code), e_)
 }
 
-func (ctx *Endpoint) DoneEmpty() {
-	ctx.Done(&scyna_proto.Error{
-		Code:    OK.Code(),
-		Message: OK.Message(),
-	})
-}
-
-func (ctx *Endpoint) Done(r proto.Message) {
+func (ctx *Endpoint) Response(r proto.Message) {
 	response := scyna_proto.Response{Code: 200}
 
 	var err error
