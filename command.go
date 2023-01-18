@@ -19,16 +19,10 @@ type CommandHandler[R proto.Message] func(ctx *Command, request R) Error
 
 func RegisterCommand[R proto.Message](url string, handler CommandHandler[R]) {
 	log.Println("Register Command: ", url)
-	var request R
-	ref := reflect.New(reflect.TypeOf(request).Elem())
-	request = ref.Interface().(R)
 
 	ctx := Command{
-		Endpoint: Endpoint{
-			Context: Context{Logger{session: false}},
-			request: request,
-		},
-		Batch: DB.NewBatch(gocql.UnloggedBatch),
+		Endpoint: Endpoint{Context: Context{Logger{session: false}}},
+		Batch:    DB.NewBatch(gocql.UnloggedBatch),
 	}
 
 	_, err := Connection.QueueSubscribe(SubscriberURL(url), "API", func(m *nats.Msg) {
@@ -36,6 +30,10 @@ func RegisterCommand[R proto.Message](url string, handler CommandHandler[R]) {
 			log.Print("Register unmarshal error response data:", err.Error())
 			return
 		}
+
+		var request R
+		ref := reflect.New(reflect.TypeOf(request).Elem())
+		request = ref.Interface().(R)
 
 		ctx.ID = ctx.Request.TraceID
 		ctx.Reply = m.Reply

@@ -13,7 +13,6 @@ type Endpoint struct {
 	Context
 	Request scyna_proto.Request
 	Reply   string
-	request proto.Message
 	flushed bool
 }
 

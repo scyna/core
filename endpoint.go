@@ -26,12 +26,8 @@ func callEndpoint(url string, request proto.Message, response proto.Message) Err
 
 func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 	log.Println("Register Endpoint: ", url)
-	var request R
 
-	ctx := Endpoint{
-		Context: Context{Logger{session: false}},
-		request: request,
-	}
+	ctx := Endpoint{Context: Context{Logger{session: false}}}
 
 	_, err := Connection.QueueSubscribe(SubscriberURL(url), "API", func(m *nats.Msg) {
 		if err := proto.Unmarshal(m.Data, &ctx.Request); err != nil {
@@ -39,12 +35,14 @@ func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 			return
 		}
 
+		var request R
+		ref := request.ProtoReflect().New()
+		request = ref.Interface().(R)
+
 		ctx.flushed = false
 		ctx.ID = ctx.Request.TraceID
 		ctx.Reply = m.Reply
 		ctx.Reset(ctx.ID)
-		ref := request.ProtoReflect().New()
-		request = ref.Interface().(R)
 
 		if ctx.Request.JSON {
 			if err := json.Unmarshal(ctx.Request.Body, request); err != nil {
