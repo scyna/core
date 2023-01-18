@@ -13,3 +13,7 @@ type Account struct {
 	Gender   Gender
 	Tel      PhoneNumber
 }
+
+func (acc *Account) ChangePassword(current string, future string) scyna.Error {
+	return nil
+}

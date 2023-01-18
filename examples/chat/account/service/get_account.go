@@ -19,7 +19,7 @@ func GetAccountByEmail(s *scyna.Endpoint, request *proto.GetAccountByEmailReques
 
 	account, ret := repository.GetAccount(email)
 	if ret != nil {
-		return domain.USER_NOT_EXISTED
+		return ret
 	}
 
 	s.Done(&proto.Account{

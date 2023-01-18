@@ -35,6 +35,12 @@ message GetAccountByIDRequest {
   uint64 id = 1;
 }
 
+message ChangePasswordRequest {
+  uint64 id = 1;
+  string current = 2;
+  string future = 3;
+}
+
 message AuthenticateRequest{
   string email = 1;
   string password = 2;
