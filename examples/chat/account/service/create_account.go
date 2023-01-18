@@ -7,7 +7,7 @@ import (
 	"github.com/scyna/core/examples/chat/account/proto"
 )
 
-func CreateAccountHandler(cmd *scyna.Command, request *proto.Account) scyna.Error {
+func CreateAccountHandler(cmd *scyna.Command, request *proto.CreateAccountRequest) scyna.Error {
 	cmd.Logger.Info("Receive CreateUserRequest")
 
 	repository := domain.LoadRepository(cmd.Logger)
@@ -34,7 +34,7 @@ func CreateAccountHandler(cmd *scyna.Command, request *proto.Account) scyna.Erro
 
 	repository.CreateAccount(cmd, &account)
 
-	cmd.Commit(&proto.CreateUserResponse{Id: account.ID},
+	cmd.Commit(&proto.CreateAccountResponse{Id: account.ID},
 		account.ID,
 		domain.ACCOUNT_CREATED_CHANNEL,
 		&proto.UserCreated{

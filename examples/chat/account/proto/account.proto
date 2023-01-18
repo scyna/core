@@ -7,12 +7,16 @@ message Account {
   uint64 id = 1;
   string email = 2;
   string name = 3;
-  string password = 4;
 }
 
 /*CREATE*/
-//message CreateUserRequest = User
-message CreateUserResponse {
+message CreateAccountRequest{
+  string email = 1;
+  string name = 2;
+  string password = 3;
+}
+
+message CreateAccountResponse {
   uint64 id = 1;
 }
 
@@ -22,20 +26,14 @@ message UserCreated{
   string name = 3;
 }
 
-/*UPDATE*/
-//message UpdateUserRequest = User
-//message UpdateUserResponse = Nothing
-
 /*GET*/
-message GetUserByEmailRequest {
+message GetAccountByEmailRequest {
   string email = 1;
 }
-//message GetUserByEmailResponse = User
 
-message GetUserByIDRequest {
+message GetAccountByIDRequest {
   uint64 id = 1;
 }
-//message GetUserByIDResponse = User
 
 message AuthenticateRequest{
   string email = 1;

@@ -7,7 +7,7 @@ import (
 	"github.com/scyna/core/examples/chat/account/proto"
 )
 
-func GetAccountByEmail(s *scyna.Endpoint, request *proto.GetUserByEmailRequest) scyna.Error {
+func GetAccountByEmail(s *scyna.Endpoint, request *proto.GetAccountByEmailRequest) scyna.Error {
 	s.Logger.Info("Receive GetUserRequest")
 
 	repository := domain.LoadRepository(s.Logger)
