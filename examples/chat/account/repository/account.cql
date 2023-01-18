@@ -24,10 +24,3 @@ CREATE TABLE chat_account.event_store
     data            blob,
     time            timestamp,
 );
-
-DROP TABLE IF EXISTS chat_account.outbox;
-CREATE TABLE chat_account.outbox
-(
-    event_id       bigint PRIMARY KEY,
-    trace_id       bigint,
-);

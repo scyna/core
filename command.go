@@ -68,10 +68,5 @@ func RegisterCommand[R proto.Message](url string, handler CommandHandler[R]) {
 }
 
 func (ctx *Command) StoreEvent(aggregate uint64, channel string, event proto.Message) Error {
-
-	if !EventStore.Append(ctx, aggregate, channel, event) {
-		return SERVER_ERROR
-	}
-	ctx.PostEvent(channel, event) //TODO: use outbox pattern
-	return nil
+	return EventStore.Append(ctx, aggregate, channel, event)
 }

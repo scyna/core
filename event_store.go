@@ -8,10 +8,8 @@ import (
 )
 
 type eventStore struct {
-	version     uint64
-	storeQuery  string
-	outboxQuery string
-	publishing  bool
+	version    uint64
+	storeQuery string
 }
 
 var EventStore *eventStore
@@ -28,14 +26,12 @@ func InitEventStore(keyspace string) {
 	}
 
 	EventStore = &eventStore{
-		version:     version,
-		publishing:  false,
-		storeQuery:  fmt.Sprintf("INSERT INTO %s.event_store(event_id, entity_id, channel, data) VALUES(?,?,?,?) ", keyspace),
-		outboxQuery: fmt.Sprintf("INSERT INTO %s.outbox(event_id, trace_id) VALUES(?,?) ", keyspace),
+		version:    version,
+		storeQuery: fmt.Sprintf("INSERT INTO %s.event_store(event_id, entity_id, channel, data) VALUES(?,?,?,?) ", keyspace),
 	}
 }
 
-func (events *eventStore) Append(ctx *Command, aggregate uint64, channel string, event proto.Message) bool {
+func (events *eventStore) Append(ctx *Command, aggregate uint64, channel string, event proto.Message) Error {
 	if events == nil {
 		panic("EventStore is not initialized")
 	}
@@ -45,31 +41,21 @@ func (events *eventStore) Append(ctx *Command, aggregate uint64, channel string,
 	bytes, err := proto.Marshal(event)
 	if err != nil {
 		ctx.Logger.Error("Can not marshal event data")
-		return false
+		return BAD_DATA
 	}
 
 	ctx.Batch.Query(events.storeQuery, id, aggregate, channel, bytes)
-	ctx.Batch.Query(events.outboxQuery, id, ctx.Request.TraceID)
 
-	if err := DB.ExecuteBatch(ctx.Batch); err == nil {
-		events.version = id
-		events.publish()
-		return true
+	if err := DB.ExecuteBatch(ctx.Batch); err != nil {
+		return SERVER_ERROR
 	}
 
-	return false
-}
+	events.version = id
 
-func (events *eventStore) publish() {
-	if events.publishing {
-		return
+	if err := ctx.PublishEvent(channel, event); err != nil {
+		/*TODO: system alert and panic here*/
+		return err
 	}
 
-	go func() {
-		events.publishing = true
-
-		/*TODO: publish*/
-
-		events.publishing = false
-	}()
+	return nil
 }

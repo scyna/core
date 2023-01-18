@@ -12,16 +12,23 @@ type Context struct {
 	Logger
 }
 
-func (ctx *Context) PostEvent(channel string, data proto.Message) { // account_created
+func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 	subject := context + "." + channel
 	msg := scyna_proto.Event{TraceID: ctx.ID}
-	if data, err := proto.Marshal(data); err == nil {
+	if data, err := proto.Marshal(data); err != nil {
+		return BAD_DATA
+	} else {
 		msg.Body = data
 	}
 
-	if data, err := proto.Marshal(&msg); err == nil {
-		JetStream.Publish(subject, data)
+	if data, err := proto.Marshal(&msg); err != nil {
+		return BAD_DATA
+	} else {
+		if _, err := JetStream.Publish(subject, data); err != nil {
+			return STREAM_ERROR
+		}
 	}
+	return nil
 }
 
 func (ctx *Context) Schedule(task string, start time.Time, interval int64, data []byte, loop uint64) (Error, uint64) {
