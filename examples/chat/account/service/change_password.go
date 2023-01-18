@@ -27,8 +27,7 @@ func ChangePasswordHandler(ctx *scyna.Command, request *proto.ChangePasswordRequ
 		return ret
 	}
 
-	if ret = ctx.StoreEvent(account.ID,
-		domain.PASSWORD_CHANGED_CHANNEL,
+	if ret = ctx.StoreEvent(account.ID, domain.PASSWORD_CHANGED_CHANNEL,
 		&proto.PasswordChanged{
 			Id:      account.ID,
 			Current: request.Current,
