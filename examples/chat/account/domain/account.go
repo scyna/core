@@ -10,7 +10,7 @@ type IRepository interface {
 	GetAccountByID(ID uint64) (*model.Account, scyna.Error)
 	LoadPassword(acc *model.Account) scyna.Error
 
-	CreateAccount(cmd *scyna.Command, account *model.Account)
+	CreateAccount(cmd *scyna.Command, account *model.Account) scyna.Error
 	UpdatePassword(cmd *scyna.Command, account *model.Account) scyna.Error
 }
 
