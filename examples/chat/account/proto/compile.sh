@@ -1,1 +1,1 @@
-protoc -I=. --go_out=. account.proto
+protoc -I=. --go_out=generated account.proto

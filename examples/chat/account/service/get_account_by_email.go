@@ -4,7 +4,7 @@ import (
 	scyna "github.com/scyna/core"
 	"github.com/scyna/core/examples/chat/account/domain"
 	"github.com/scyna/core/examples/chat/account/model"
-	"github.com/scyna/core/examples/chat/account/proto"
+	proto "github.com/scyna/core/examples/chat/account/proto/generated"
 )
 
 func GetAccountByEmail(ctx *scyna.Endpoint, request *proto.GetAccountByEmailRequest) scyna.Error {

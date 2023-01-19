@@ -5,7 +5,7 @@ import (
 
 	scyna "github.com/scyna/core"
 	"github.com/scyna/core/examples/chat/account/domain"
-	"github.com/scyna/core/examples/chat/account/proto"
+	proto "github.com/scyna/core/examples/chat/account/proto/generated"
 	scyna_test "github.com/scyna/core/testing"
 )
 
