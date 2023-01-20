@@ -33,7 +33,7 @@ type Trace struct {
 
 func (trace *Trace) Record() {
 	trace.Duration = uint64(time.Now().UnixNano() - trace.Time.UnixNano())
-	emitSignal(TRACE_CREATED_CHANNEL, &scyna_proto.TraceCreatedSignal{
+	EmitSignal(TRACE_CREATED_CHANNEL, &scyna_proto.TraceCreatedSignal{
 		ID:        trace.ID,
 		ParentID:  trace.ParentID,
 		Type:      uint32(trace.Type),

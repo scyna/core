@@ -27,7 +27,7 @@ func RegisterSignal[R proto.Message](channel string, handler SignalHandler[R]) {
 	}
 }
 
-func emitSignal(channel string, signal proto.Message) {
+func EmitSignal(channel string, signal proto.Message) {
 	if data, err := proto.Marshal(signal); err == nil {
 		Connection.Publish(channel, data)
 	}

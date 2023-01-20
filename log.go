@@ -76,7 +76,7 @@ func UseRemoteLog(count int) {
 					Session: l.Session,
 					SEQ:     l.Sequence,
 				}
-				emitSignal(LOG_CREATED_CHANNEL, &event)
+				EmitSignal(LOG_CREATED_CHANNEL, &event)
 			}
 		}()
 	}

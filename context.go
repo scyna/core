@@ -31,7 +31,7 @@ func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 	return nil
 }
 
-func (ctx *Context) Schedule(task string, start time.Time, interval int64, data []byte, loop uint64) (Error, uint64) {
+func (ctx *Context) ScheduleTask(task string, start time.Time, interval int64, data []byte, loop uint64) (Error, uint64) {
 	var response scyna_proto.StartTaskResponse
 	if err := ctx.CallEndpoint(START_TASK_URL, &scyna_proto.StartTaskRequest{
 		Context:  context,
@@ -63,7 +63,7 @@ func (ctx *Context) Tag(key string, value string) {
 	if ctx.ID == 0 {
 		return
 	}
-	emitSignal(TAG_CREATED_CHANNEL, &scyna_proto.TagCreatedSignal{
+	EmitSignal(TAG_CREATED_CHANNEL, &scyna_proto.TagCreatedSignal{
 		TraceID: ctx.ID,
 		Key:     key,
 		Value:   value,
