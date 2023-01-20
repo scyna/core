@@ -63,7 +63,7 @@ func (ctx *Context) Tag(key string, value string) {
 	if ctx.ID == 0 {
 		return
 	}
-	EmitSignal(TAG_CREATED_CHANNEL, &scyna_proto.TagCreatedSignal{
+	emitSignal(TAG_CREATED_CHANNEL, &scyna_proto.TagCreatedSignal{
 		TraceID: ctx.ID,
 		Key:     key,
 		Value:   value,
