@@ -53,6 +53,7 @@ func (events *eventStore) Append(ctx *Command, aggregate uint64, channel string,
 
 	events.version = id
 
+	/*TODO: publish event to JetStream here*/
 	// if err := ctx.PublishEvent(channel, event); err != nil {
 	// 	ctx.Logger.Error(err.Message())
 	// 	/*TODO: system alert and panic here*/

@@ -51,14 +51,9 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 
 		if err := proto.Unmarshal(msg.Body, event); err == nil {
 			handler(&context, event)
-			// for _, entityID := range msg.Entities {
-			// 	//addActivity(entityID, eventID)
-			// }
-			// TODO: update entity id to module_name.event_store
 		} else {
 			log.Print("Error in parsing data:", err)
 		}
-
 		trace.Record()
 	}
 }
