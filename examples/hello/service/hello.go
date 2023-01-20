@@ -3,7 +3,7 @@ package hello
 import (
 	validation "github.com/go-ozzo/ozzo-validation"
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/example/hello/proto"
+	"github.com/scyna/core/examples/hello/proto"
 )
 
 func Hello(ctx *scyna.Endpoint, request *proto.HelloRequest) scyna.Error {
