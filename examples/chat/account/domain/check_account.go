@@ -7,7 +7,7 @@ import (
 
 func AssureAccountNotExists(repository IRepository, email model.EmailAddress) scyna.Error {
 	if _, err := repository.GetAccountByEmail(email); err == nil {
-		return USER_EXISTED
+		return model.USER_EXISTED
 	}
 	return nil
 }

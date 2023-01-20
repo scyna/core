@@ -9,9 +9,6 @@ import (
 	scyna_test "github.com/scyna/core/testing"
 )
 
-func TestAbc(t *testing.T) {
-}
-
 func TestHelloSuccess(t *testing.T) {
 	scyna_test.EndpointTest(hello.HELLO_URL).
 		WithRequest(&proto.HelloRequest{Name: "Alice"}).

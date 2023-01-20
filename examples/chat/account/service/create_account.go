@@ -35,7 +35,7 @@ func CreateAccountHandler(ctx *scyna.Command, request *proto.CreateAccountReques
 
 	repository.CreateAccount(ctx, &account)
 
-	if ret = ctx.StoreEvent(account.ID, domain.ACCOUNT_CREATED_CHANNEL,
+	if ret = ctx.StoreEvent(account.ID, ACCOUNT_CREATED_CHANNEL,
 		&proto.AccountCreated{
 			Id:    account.ID,
 			Name:  account.Name,

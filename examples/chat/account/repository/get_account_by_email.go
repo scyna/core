@@ -1,9 +1,10 @@
 package repository
 
 import (
+	"log"
+
 	"github.com/scylladb/gocqlx/v2/qb"
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/examples/chat/account/domain"
 	"github.com/scyna/core/examples/chat/account/model"
 )
 
@@ -15,13 +16,17 @@ func (r *accountRepository) GetAccountByEmail(email model.EmailAddress) (*model.
 		Name  string `db:"name"`
 	}
 
+	var tmp = email.ToString()
+
+	log.Print(tmp)
+
 	if err := qb.Select(ACCOUNT_TABLE).
 		Columns("id", "name", "email").
 		Where(qb.Eq("email")).
 		Limit(1).
-		Query(scyna.DB).Bind(email.ToString()).GetRelease(&account); err != nil {
+		Query(scyna.DB).Bind(tmp).GetRelease(&account); err != nil {
 		r.LOG.Error(err.Error())
-		return nil, domain.USER_NOT_EXISTED
+		return nil, model.USER_NOT_EXISTED
 	}
 
 	ret := &model.Account{
@@ -32,7 +37,7 @@ func (r *accountRepository) GetAccountByEmail(email model.EmailAddress) (*model.
 
 	var err scyna.Error
 	if ret.Email, err = model.ParseEmail(account.Email); err != nil {
-		return nil, domain.BAD_EMAIL
+		return nil, model.BAD_EMAIL
 	}
 
 	return ret, nil
