@@ -12,5 +12,5 @@ func ParsePassword(password string) (Password, scyna.Error) {
 }
 
 func (p Password) Encode() string {
-	return ""
+	return p.password
 }

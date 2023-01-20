@@ -17,7 +17,7 @@ func CreateAccountHandler(ctx *scyna.Command, request *proto.CreateAccountReques
 		return ret
 	}
 
-	if ret = domain.CheckAccountExists(repository, email); ret != nil {
+	if ret = domain.AssureAccountNotExists(repository, email); ret != nil {
 		return ret
 	}
 
@@ -29,6 +29,7 @@ func CreateAccountHandler(ctx *scyna.Command, request *proto.CreateAccountReques
 	}
 
 	if account.Password, ret = model.ParsePassword(request.Password); ret != nil {
+		ctx.Logger.Error("wrong password")
 		return ret
 	}
 
@@ -39,6 +40,7 @@ func CreateAccountHandler(ctx *scyna.Command, request *proto.CreateAccountReques
 			Id:    account.ID,
 			Name:  account.Name,
 			Email: account.Email.ToString()}); ret != nil {
+		ctx.Logger.Error("Not OK")
 		return ret
 	}
 

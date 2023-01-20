@@ -47,15 +47,17 @@ func (events *eventStore) Append(ctx *Command, aggregate uint64, channel string,
 	ctx.Batch.Query(events.storeQuery, id, aggregate, channel, bytes)
 
 	if err := DB.ExecuteBatch(ctx.Batch); err != nil {
+		ctx.Logger.Error(err.Error())
 		return SERVER_ERROR
 	}
 
 	events.version = id
 
-	if err := ctx.PublishEvent(channel, event); err != nil {
-		/*TODO: system alert and panic here*/
-		return err
-	}
+	// if err := ctx.PublishEvent(channel, event); err != nil {
+	// 	ctx.Logger.Error(err.Message())
+	// 	/*TODO: system alert and panic here*/
+	// 	return err
+	// }
 
 	return nil
 }
