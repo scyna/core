@@ -2,7 +2,7 @@ package hello
 
 import (
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/example/hello/proto"
+	"github.com/scyna/core/examples/hello/proto"
 )
 
 func Add(ctx *scyna.Endpoint, request *proto.AddRequest) scyna.Error {

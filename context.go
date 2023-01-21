@@ -31,9 +31,9 @@ func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 	return nil
 }
 
-func (ctx *Context) Schedule(task string, start time.Time, interval int64, data []byte, loop uint64) (Error, uint64) {
+func (ctx *Context) ScheduleTask(task string, start time.Time, interval int64, data []byte, loop uint64) (Error, uint64) {
 	var response scyna_proto.StartTaskResponse
-	if err := ctx.CallEndpoint(START_TASK_URL, &scyna_proto.StartTaskRequest{
+	if err := ctx.SendRequest(START_TASK_URL, &scyna_proto.StartTaskRequest{
 		Context:  context,
 		Topic:    fmt.Sprintf("%s.task.%s", context, task),
 		Data:     data,
@@ -47,7 +47,7 @@ func (ctx *Context) Schedule(task string, start time.Time, interval int64, data 
 	return nil, response.Id
 }
 
-func (ctx *Context) CallEndpoint(url string, request proto.Message, response proto.Message) Error {
+func (ctx *Context) SendRequest(url string, request proto.Message, response proto.Message) Error {
 	trace := Trace{
 		ID:       ID.Next(),
 		ParentID: ctx.ID,
@@ -56,7 +56,7 @@ func (ctx *Context) CallEndpoint(url string, request proto.Message, response pro
 		Type:     TRACE_ENDPOINT,
 		Source:   context,
 	}
-	return callEndpoint_(&trace, url, request, response)
+	return sendRequest_(&trace, url, request, response)
 }
 
 func (ctx *Context) Tag(key string, value string) {
