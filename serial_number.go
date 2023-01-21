@@ -33,7 +33,7 @@ func (sn *serialNumber) Next() string {
 	} else {
 		request := scyna_proto.GetSNRequest{Key: sn.key}
 		var response scyna_proto.GetSNResponse
-		if r := callEndpoint(GEN_GET_SN_URL, &request, &response); r.Code() == 0 {
+		if r := sendRequest(GEN_GET_SN_URL, &request, &response); r.Code() == 0 {
 			sn.prefix = response.Prefix
 			sn.next = response.Start
 			sn.last = response.End
