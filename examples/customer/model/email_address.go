@@ -12,7 +12,7 @@ func (e EmailAddress) NotProvided() bool {
 	return len(e.value) == 0
 }
 
-func NewEmailAddress(address string) EmailAddress {
+func ParseEmail(address string) EmailAddress {
 	/*TODO validate*/
 	return EmailAddress{value: address}
 }

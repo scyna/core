@@ -25,6 +25,10 @@ func (a StreetAddress) Country() string {
 	return a.country
 }
 
+func (a StreetAddress) IsEmpty() bool {
+	return len(a.street) == 0
+}
+
 type streetAddressBuilder struct {
 	street   string
 	district string
