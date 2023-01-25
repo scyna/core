@@ -12,8 +12,8 @@ type DateOfBirth struct {
 	year  int
 }
 
-func (dob DateOfBirth) String() string {
-	return fmt.Sprintf("%d/%d/%d", dob.date, dob.month, dob.year)
+func (d DateOfBirth) String() string {
+	return fmt.Sprintf("%d/%d/%d", d.date, d.month, d.year)
 }
 
 func ParseDateOfBirth(date string) (DateOfBirth, scyna.Error) {
