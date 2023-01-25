@@ -36,26 +36,34 @@ type streetAddressBuilder struct {
 	country  string
 }
 
-func NewStreetAddressBuilder() *streetAddressBuilder {
+func NewStreetAddress() *streetAddressBuilder {
 	return &streetAddressBuilder{}
 }
 
-func (b *streetAddressBuilder) SetStreet(street string) *streetAddressBuilder {
+func (b *streetAddressBuilder) Modify(address StreetAddress) *streetAddressBuilder {
+	b.street = address.street
+	b.district = address.district
+	b.province = address.province
+	b.country = address.country
+	return b
+}
+
+func (b *streetAddressBuilder) WithStreet(street string) *streetAddressBuilder {
 	b.street = street
 	return b
 }
 
-func (b *streetAddressBuilder) SetDistrict(district string) *streetAddressBuilder {
+func (b *streetAddressBuilder) WithDistrict(district string) *streetAddressBuilder {
 	b.district = district
 	return b
 }
 
-func (b *streetAddressBuilder) SetProvive(province string) *streetAddressBuilder {
+func (b *streetAddressBuilder) WithProvive(province string) *streetAddressBuilder {
 	b.province = province
 	return b
 }
 
-func (b *streetAddressBuilder) SetCountry(country string) *streetAddressBuilder {
+func (b *streetAddressBuilder) WithCountry(country string) *streetAddressBuilder {
 	b.country = country
 	return b
 }
