@@ -6,5 +6,6 @@ import (
 )
 
 func IdentityExists(repository IRepository, identity model.Identity) scyna.Error {
+	/*TODO*/
 	return nil
 }
