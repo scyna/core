@@ -5,7 +5,7 @@ option go_package = "./;proto";
 
 message CreateCustomerRequest {
   string IDNumber = 1;
-  int32  IDType = 2;
+  string  IDType = 2;
   string Name = 3;
   string IssueDate = 4;
   string IssuePlace = 5;

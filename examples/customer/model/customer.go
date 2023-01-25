@@ -1,7 +1,5 @@
 package model
 
-import scyna "github.com/scyna/core"
-
 type Name string
 type CustomerID string
 
@@ -14,9 +12,4 @@ type Customer struct {
 	Phone    PhoneNumber
 	Address  StreetAddress
 	DOB      DateOfBirth
-}
-
-func NewCustomer() (*Customer, scyna.Error) {
-	/*TODO*/
-	return &Customer{}, nil
 }
