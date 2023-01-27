@@ -13,7 +13,7 @@ type Context struct {
 }
 
 func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
-	subject := context + "." + channel
+	subject := module + "." + channel
 	msg := scyna_proto.Event{TraceID: ctx.ID}
 	if data, err := proto.Marshal(data); err != nil {
 		return BAD_DATA
@@ -34,8 +34,8 @@ func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 func (ctx *Context) ScheduleTask(task string, start time.Time, interval int64, data []byte, loop uint64) (Error, uint64) {
 	var response scyna_proto.StartTaskResponse
 	if err := ctx.SendRequest(START_TASK_URL, &scyna_proto.StartTaskRequest{
-		Context:  context,
-		Topic:    fmt.Sprintf("%s.task.%s", context, task),
+		Module:   module,
+		Topic:    fmt.Sprintf("%s.task.%s", module, task),
 		Data:     data,
 		Time:     start.Unix(),
 		Interval: interval,
@@ -54,7 +54,7 @@ func (ctx *Context) SendRequest(url string, request proto.Message, response prot
 		Time:     time.Now(),
 		Path:     url,
 		Type:     TRACE_ENDPOINT,
-		Source:   context,
+		Source:   module,
 	}
 	return sendRequest_(&trace, url, request, response)
 }

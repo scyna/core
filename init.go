@@ -26,8 +26,8 @@ type RemoteConfig struct {
 func RemoteInit(config RemoteConfig) {
 
 	request := scyna_proto.CreateSessionRequest{
-		Context: config.Name,
-		Secret:  config.Secret,
+		Module: config.Name,
+		Secret: config.Secret,
 	}
 
 	data, err := proto.Marshal(&request)
@@ -64,7 +64,7 @@ func RemoteInit(config RemoteConfig) {
 }
 
 func DirectInit(name string, c *scyna_proto.Configuration) {
-	context = name
+	module = name
 	var err error
 	var nats_ []string
 	for _, n := range strings.Split(c.NatsUrl, ",") {
@@ -95,8 +95,8 @@ func DirectInit(name string, c *scyna_proto.Configuration) {
 	Settings.Init()
 
 	/*registration*/
-	RegisterSignal(SETTING_UPDATE_CHANNEL+context, UpdateSettingHandler)
-	RegisterSignal(SETTING_REMOVE_CHANNEL+context, RemoveSettingHandler)
+	RegisterSignal(SETTING_UPDATE_CHANNEL+module, UpdateSettingHandler)
+	RegisterSignal(SETTING_REMOVE_CHANNEL+module, RemoveSettingHandler)
 }
 
 func initScylla(host []string, username string, password string, location string) {

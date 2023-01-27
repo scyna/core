@@ -16,7 +16,7 @@ import (
 type SyncHandler[R proto.Message] func(ctx *Context, data R) *http.Request
 
 func RegisterSync[R proto.Message](channel string, receiver string, handler SyncHandler[R]) {
-	subject := context + ".sync." + channel
+	subject := module + ".sync." + channel
 	durable := "sync_" + channel + "_" + receiver
 	LOG.Info(fmt.Sprintf("Channel %s, durable: %s", subject, durable))
 
@@ -30,7 +30,7 @@ func RegisterSync[R proto.Message](channel string, receiver string, handler Sync
 		Type:      TRACE_SYNC,
 	}
 
-	sub, err := JetStream.PullSubscribe(subject, durable, nats.BindStream(context))
+	sub, err := JetStream.PullSubscribe(subject, durable, nats.BindStream(module))
 
 	if err != nil {
 		Fatal("Error in start event stream:", err.Error())

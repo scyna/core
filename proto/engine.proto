@@ -19,7 +19,7 @@ message Configuration {
 
 /*session*/
 message CreateSessionRequest {
-  string Context = 1;
+  string Module = 1;
   string Secret = 2;
 }
 
@@ -31,12 +31,12 @@ message CreateSessionResponse {
 message EndSessionSignal {
   uint64 ID = 1;
   string Code = 2;
-  string Context = 3;
+  string Module = 3;
 }
 
 message UpdateSessionSignal {
   uint64 ID = 1;
-  string Context = 2;
+  string Module = 2;
 }
 
 /*GENERATOR*/
@@ -94,13 +94,13 @@ message EndpointDoneSignal {
 
 /*SETTING*/
 message WriteSettingRequest {
-  string Context = 1;
+  string Module = 1;
   string Key = 2;
   string Value = 3;
 }
 
 message ReadSettingRequest {
-  string Context = 1;
+  string Module = 1;
   string Key = 2;
 }
 
@@ -109,18 +109,18 @@ message ReadSettingResponse {
 }
 
 message SettingUpdatedSignal {
-  string Context = 1;
+  string Module = 1;
   string Key = 2;
   string Value = 3;
 }
 
 message SettingRemovedSignal {
-  string Context = 1;
+  string Module = 1;
   string Key = 2;
 }
 
 message RemoveSettingRequest {
-  string Context = 1;
+  string Module = 1;
   string Key = 2;
 }
 
