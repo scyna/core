@@ -16,7 +16,7 @@ func (r *accountRepository) GetAccountByEmail(email model.EmailAddress) (*model.
 		Name  string `db:"name"`
 	}
 
-	var tmp = email.ToString()
+	var tmp = email.String()
 
 	log.Print(tmp)
 

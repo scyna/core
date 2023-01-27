@@ -7,16 +7,16 @@ import (
 )
 
 type EmailAddress struct {
-	addr string
+	value string
 }
 
-func ParseEmail(addr string) (EmailAddress, scyna.Error) {
-	if validation.Validate(addr, validation.Required, is.Email) != nil {
+func ParseEmail(email string) (EmailAddress, scyna.Error) {
+	if validation.Validate(email, validation.Required, is.Email) != nil {
 		return EmailAddress{}, BAD_EMAIL
 	}
-	return EmailAddress{addr: addr}, nil
+	return EmailAddress{value: email}, nil
 }
 
-func (e EmailAddress) ToString() string {
-	return e.addr
+func (e EmailAddress) String() string {
+	return e.value
 }

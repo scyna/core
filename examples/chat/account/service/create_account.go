@@ -41,7 +41,7 @@ func CreateAccountHandler(ctx *scyna.Command, request *proto.CreateAccountReques
 		&proto.AccountCreated{
 			Id:    account.ID,
 			Name:  account.Name,
-			Email: account.Email.ToString()}); ret != nil {
+			Email: account.Email.String()}); ret != nil {
 		ctx.Logger.Error("Not OK")
 		return ret
 	}
