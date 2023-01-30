@@ -1,4 +1,4 @@
-package account
+package service
 
 const (
 	CREATE_ACCOUNT_URL       = "/chat/account/create"

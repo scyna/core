@@ -1,8 +1,8 @@
-module github.com/scyna/core/examples/chat/account
+module github.com/scyna/core/examples/account
 
 go 1.18
 
-replace github.com/scyna/core => ../../..
+replace github.com/scyna/core => ../..
 
 require (
 	github.com/scylladb/gocqlx/v2 v2.7.0

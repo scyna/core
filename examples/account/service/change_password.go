@@ -1,9 +1,9 @@
-package account
+package service
 
 import (
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/examples/chat/account/domain"
-	proto "github.com/scyna/core/examples/chat/account/proto/generated"
+	"github.com/scyna/core/examples/account/domain"
+	proto "github.com/scyna/core/examples/account/proto/generated"
 )
 
 func ChangePasswordHandler(ctx *scyna.Command, request *proto.ChangePasswordRequest) scyna.Error {

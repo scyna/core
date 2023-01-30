@@ -2,7 +2,7 @@ package repository
 
 import (
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/examples/chat/account/domain"
+	"github.com/scyna/core/examples/account/domain"
 )
 
 const ACCOUNT_TABLE = "chat_account.account"

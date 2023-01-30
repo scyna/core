@@ -5,9 +5,10 @@ import (
 	"testing"
 
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/examples/chat/account/domain"
-	"github.com/scyna/core/examples/chat/account/repository"
-	account "github.com/scyna/core/examples/chat/account/service"
+	"github.com/scyna/core/examples/account/domain"
+	"github.com/scyna/core/examples/account/repository"
+	"github.com/scyna/core/examples/account/service"
+	account "github.com/scyna/core/examples/account/service"
 	scyna_test "github.com/scyna/core/testing"
 )
 
@@ -16,8 +17,8 @@ func TestMain(m *testing.M) {
 	scyna.InitSingleWriter("chat_account")
 
 	/*register services*/
-	scyna.RegisterCommand(account.CREATE_ACCOUNT_URL, account.CreateAccountHandler)
-	scyna.RegisterEndpoint(account.GET_ACCOUNT_URL, account.GetAccountByEmail)
+	scyna.RegisterCommand(account.CREATE_ACCOUNT_URL, service.CreateAccountHandler)
+	scyna.RegisterEndpoint(account.GET_ACCOUNT_URL, service.GetAccountByEmail)
 
 	domain.AttachRepositoryCreator(repository.NewRepository)
 

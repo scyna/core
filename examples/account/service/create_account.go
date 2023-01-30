@@ -1,10 +1,10 @@
-package account
+package service
 
 import (
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/examples/chat/account/domain"
-	"github.com/scyna/core/examples/chat/account/model"
-	proto "github.com/scyna/core/examples/chat/account/proto/generated"
+	"github.com/scyna/core/examples/account/domain"
+	"github.com/scyna/core/examples/account/model"
+	proto "github.com/scyna/core/examples/account/proto/generated"
 )
 
 func CreateAccountHandler(ctx *scyna.Command, request *proto.CreateAccountRequest) scyna.Error {

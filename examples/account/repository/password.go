@@ -2,7 +2,7 @@ package repository
 
 import (
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/examples/chat/account/model"
+	"github.com/scyna/core/examples/account/model"
 )
 
 func (r *accountRepository) LoadPassword(account *model.Account) scyna.Error {

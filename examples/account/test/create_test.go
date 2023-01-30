@@ -3,9 +3,9 @@ package account_test
 import (
 	"testing"
 
-	"github.com/scyna/core/examples/chat/account/model"
-	proto "github.com/scyna/core/examples/chat/account/proto/generated"
-	account "github.com/scyna/core/examples/chat/account/service"
+	"github.com/scyna/core/examples/account/model"
+	proto "github.com/scyna/core/examples/account/proto/generated"
+	account "github.com/scyna/core/examples/account/service"
 	scyna_test "github.com/scyna/core/testing"
 )
 
