@@ -16,22 +16,22 @@ type EndpointLiteHandler func(ctx *Endpoint) Error
 func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 	log.Println("Register Endpoint: ", url)
 
-	ctx := Endpoint{Context: Context{Logger{session: false}}}
-
 	_, err := Connection.QueueSubscribe(SubscriberURL(url), "API", func(m *nats.Msg) {
-		if err := proto.Unmarshal(m.Data, &ctx.Request); err != nil {
-			log.Print("Register unmarshal error response data:", err.Error())
-			return
-		}
 
 		var request R
 		ref := request.ProtoReflect().New()
 		request = ref.Interface().(R)
+		ctx := Endpoint{
+			Context: Context{Logger{session: false}},
+			flushed: false,
+			Reply:   m.Reply,
+		}
 
-		ctx.flushed = false
+		if err := proto.Unmarshal(m.Data, &ctx.Request); err != nil {
+			log.Print("Register unmarshal error response data:", err.Error())
+			return
+		}
 		ctx.ID = ctx.Request.TraceID
-		ctx.Reply = m.Reply
-		ctx.Reset(ctx.ID)
 
 		if ctx.Request.JSON {
 			if err := json.Unmarshal(ctx.Request.Body, request); err != nil {
@@ -63,19 +63,20 @@ func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 
 func RegisterEndpointLite(url string, handler EndpointLiteHandler) {
 	log.Println("Register EndpointLite:", url)
-	ctx := Endpoint{
-		Context: Context{Logger{session: false}},
-	}
 
 	_, err := Connection.QueueSubscribe(SubscriberURL(url), "API", func(m *nats.Msg) {
+		ctx := Endpoint{
+			Context: Context{Logger{session: false}},
+			Reply:   m.Reply,
+			flushed: false,
+		}
+
 		if err := proto.Unmarshal(m.Data, &ctx.Request); err != nil {
 			log.Print("Register unmarshal error response data:", err.Error())
 			return
 		}
 
 		ctx.ID = ctx.Request.TraceID
-		ctx.Reply = m.Reply
-		ctx.Reset(ctx.ID)
 
 		e := handler(&ctx)
 		if !ctx.flushed {

@@ -42,25 +42,26 @@ type CommandHandler[R proto.Message] func(ctx *Command, request R) Error
 func RegisterCommand[R proto.Message](url string, handler CommandHandler[R]) {
 	log.Println("Register Command: ", url)
 
-	ctx := Command{
-		Endpoint: Endpoint{Context: Context{Logger{session: false}}},
-		Batch:    DB.NewBatch(gocql.UnloggedBatch),
-	}
-
 	_, err := Connection.QueueSubscribe(SubscriberURL(url), "API", func(m *nats.Msg) {
+		var request R
+		ref := reflect.New(reflect.TypeOf(request).Elem())
+		request = ref.Interface().(R)
+
+		ctx := Command{
+			Endpoint: Endpoint{
+				Context: Context{Logger{session: false}},
+				Reply:   m.Reply,
+				flushed: false,
+			},
+			Batch: DB.NewBatch(gocql.UnloggedBatch),
+		}
+
 		if err := proto.Unmarshal(m.Data, &ctx.Request); err != nil {
 			log.Print("Register unmarshal error response data:", err.Error())
 			return
 		}
 
-		var request R
-		ref := reflect.New(reflect.TypeOf(request).Elem())
-		request = ref.Interface().(R)
-
 		ctx.ID = ctx.Request.TraceID
-		ctx.Reply = m.Reply
-		ctx.flushed = false
-		ctx.Reset(ctx.ID)
 
 		if ctx.Request.JSON {
 			if err := json.Unmarshal(ctx.Request.Body, request); err != nil {
@@ -111,10 +112,10 @@ func (ctx *Command) StoreEvent(aggregate uint64, channel string, event proto.Mes
 
 	_version = id
 
-	if err := ctx.PublishEvent(channel, event); err != nil {
-		ctx.Logger.Error(err.Message())
-		/*TODO: system alert and panic here*/
-		return err
-	}
+	// if err := ctx.PublishEvent(channel, event); err != nil {
+	// 	ctx.Logger.Error(err.Message())
+	// 	/*TODO: system alert and panic here*/
+	// 	return err
+	// }
 	return nil
 }

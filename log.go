@@ -108,10 +108,6 @@ func (l *Logger) writeLog(level LogLevel, message string) {
 	}
 }
 
-func (l *Logger) Reset(id uint64) {
-	l.ID = id
-}
-
 func (l *Logger) Info(messsage string) {
 	l.writeLog(LOG_INFO, messsage)
 }
