@@ -19,7 +19,7 @@ func main() {
 
 	domain.AttachRepositoryCreator(repository.NewRepository)
 
-	scyna.InitSingleWriter("chat_account")
+	scyna.InitSingleWriter("ex_account")
 
 	scyna.RegisterCommand("/scyna.example/user/create", service.CreateAccountHandler)
 	scyna.Start()

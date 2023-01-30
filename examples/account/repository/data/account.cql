@@ -1,8 +1,8 @@
-DROP KEYSPACE IF EXISTS chat_account;
-CREATE KEYSPACE chat_account WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+DROP KEYSPACE IF EXISTS ex_account;
+CREATE KEYSPACE ex_account WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
 
-DROP TABLE IF EXISTS chat_account.account;
-CREATE TABLE chat_account.account
+DROP TABLE IF EXISTS ex_account.account;
+CREATE TABLE ex_account.account
 (
     id           bigint PRIMARY KEY,
     email        text,
@@ -13,10 +13,10 @@ CREATE TABLE chat_account.account
     gender       smallint,
     tel          text,
 );
-CREATE INDEX ON chat_account.account (email);
+CREATE INDEX ON ex_account.account (email);
 
-DROP TABLE IF EXISTS chat_account.event_store;
-CREATE TABLE chat_account.event_store
+DROP TABLE IF EXISTS ex_account.event_store;
+CREATE TABLE ex_account.event_store
 (
     event_id        bigint PRIMARY KEY,
     entity_id       bigint,

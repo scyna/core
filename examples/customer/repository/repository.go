@@ -5,7 +5,7 @@ import (
 	"github.com/scyna/core/examples/customer/domain"
 )
 
-const CUSTOMER_TABLE = "ddd_ex.customer"
+const CUSTOMER_TABLE = "ex_customer.customer"
 
 type customerRepository struct {
 	LOG scyna.Logger
