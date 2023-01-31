@@ -35,11 +35,11 @@ func CreateAccountHandler(ctx *scyna.Endpoint, request *proto.CreateAccountReque
 
 	command := scyna.NewCommand(&ctx.Context).
 		SetAggregateID(account.ID).
+		//SetChannel(ACCOUNT_CREATED_CHANNEL).
 		SetEvent(&proto.AccountCreated{
 			Id:    account.ID,
 			Name:  account.Name,
 			Email: account.Email.String()})
-		//SetChannel(ACCOUNT_CREATED_CHANNEL)
 
 	if ret = repository.CreateAccount(command, &account); ret != nil {
 		return ret
