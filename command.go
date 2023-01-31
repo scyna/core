@@ -12,20 +12,22 @@ var _version uint64 = 0
 var _query string
 
 func InitSingleWriter(keyspace string) {
-	var version uint64 = 0
+	var version uint64 = 1
 
 	if err := qb.Select(keyspace + ".event_store").
 		Max("event_id").
 		Query(DB).
 		GetRelease(&version); err != nil {
-		if err == gocql.ErrNotFound {
-			version = 1
-		} else {
-			panic("Error in load single writer configuration")
-		}
+		panic("Error in load single writer configuration")
 	}
+
+	if version == 0 {
+		version = 1
+	}
+
 	_version = version
 	_query = fmt.Sprintf("INSERT INTO %s.event_store(event_id, entity_id, channel, data) VALUES(?,?,?,?) ", keyspace)
+	//log.Print("Version:", _version)
 }
 
 type Command struct {

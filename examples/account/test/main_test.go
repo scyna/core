@@ -14,7 +14,7 @@ import (
 
 func TestMain(m *testing.M) {
 	scyna_test.Init()
-	scyna.InitSingleWriter("chat_account")
+	scyna.InitSingleWriter("ex_account")
 
 	/*register services*/
 	scyna.RegisterEndpoint(account.CREATE_ACCOUNT_URL, service.CreateAccountHandler)
