@@ -68,6 +68,10 @@ func (command *Command) Commit() Error {
 		panic("SingleWriter is not initialized")
 	}
 
+	if (command.entity == 0) || (command.event == nil) {
+		return BAD_DATA
+	}
+
 	var id = _version + 1
 
 	bytes, err := proto.Marshal(command.event)
