@@ -7,7 +7,7 @@ import (
 	proto "github.com/scyna/core/examples/account/proto/generated"
 )
 
-func CreateAccountHandler(ctx *scyna.Command, request *proto.CreateAccountRequest) scyna.Error {
+func CreateAccountHandler(ctx *scyna.Endpoint, request *proto.CreateAccountRequest) scyna.Error {
 	ctx.Logger.Info("Receive CreateUserRequest")
 
 	repository := domain.LoadRepository(ctx.Logger)
@@ -33,18 +33,19 @@ func CreateAccountHandler(ctx *scyna.Command, request *proto.CreateAccountReques
 		return ret
 	}
 
-	if ret = repository.CreateAccount(ctx, &account); ret != nil {
+	command := scyna.NewCommand(&ctx.Context)
+
+	if ret = repository.CreateAccount(command, &account); ret != nil {
 		return ret
 	}
 
-	if ret = ctx.StoreEvent(account.ID, ACCOUNT_CREATED_CHANNEL,
-		&proto.AccountCreated{
+	command.SetAggregateID(account.ID).
+		SetEvent(&proto.AccountCreated{
 			Id:    account.ID,
 			Name:  account.Name,
-			Email: account.Email.String()}); ret != nil {
-		ctx.Logger.Error("Not OK")
-		return ret
-	}
+			Email: account.Email.String()}).
+		SetChannel(ACCOUNT_CREATED_CHANNEL).
+		Commit()
 
 	ctx.Response(&proto.CreateAccountResponse{Id: account.ID})
 

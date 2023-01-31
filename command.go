@@ -1,13 +1,9 @@
 package scyna
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
-	reflect "reflect"
 
 	"github.com/gocql/gocql"
-	"github.com/nats-io/nats.go"
 	"github.com/scylladb/gocqlx/v2/qb"
 	"google.golang.org/protobuf/proto"
 )
@@ -33,89 +29,68 @@ func InitSingleWriter(keyspace string) {
 }
 
 type Command struct {
-	Endpoint
-	Batch *gocql.Batch
+	batch   *gocql.Batch
+	channel string
+	event   proto.Message
+	entity  uint64
+	context *Context
 }
 
-type CommandHandler[R proto.Message] func(ctx *Command, request R) Error
+func (command *Command) Batch() *gocql.Batch {
+	return command.batch
+}
 
-func RegisterCommand[R proto.Message](url string, handler CommandHandler[R]) {
-	log.Println("Register Command: ", url)
-
-	_, err := Connection.QueueSubscribe(SubscriberURL(url), "API", func(m *nats.Msg) {
-		var request R
-		ref := reflect.New(reflect.TypeOf(request).Elem())
-		request = ref.Interface().(R)
-
-		ctx := Command{
-			Endpoint: Endpoint{
-				Context: Context{Logger{session: false}},
-				Reply:   m.Reply,
-				flushed: false,
-			},
-			Batch: DB.NewBatch(gocql.UnloggedBatch),
-		}
-
-		if err := proto.Unmarshal(m.Data, &ctx.Request); err != nil {
-			log.Print("Register unmarshal error response data:", err.Error())
-			return
-		}
-
-		ctx.ID = ctx.Request.TraceID
-
-		if ctx.Request.JSON {
-			if err := json.Unmarshal(ctx.Request.Body, request); err != nil {
-				log.Print("Bad Request: " + err.Error())
-				ctx.flushError(400, BAD_REQUEST)
-			}
-		} else {
-			if err := proto.Unmarshal(ctx.Request.Body, request); err != nil {
-				log.Print("Bad Request: " + err.Error())
-				ctx.flushError(400, BAD_REQUEST)
-			}
-		}
-
-		e := handler(&ctx, request)
-		if !ctx.flushed {
-			if e == OK {
-				ctx.flushError(200, OK)
-			} else {
-				ctx.flushError(400, e)
-			}
-		}
-	})
-
-	if err != nil {
-		log.Fatal("Can not register command:", url)
+func NewCommand(context *Context) *Command {
+	return &Command{
+		batch:   DB.NewBatch(gocql.UnloggedBatch),
+		entity:  0,
+		context: context,
 	}
 }
 
-func (ctx *Command) StoreEvent(aggregate uint64, channel string, event proto.Message) Error {
+func (command *Command) SetAggregateID(id uint64) *Command {
+	command.entity = id
+	return command
+}
+
+func (command *Command) SetEvent(event proto.Message) *Command {
+	command.event = event
+	return command
+}
+
+func (command *Command) SetChannel(channel string) *Command {
+	command.channel = channel
+	return command
+}
+
+func (command *Command) Commit() Error {
 	if _version == 0 {
 		panic("SingleWriter is not initialized")
 	}
 
 	var id = _version + 1
 
-	bytes, err := proto.Marshal(event)
+	bytes, err := proto.Marshal(command.event)
 	if err != nil {
-		ctx.Logger.Error("Can not marshal event data")
+		command.context.Error("Can not marshal event data")
 		return BAD_DATA
 	}
 
-	ctx.Batch.Query(_query, id, aggregate, channel, bytes)
+	command.batch.Query(_query, id, command.entity, command.channel, bytes)
 
-	if err := DB.ExecuteBatch(ctx.Batch); err != nil {
-		ctx.Logger.Error(err.Error())
+	if err := DB.ExecuteBatch(command.batch); err != nil {
+		command.context.Error(err.Error())
 		return SERVER_ERROR
 	}
 
 	_version = id
 
-	// if err := ctx.PublishEvent(channel, event); err != nil {
-	// 	ctx.Logger.Error(err.Message())
-	// 	/*TODO: system alert and panic here*/
-	// 	return err
-	// }
+	if len(command.channel) > 0 {
+		if err := command.context.PublishEvent(command.channel, command.event); err != nil {
+			command.context.Error(err.Message())
+			/*TODO: system alert and panic here*/
+			return err
+		}
+	}
 	return nil
 }

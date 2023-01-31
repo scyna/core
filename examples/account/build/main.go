@@ -21,6 +21,6 @@ func main() {
 
 	scyna.InitSingleWriter("ex_account")
 
-	scyna.RegisterCommand("/scyna.example/user/create", service.CreateAccountHandler)
+	scyna.RegisterEndpoint("/scyna.example/user/create", service.CreateAccountHandler)
 	scyna.Start()
 }

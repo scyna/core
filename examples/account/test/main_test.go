@@ -17,7 +17,7 @@ func TestMain(m *testing.M) {
 	scyna.InitSingleWriter("chat_account")
 
 	/*register services*/
-	scyna.RegisterCommand(account.CREATE_ACCOUNT_URL, service.CreateAccountHandler)
+	scyna.RegisterEndpoint(account.CREATE_ACCOUNT_URL, service.CreateAccountHandler)
 	scyna.RegisterEndpoint(account.GET_ACCOUNT_URL, service.GetAccountByEmail)
 
 	domain.AttachRepositoryCreator(repository.NewRepository)
