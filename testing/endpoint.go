@@ -14,6 +14,9 @@ type endpointTest struct {
 	request  proto.Message
 	response proto.Message
 	status   int32
+
+	expectedEvent proto.Message
+	receivedEvent proto.Message
 }
 
 func EndpointTest(url string) *endpointTest {
@@ -46,6 +49,13 @@ func (t *endpointTest) ExpectResponse(response proto.Message) *endpointTest {
 	return t
 }
 
+func (t *endpointTest) ExpectEvent(event proto.Message) *endpointTest {
+	t.expectedEvent = event
+	/*TODO: create stream and consumer*/
+	/*TODO: register event handler*/
+	return t
+}
+
 func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 	var res = st.callEndpoint(t)
 	if st.status != res.Code {
@@ -69,6 +79,12 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 		}
 	} else {
 		t.Fatal("Too many parametter")
+	}
+
+	if st.expectedEvent != nil {
+		/* TODO: wait and check receivedEvent */
+		/* TODO: match event*/
+		/* TODO: remove stream and consumer */
 	}
 }
 
