@@ -16,9 +16,10 @@ type endpointTest struct {
 	request            proto.Message
 	response           proto.Message
 	exactResponseMatch bool
-	expectedEvent      proto.Message
-	channel            string
-	exactEventMatch    bool
+
+	event           proto.Message
+	channel         string
+	exactEventMatch bool
 }
 
 func EndpointTest(url string) *endpointTest {
@@ -65,13 +66,13 @@ func (t *endpointTest) MatchResponse(response proto.Message) *endpointTest {
 }
 
 func (t *endpointTest) ExpectEvent(event proto.Message) *endpointTest {
-	t.expectedEvent = event
+	t.event = event
 	t.exactEventMatch = true
 	return t
 }
 
 func (t *endpointTest) MatchEvent(event proto.Message) *endpointTest {
-	t.expectedEvent = event
+	t.event = event
 	t.exactEventMatch = false
 	return t
 }
@@ -117,7 +118,7 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 		t.Fatal("Too many parametter")
 	}
 
-	if st.expectedEvent != nil {
+	if st.event != nil {
 		subs, err := scyna.JetStream.SubscribeSync(streamName + ".*")
 		if err != nil {
 			t.Fatal("Error in subscribe")
@@ -134,17 +135,17 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 			t.Fatal("Can not parse received event")
 		}
 
-		receivedEvent := proto.Clone(st.expectedEvent)
+		receivedEvent := proto.Clone(st.event)
 		if proto.Unmarshal(event.Body, receivedEvent) != nil {
 			t.Fatal("Can not parse received event")
 		}
 
 		if st.exactEventMatch {
-			if !proto.Equal(st.expectedEvent, receivedEvent) {
+			if !proto.Equal(st.event, receivedEvent) {
 				t.Fatal("Event not match")
 			}
 		} else {
-			if !matchMessage(st.expectedEvent, receivedEvent) {
+			if !matchMessage(st.event, receivedEvent) {
 				t.Fatal("Event not match")
 			}
 		}
