@@ -150,7 +150,6 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 		}
 
 		subs.Unsubscribe()
-		subs.Drain()
 	}
 
 	if len(streamName) > 0 {

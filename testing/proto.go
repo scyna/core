@@ -91,8 +91,8 @@ func equalValue(fd pref.FieldDescriptor, x, y pref.Value) bool {
 		return x.String() == y.String()
 	case pref.BytesKind:
 		return bytes.Equal(x.Bytes(), y.Bytes())
-	// case pref.MessageKind, pref.GroupKind:
-	// 	return matchMessage(x.Message(), y.Message())
+	case pref.MessageKind, pref.GroupKind:
+		return matchMessage(x.Message().Interface(), y.Message().Interface())
 	default:
 		return x.Interface() == y.Interface()
 	}
