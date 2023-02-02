@@ -7,7 +7,7 @@ import (
 	proto "github.com/scyna/core/examples/account/proto/generated"
 )
 
-func GetAccountByEmail(ctx *scyna.Endpoint, request *proto.GetAccountByEmailRequest) scyna.Error {
+func GetAccountByEmailHandler(ctx *scyna.Endpoint, request *proto.GetAccountByEmailRequest) scyna.Error {
 	ctx.Logger.Info("Receive GetUserRequest")
 
 	repository := domain.LoadRepository(ctx.Logger)

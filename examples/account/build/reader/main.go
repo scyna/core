@@ -7,20 +7,15 @@ import (
 	"github.com/scyna/core/examples/account/service"
 )
 
-const MODULE_CODE = "chat_account"
-
 func main() {
 	scyna.RemoteInit(scyna.RemoteConfig{
 		ManagerUrl: "http://localhost:8081",
-		Name:       MODULE_CODE,
-		Secret:     "123456789aA@#",
+		Name:       "ex_account",
+		Secret:     "12345678",
 	})
 	defer scyna.Release()
 
 	domain.AttachRepositoryCreator(repository.NewRepository)
-
-	scyna.InitSingleWriter("ex_account")
-
-	scyna.RegisterEndpoint("/scyna.example/user/create", service.CreateAccountHandler)
+	scyna.RegisterEndpoint(service.GET_ACCOUNT_URL, service.GetAccountByEmailHandler)
 	scyna.Start()
 }
