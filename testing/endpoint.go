@@ -79,6 +79,9 @@ func (t *endpointTest) MatchEvent(event proto.Message) *endpointTest {
 func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 
 	streamName := getStreamName(st.channel)
+	if len(st.channel) > 0 && len(streamName) == 0 {
+		t.Fatal("Invalid channel format")
+	}
 
 	if len(streamName) > 0 {
 		createStreamForModule(streamName)
