@@ -25,7 +25,7 @@ func ChangePasswordHandler(ctx *scyna.Endpoint, request *proto.ChangePasswordReq
 
 	command := scyna.NewCommand(&ctx.Context).
 		SetAggregateID(account.ID).
-		//SetChannel(PASSWORD_CHANGED_CHANNEL).
+		SetChannel(PASSWORD_CHANGED_CHANNEL).
 		SetEvent(&proto.PasswordChanged{
 			Id:      account.ID,
 			Current: request.Current,
