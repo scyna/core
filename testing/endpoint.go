@@ -1,6 +1,7 @@
 package scyna_test
 
 import (
+	"log"
 	"testing"
 	"time"
 
@@ -16,7 +17,7 @@ type endpointTest struct {
 	status   int32
 
 	expectedEvent proto.Message
-	receivedEvent proto.Message
+	channel       string
 }
 
 func EndpointTest(url string) *endpointTest {
@@ -49,14 +50,18 @@ func (t *endpointTest) ExpectResponse(response proto.Message) *endpointTest {
 	return t
 }
 
-func (t *endpointTest) ExpectEvent(event proto.Message) *endpointTest {
+func (t *endpointTest) ExpectEvent(channel string, event proto.Message) *endpointTest {
+	t.channel = channel
 	t.expectedEvent = event
-	/*TODO: create stream and consumer*/
-	/*TODO: register event handler*/
 	return t
 }
 
 func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
+	streamName := getStreamName(st.channel)
+	if st.expectedEvent != nil {
+		createStreamForModule(streamName)
+	}
+
 	var res = st.callEndpoint(t)
 	if st.status != res.Code {
 		t.Fatalf("Expect status %d but actually %d with response %s", st.status, res.Code, string(res.Body))
@@ -82,9 +87,36 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 	}
 
 	if st.expectedEvent != nil {
-		/* TODO: wait and check receivedEvent */
-		/* TODO: match event*/
-		/* TODO: remove stream and consumer */
+		subs, err := scyna.JetStream.SubscribeSync(streamName + ".*")
+		if err != nil {
+			t.Fatal("Error in subscribe")
+		}
+
+		msg, err := subs.NextMsg(time.Second)
+		if err != nil {
+			t.Fatal("Timeout")
+		}
+
+		var event scyna_proto.Event
+		if err := proto.Unmarshal(msg.Data, &event); err != nil {
+			log.Print("Register unmarshal error response data:", err.Error())
+			t.Fatal("Can not parse received event")
+		}
+
+		receivedEvent := proto.Clone(st.expectedEvent)
+		if proto.Unmarshal(event.Body, receivedEvent) != nil {
+			t.Fatal("Can not parse received event")
+		}
+
+		if !proto.Equal(st.expectedEvent, receivedEvent) {
+			log.Print(receivedEvent)
+			log.Print(st.expectedEvent)
+			t.Fatal("Event not match")
+		}
+
+		subs.Unsubscribe()
+		subs.Drain()
+		deleteStream(streamName)
 	}
 }
 
@@ -115,7 +147,7 @@ func (st *endpointTest) callEndpoint(t *testing.T) *scyna_proto.Response {
 				t.Fatal("Server Error:", err)
 			}
 		} else {
-			t.Fatal("Server2 Error:", err)
+			t.Fatal("Server Error:", err)
 		}
 	} else {
 		t.Fatal("Bad Request:", err)

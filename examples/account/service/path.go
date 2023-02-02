@@ -1,8 +1,8 @@
 package service
 
 const (
-	CREATE_ACCOUNT_URL       = "/chat/account/create"
-	GET_ACCOUNT_URL          = "/chat/account/get"
-	ACCOUNT_CREATED_CHANNEL  = "chat.account.user_created"
-	PASSWORD_CHANGED_CHANNEL = "chat.account.password_changed"
+	CREATE_ACCOUNT_URL       = "/account/create"
+	GET_ACCOUNT_URL          = "/account/get"
+	ACCOUNT_CREATED_CHANNEL  = "account.user_created"
+	PASSWORD_CHANGED_CHANNEL = "account.password_changed"
 )

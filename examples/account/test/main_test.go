@@ -8,7 +8,6 @@ import (
 	"github.com/scyna/core/examples/account/domain"
 	"github.com/scyna/core/examples/account/repository"
 	"github.com/scyna/core/examples/account/service"
-	account "github.com/scyna/core/examples/account/service"
 	scyna_test "github.com/scyna/core/testing"
 )
 
@@ -17,8 +16,7 @@ func TestMain(m *testing.M) {
 	scyna.InitSingleWriter("ex_account")
 
 	/*register services*/
-	scyna.RegisterEndpoint(account.CREATE_ACCOUNT_URL, service.CreateAccountHandler)
-	scyna.RegisterEndpoint(account.GET_ACCOUNT_URL, service.GetAccountByEmail)
+	scyna.RegisterEndpoint(service.CREATE_ACCOUNT_URL, service.CreateAccountHandler)
 
 	domain.AttachRepositoryCreator(repository.NewRepository)
 

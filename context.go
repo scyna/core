@@ -13,7 +13,6 @@ type Context struct {
 }
 
 func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
-	subject := module + "." + channel
 	msg := scyna_proto.Event{TraceID: ctx.ID}
 	if data, err := proto.Marshal(data); err != nil {
 		return BAD_DATA
@@ -24,7 +23,7 @@ func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 	if data, err := proto.Marshal(&msg); err != nil {
 		return BAD_DATA
 	} else {
-		if _, err := JetStream.Publish(subject, data); err != nil {
+		if _, err := JetStream.Publish(channel, data); err != nil {
 			return STREAM_ERROR
 		}
 	}
