@@ -33,7 +33,7 @@ func Release() {
 }
 
 func Start() {
-	startListening()
+	startEventStreams()
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 	<-sig
