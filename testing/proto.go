@@ -3,14 +3,12 @@ package scyna_test
 import (
 	"bytes"
 	"math"
-	"reflect"
 
-	"google.golang.org/protobuf/encoding/protowire"
 	"google.golang.org/protobuf/proto"
 	pref "google.golang.org/protobuf/reflect/protoreflect"
 )
 
-func matchMessage(x proto.Message, y proto.Message) bool {
+func matchMessage(x, y proto.Message) bool {
 	mx := x.ProtoReflect()
 	my := y.ProtoReflect()
 
@@ -98,29 +96,4 @@ func equalValue(fd pref.FieldDescriptor, x, y pref.Value) bool {
 	default:
 		return x.Interface() == y.Interface()
 	}
-}
-
-// equalUnknown compares unknown fields by direct comparison on the raw bytes
-// of each individual field number.
-func equalUnknown(x, y pref.RawFields) bool {
-	if len(x) != len(y) {
-		return false
-	}
-	if bytes.Equal([]byte(x), []byte(y)) {
-		return true
-	}
-
-	mx := make(map[pref.FieldNumber]pref.RawFields)
-	my := make(map[pref.FieldNumber]pref.RawFields)
-	for len(x) > 0 {
-		fnum, _, n := protowire.ConsumeField(x)
-		mx[fnum] = append(mx[fnum], x[:n]...)
-		x = x[n:]
-	}
-	for len(y) > 0 {
-		fnum, _, n := protowire.ConsumeField(y)
-		my[fnum] = append(my[fnum], y[:n]...)
-		y = y[n:]
-	}
-	return reflect.DeepEqual(mx, my)
 }
