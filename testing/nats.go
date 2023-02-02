@@ -27,12 +27,16 @@ func deleteStream(name string) error {
 	return nil
 }
 
-func createStreamForModule(module string) error {
+func createStream(name string) error {
+	if _, err := scyna.JetStream.StreamInfo(name); err == nil {
+		scyna.JetStream.DeleteStream(name)
+	}
+
 	if _, err := scyna.JetStream.AddStream(&nats.StreamConfig{
-		Name:     module,
-		Subjects: []string{module + ".>"},
+		Name:     name,
+		Subjects: []string{name + ".>"},
 	}); err != nil {
-		log.Print("Create stream for module " + module + ": Error: " + err.Error())
+		log.Print("Create stream for module " + name + ": Error: " + err.Error())
 		return err
 	}
 	return nil

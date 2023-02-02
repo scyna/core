@@ -84,7 +84,7 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 	}
 
 	if len(streamName) > 0 {
-		createStreamForModule(streamName)
+		createStream(streamName)
 	}
 
 	var res = st.callEndpoint(t)
@@ -118,7 +118,7 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 	}
 
 	if st.event != nil {
-		subs, err := scyna.JetStream.SubscribeSync(streamName + ".*")
+		subs, err := scyna.JetStream.SubscribeSync(st.channel)
 		if err != nil {
 			t.Fatal("Error in subscribe")
 		}
