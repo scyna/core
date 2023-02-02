@@ -13,13 +13,12 @@ import (
 type endpointTest struct {
 	status             int32
 	url                string
+	channel            string
 	request            proto.Message
 	response           proto.Message
+	event              proto.Message
+	exactEventMatch    bool
 	exactResponseMatch bool
-
-	event           proto.Message
-	channel         string
-	exactEventMatch bool
 }
 
 func EndpointTest(url string) *endpointTest {
