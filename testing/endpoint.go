@@ -11,13 +11,14 @@ import (
 )
 
 type endpointTest struct {
-	url      string
-	request  proto.Message
-	response proto.Message
-	status   int32
-
-	expectedEvent proto.Message
-	channel       string
+	status             int32
+	url                string
+	request            proto.Message
+	response           proto.Message
+	exactResponseMatch bool
+	expectedEvent      proto.Message
+	channel            string
+	exactEventMatch    bool
 }
 
 func EndpointTest(url string) *endpointTest {
@@ -26,6 +27,11 @@ func EndpointTest(url string) *endpointTest {
 
 func (t *endpointTest) WithRequest(request proto.Message) *endpointTest {
 	t.request = request
+	return t
+}
+
+func (t *endpointTest) PublishEventTo(channel string) *endpointTest {
+	t.channel = channel
 	return t
 }
 
@@ -47,18 +53,34 @@ func (t *endpointTest) ExpectSuccess() *endpointTest {
 func (t *endpointTest) ExpectResponse(response proto.Message) *endpointTest {
 	t.status = 200
 	t.response = response
+	t.exactResponseMatch = true
 	return t
 }
 
-func (t *endpointTest) ExpectEvent(channel string, event proto.Message) *endpointTest {
-	t.channel = channel
+func (t *endpointTest) MatchResponse(response proto.Message) *endpointTest {
+	t.status = 200
+	t.response = response
+	t.exactResponseMatch = false
+	return t
+}
+
+func (t *endpointTest) ExpectEvent(event proto.Message) *endpointTest {
 	t.expectedEvent = event
+	t.exactEventMatch = true
+	return t
+}
+
+func (t *endpointTest) MatchEvent(event proto.Message) *endpointTest {
+	t.expectedEvent = event
+	t.exactEventMatch = false
 	return t
 }
 
 func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
+
 	streamName := getStreamName(st.channel)
-	if st.expectedEvent != nil {
+
+	if len(streamName) > 0 {
 		createStreamForModule(streamName)
 	}
 
@@ -74,8 +96,14 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 				t.Fatal("Can not parse response body")
 			}
 
-			if !proto.Equal(tmp, st.response) {
-				t.Fatal("Response not match")
+			if st.exactResponseMatch {
+				if !proto.Equal(tmp, st.response) {
+					t.Fatal("Response not match")
+				}
+			} else {
+				if !matchMessage(tmp, st.response) {
+					t.Fatal("Response not match")
+				}
 			}
 		}
 	} else if len(response) == 1 {
@@ -108,14 +136,21 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 			t.Fatal("Can not parse received event")
 		}
 
-		if !proto.Equal(st.expectedEvent, receivedEvent) {
-			log.Print(receivedEvent)
-			log.Print(st.expectedEvent)
-			t.Fatal("Event not match")
+		if st.exactEventMatch {
+			if !proto.Equal(st.expectedEvent, receivedEvent) {
+				t.Fatal("Event not match")
+			}
+		} else {
+			if !matchMessage(st.expectedEvent, receivedEvent) {
+				t.Fatal("Event not match")
+			}
 		}
 
 		subs.Unsubscribe()
 		subs.Drain()
+	}
+
+	if len(streamName) > 0 {
 		deleteStream(streamName)
 	}
 }

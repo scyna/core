@@ -17,6 +17,7 @@ func TestMain(m *testing.M) {
 
 	/*register services*/
 	scyna.RegisterEndpoint(service.CREATE_ACCOUNT_URL, service.CreateAccountHandler)
+	scyna.RegisterEndpoint(service.GET_ACCOUNT_URL, service.GetAccountByEmail)
 
 	domain.AttachRepositoryCreator(repository.NewRepository)
 

@@ -17,7 +17,8 @@ func TestCreateShouldReturnSuccess(t *testing.T) {
 			Name:     "Nguyen Van A",
 			Password: "1234565",
 		}).
-		ExpectEvent(service.ACCOUNT_CREATED_CHANNEL, &proto.AccountCreated{
+		PublishEventTo(service.ACCOUNT_CREATED_CHANNEL).
+		MatchEvent(&proto.AccountCreated{
 			Email: "a@gmail.com",
 			Name:  "Nguyen Van A",
 		}).
@@ -33,6 +34,7 @@ func TestCreateThenGet(t *testing.T) {
 			Name:     "Nguyen Van A",
 			Password: "1234565",
 		}).
+		PublishEventTo(service.ACCOUNT_CREATED_CHANNEL).
 		ExpectSuccess().Run(t, &response)
 
 	scyna_test.EndpointTest(service.GET_ACCOUNT_URL).

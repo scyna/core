@@ -37,7 +37,7 @@ func CreateAccountHandler(ctx *scyna.Endpoint, request *proto.CreateAccountReque
 		SetAggregateID(account.ID).
 		SetChannel(ACCOUNT_CREATED_CHANNEL).
 		SetEvent(&proto.AccountCreated{
-			Id:    0,
+			Id:    account.ID,
 			Name:  account.Name,
 			Email: account.Email.String()})
 
