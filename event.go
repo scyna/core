@@ -95,7 +95,7 @@ func createOrGetEventStream(sender string) *eventStream {
 	return stream
 }
 
-func startEventStream() {
+func startListening() {
 	for _, e := range eventStreams {
 		e.start()
 	}
