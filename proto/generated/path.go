@@ -1,4 +1,4 @@
-package scyna_engine
+package scyna_proto
 
 const (
 	GEN_GET_ID_URL         = "/scyna/generator/id"

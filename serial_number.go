@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	scyna_engine "github.com/scyna/core/engine"
+	scyna_proto "github.com/scyna/core/proto/generated"
 )
 
 type serialNumber struct {
@@ -31,9 +31,9 @@ func (sn *serialNumber) Next() string {
 	if sn.next < sn.last {
 		sn.next++
 	} else {
-		request := scyna_engine.GetSNRequest{Key: sn.key}
-		var response scyna_engine.GetSNResponse
-		if r := sendRequest(scyna_engine.GEN_GET_SN_URL, &request, &response); r.Code() == 0 {
+		request := scyna_proto.GetSNRequest{Key: sn.key}
+		var response scyna_proto.GetSNResponse
+		if r := sendRequest(scyna_proto.GEN_GET_SN_URL, &request, &response); r.Code() == 0 {
 			sn.prefix = response.Prefix
 			sn.next = response.Start
 			sn.last = response.End

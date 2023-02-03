@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/scylladb/gocqlx/v2/qb"
-	scyna_engine "github.com/scyna/core/engine"
+	scyna_proto "github.com/scyna/core/proto/generated"
 	scyna_utils "github.com/scyna/core/utils"
 )
 
@@ -69,7 +69,7 @@ func UseRemoteLog(count int) {
 		go func() {
 			for l := range logQueue {
 				time_ := time.Now().UnixMicro()
-				event := scyna_engine.LogCreatedSignal{
+				event := scyna_proto.LogCreatedSignal{
 					Time:    uint64(time_),
 					ID:      l.ID,
 					Level:   uint32(l.Level),
@@ -77,7 +77,7 @@ func UseRemoteLog(count int) {
 					Session: l.Session,
 					SEQ:     l.Sequence,
 				}
-				EmitSignal(scyna_engine.LOG_CREATED_CHANNEL, &event)
+				EmitSignal(scyna_proto.LOG_CREATED_CHANNEL, &event)
 			}
 		}()
 	}

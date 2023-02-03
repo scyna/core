@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 
-	scyna_engine "github.com/scyna/core/engine"
 	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
@@ -98,7 +97,7 @@ func (ctx *Endpoint) tag(code uint32, response proto.Message) {
 	}
 	res, _ := json.Marshal(response)
 
-	EmitSignal(scyna_engine.ENDPOINT_DONE_CHANNEL, &scyna_engine.EndpointDoneSignal{
+	EmitSignal(scyna_proto.ENDPOINT_DONE_CHANNEL, &scyna_proto.EndpointDoneSignal{
 		TraceID:  ctx.ID,
 		Response: string(res),
 	})

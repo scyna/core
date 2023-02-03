@@ -1,4 +1,4 @@
-package scyna_engine
+package scyna_utils
 
 import (
 	"sync"

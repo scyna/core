@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	scyna_engine "github.com/scyna/core/engine"
 	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
@@ -37,7 +36,7 @@ func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 
 func (ctx *Context) ScheduleTask(task string, start time.Time, interval int64, data []byte, loop uint64) (Error, uint64) {
 	var response scyna_proto.StartTaskResponse
-	if err := ctx.SendRequest(scyna_engine.START_TASK_URL, &scyna_proto.StartTaskRequest{
+	if err := ctx.SendRequest(scyna_proto.START_TASK_URL, &scyna_proto.StartTaskRequest{
 		Module:   module,
 		Topic:    fmt.Sprintf("%s.task.%s", module, task),
 		Data:     data,
@@ -67,7 +66,7 @@ func (ctx *Context) SaveTag(key string, value string) {
 	if ctx.ID == 0 {
 		return
 	}
-	EmitSignal(scyna_engine.TAG_CREATED_CHANNEL, &scyna_engine.TagCreatedSignal{
+	EmitSignal(scyna_proto.TAG_CREATED_CHANNEL, &scyna_proto.TagCreatedSignal{
 		TraceID: ctx.ID,
 		Key:     key,
 		Value:   value,

@@ -12,9 +12,8 @@ import (
 	"github.com/gocql/gocql"
 	"github.com/nats-io/nats.go"
 	"github.com/scylladb/gocqlx/v2"
+	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
-
-	scyna_engine "github.com/scyna/core/engine"
 )
 
 type RemoteConfig struct {
@@ -25,7 +24,7 @@ type RemoteConfig struct {
 
 func RemoteInit(config RemoteConfig) {
 
-	request := scyna_engine.CreateSessionRequest{
+	request := scyna_proto.CreateSessionRequest{
 		Module: config.Name,
 		Secret: config.Secret,
 	}
@@ -35,7 +34,7 @@ func RemoteInit(config RemoteConfig) {
 		log.Fatal("Bad authentication request")
 	}
 
-	req, err := http.NewRequest("POST", config.ManagerUrl+scyna_engine.SESSION_CREATE_URL, bytes.NewBuffer(data))
+	req, err := http.NewRequest("POST", config.ManagerUrl+scyna_proto.SESSION_CREATE_URL, bytes.NewBuffer(data))
 	if err != nil {
 		log.Fatal("Error in create http request:", err)
 	}
@@ -54,7 +53,7 @@ func RemoteInit(config RemoteConfig) {
 		log.Fatal("Can not read response body:", err)
 	}
 
-	var response scyna_engine.CreateSessionResponse
+	var response scyna_proto.CreateSessionResponse
 	if err := proto.Unmarshal(resBody, &response); err != nil {
 		log.Fatal("Authenticate error")
 	}
@@ -63,7 +62,7 @@ func RemoteInit(config RemoteConfig) {
 	DirectInit(config.Name, response.Config)
 }
 
-func DirectInit(name string, c *scyna_engine.Configuration) {
+func DirectInit(name string, c *scyna_proto.Configuration) {
 	module = name
 	var err error
 	var nats_ []string
@@ -95,8 +94,8 @@ func DirectInit(name string, c *scyna_engine.Configuration) {
 	Settings.Init()
 
 	/*registration*/
-	RegisterSignal(scyna_engine.SETTING_UPDATE_CHANNEL+module, UpdateSettingHandler)
-	RegisterSignal(scyna_engine.SETTING_REMOVE_CHANNEL+module, RemoveSettingHandler)
+	RegisterSignal(scyna_proto.SETTING_UPDATE_CHANNEL+module, UpdateSettingHandler)
+	RegisterSignal(scyna_proto.SETTING_REMOVE_CHANNEL+module, RemoveSettingHandler)
 }
 
 func initScylla(host []string, username string, password string, location string) {
