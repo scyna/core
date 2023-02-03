@@ -58,7 +58,7 @@ func (ctx *Context) SendRequest(url string, request proto.Message, response prot
 	return sendRequest_(&trace, url, request, response)
 }
 
-func (ctx *Context) Tag(key string, value string) {
+func (ctx *Context) SaveTag(key string, value string) {
 	if ctx.ID == 0 {
 		return
 	}
