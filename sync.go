@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	reflect "reflect"
 	"time"
 
 	"github.com/nats-io/nats.go"
@@ -19,16 +18,7 @@ func RegisterSync[R proto.Message](channel string, receiver string, handler Sync
 	subject := module + ".sync." + channel
 	durable := "sync_" + channel + "_" + receiver
 	LOG.Info(fmt.Sprintf("Channel %s, durable: %s", subject, durable))
-
-	var event R
-	ref := reflect.New(reflect.TypeOf(event).Elem())
-	event = ref.Interface().(R)
-
-	trace := Trace{
-		Path:      subject, //FIXME
-		SessionID: Session.ID(),
-		Type:      TRACE_SYNC,
-	}
+	event := newMessageForType[R]()
 
 	sub, err := JetStream.PullSubscribe(subject, durable, nats.BindStream(module))
 
@@ -51,13 +41,16 @@ func RegisterSync[R proto.Message](channel string, receiver string, handler Sync
 				m.Ack()
 				continue
 			}
-			trace.Time = time.Now()
-			trace.ID = ID.Next()
-			trace.ParentID = msg.TraceID
-
-			context := Context{
-				Logger{ID: trace.ID, session: false},
+			trace := Trace{
+				Path:      subject, //FIXME
+				SessionID: Session.ID(),
+				Type:      TRACE_SYNC,
+				Time:      time.Now(),
+				ID:        ID.Next(),
+				ParentID:  msg.TraceID,
 			}
+
+			context := NewContext(trace.ID)
 
 			if err := proto.Unmarshal(msg.Body, event); err != nil {
 				log.Print("Error in parsing data:", err)
@@ -65,13 +58,13 @@ func RegisterSync[R proto.Message](channel string, receiver string, handler Sync
 				continue
 			}
 
-			request := handler(&context, event)
+			request := handler(context, event)
 			if sendSyncRequest(request) {
 				m.Ack()
 			} else {
 				sent := false
 				for i := 0; i < 3; i++ {
-					request := handler(&context, event)
+					request := handler(context, event)
 					if sendSyncRequest(request) {
 						m.Ack()
 						sent = true
