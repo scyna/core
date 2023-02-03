@@ -2,7 +2,7 @@ package scyna
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -93,7 +93,7 @@ func sendSyncRequest(request *http.Request) bool {
 		return false
 	} else {
 		defer response.Body.Close()
-		bodyBytes, err := ioutil.ReadAll(response.Body)
+		bodyBytes, err := io.ReadAll(response.Body)
 		if err != nil {
 			LOG.Info("Sync error: " + err.Error())
 			return true
