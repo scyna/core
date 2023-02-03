@@ -12,6 +12,10 @@ type Context struct {
 	Logger
 }
 
+func NewContext(id uint64) *Context {
+	return &Context{Logger{ID: id, session: false}}
+}
+
 func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 	msg := scyna_proto.Event{TraceID: ctx.ID}
 	if data, err := proto.Marshal(data); err != nil {
