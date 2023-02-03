@@ -9,6 +9,7 @@ import (
 
 	"github.com/scylladb/gocqlx/v2/qb"
 	scyna_engine "github.com/scyna/core/engine"
+	scyna_utils "github.com/scyna/core/utils"
 )
 
 type LogLevel int
@@ -46,7 +47,7 @@ func UseDirectLog(count int) {
 			for l := range logQueue {
 				time_ := time.Now()
 				if l.Session {
-					if _, err := qSession.Bind(l.ID, GetDayByTime(time_), time_, l.Sequence, l.Level, l.Message).
+					if _, err := qSession.Bind(l.ID, scyna_utils.GetDayByTime(time_), time_, l.Sequence, l.Level, l.Message).
 						ExecCAS(); err != nil {
 						log.Println("saveSessionLog: " + err.Error())
 					}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/nats-io/nats.go"
 	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_utils "github.com/scyna/core/utils"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -16,8 +17,8 @@ type EndpointLiteHandler func(ctx *Endpoint) Error
 func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 	log.Println("Register Endpoint: ", url)
 
-	_, err := Connection.QueueSubscribe(SubscriberURL(url), "API", func(m *nats.Msg) {
-		request := newMessageForType[R]()
+	_, err := Connection.QueueSubscribe(scyna_utils.SubscriberURL(url), "API", func(m *nats.Msg) {
+		request := scyna_utils.NewMessageForType[R]()
 		ctx := Endpoint{
 			Context: Context{Logger{session: false}},
 			flushed: false,
@@ -54,14 +55,14 @@ func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 	})
 
 	if err != nil {
-		Fatal("Can not register endpoint:", url)
+		panic("Can not register endpoint:" + url)
 	}
 }
 
 func RegisterEndpointLite(url string, handler EndpointLiteHandler) {
 	log.Println("Register EndpointLite:", url)
 
-	_, err := Connection.QueueSubscribe(SubscriberURL(url), "API", func(m *nats.Msg) {
+	_, err := Connection.QueueSubscribe(scyna_utils.SubscriberURL(url), "API", func(m *nats.Msg) {
 		ctx := Endpoint{
 			Context: Context{Logger{session: false}},
 			Reply:   m.Reply,
@@ -86,7 +87,7 @@ func RegisterEndpointLite(url string, handler EndpointLiteHandler) {
 	})
 
 	if err != nil {
-		Fatal("Can not register command:", url)
+		panic("Can not register command:" + url)
 	}
 }
 
@@ -115,7 +116,7 @@ func sendRequest_(trace *Trace, url string, request proto.Message, response prot
 	}
 
 	if data, err := proto.Marshal(&req); err == nil {
-		if msg, err := Connection.Request(PublishURL(url), data, 10*time.Second); err == nil {
+		if msg, err := Connection.Request(scyna_utils.PublishURL(url), data, 10*time.Second); err == nil {
 			if err := proto.Unmarshal(msg.Data, &res); err != nil {
 				return SERVER_ERROR
 			}

@@ -7,6 +7,7 @@ import (
 
 	scyna "github.com/scyna/core"
 	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_utils "github.com/scyna/core/utils"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -179,7 +180,7 @@ func (st *endpointTest) callEndpoint(t *testing.T) *scyna_proto.Response {
 	}
 
 	if data, err := proto.Marshal(&req); err == nil {
-		if msg, err := scyna.Connection.Request(scyna.PublishURL(st.url), data, 10*time.Second); err == nil {
+		if msg, err := scyna.Connection.Request(scyna_utils.PublishURL(st.url), data, 10*time.Second); err == nil {
 			if err := proto.Unmarshal(msg.Data, &res); err != nil {
 				t.Fatal("Server Error:", err)
 			}

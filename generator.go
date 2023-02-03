@@ -6,6 +6,7 @@ import (
 
 	scyna_engine "github.com/scyna/core/engine"
 	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_utils "github.com/scyna/core/utils"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -32,7 +33,7 @@ func (g *generator) Next() uint64 {
 		g.next++
 	} else {
 		if !g.getID() {
-			Fatal("Can not create generator")
+			panic("Can not create generator")
 		}
 	}
 	return (uint64(g.prefix) << 44) + g.next
@@ -43,7 +44,7 @@ func (g *generator) getID() bool {
 	res := scyna_proto.Response{}
 
 	if data, err := proto.Marshal(&req); err == nil {
-		if msg, err := Connection.Request(PublishURL(scyna_engine.GEN_GET_ID_URL), data, REQUEST_TIMEOUT*time.Second); err == nil {
+		if msg, err := Connection.Request(scyna_utils.PublishURL(scyna_engine.GEN_GET_ID_URL), data, REQUEST_TIMEOUT*time.Second); err == nil {
 			if err := proto.Unmarshal(msg.Data, &res); err == nil {
 				if res.Code == 200 {
 					var response scyna_engine.GetIDResponse

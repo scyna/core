@@ -85,7 +85,7 @@ func DirectInit(name string, c *scyna_engine.Configuration) {
 	/*init jetstream*/
 	JetStream, err = Connection.JetStream()
 	if err != nil {
-		Fatal("Init: " + err.Error())
+		panic("Init: " + err.Error())
 	}
 
 	/*init db*/
@@ -114,6 +114,6 @@ func initScylla(host []string, username string, password string, location string
 	var err error
 	DB, err = gocqlx.WrapSession(cluster.CreateSession())
 	if err != nil {
-		Fatalf("Can not create session: Host = %s, Error = %s ", host, err.Error())
+		panic(fmt.Sprintf("Can not create session: Host = %s, Error = %s ", host, err.Error()))
 	}
 }

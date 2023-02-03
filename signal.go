@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/nats-io/nats.go"
+	scyna_utils "github.com/scyna/core/utils"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -11,7 +12,7 @@ type SignalHandler[R proto.Message] func(data R)
 
 func RegisterSignal[R proto.Message](channel string, handler SignalHandler[R]) {
 	log.Print("Register SignalLite:", channel)
-	signal := newMessageForType[R]()
+	signal := scyna_utils.NewMessageForType[R]()
 
 	if _, err := Connection.QueueSubscribe(channel, module, func(m *nats.Msg) {
 		if err := proto.Unmarshal(m.Data, signal); err == nil {

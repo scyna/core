@@ -9,6 +9,7 @@ import (
 
 	"github.com/nats-io/nats.go"
 	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_utils "github.com/scyna/core/utils"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -18,12 +19,12 @@ func RegisterSync[R proto.Message](channel string, receiver string, handler Sync
 	subject := module + ".sync." + channel
 	durable := "sync_" + channel + "_" + receiver
 	LOG.Info(fmt.Sprintf("Channel %s, durable: %s", subject, durable))
-	event := newMessageForType[R]()
+	event := scyna_utils.NewMessageForType[R]()
 
 	sub, err := JetStream.PullSubscribe(subject, durable, nats.BindStream(module))
 
 	if err != nil {
-		Fatal("Error in start event stream:", err.Error())
+		panic("Error in start event stream:" + err.Error())
 	}
 
 	go func() {

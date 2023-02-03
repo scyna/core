@@ -5,6 +5,7 @@ import (
 
 	"github.com/nats-io/nats.go"
 	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_utils "github.com/scyna/core/utils"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -22,7 +23,7 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 	assureStreamReady(sender, module)
 	stream := createOrGetEventStream(sender)
 	subject := buildSubject(sender, channel)
-	event := newMessageForType[R]()
+	event := scyna_utils.NewMessageForType[R]()
 
 	stream.executors[subject] = func(m *nats.Msg) {
 		var msg scyna_proto.Event

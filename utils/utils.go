@@ -1,14 +1,12 @@
-package scyna
+package scyna_utils
 
 import (
 	"fmt"
-	"log"
 	"reflect"
 	"regexp"
 	"strings"
 	"time"
 
-	scyna_engine "github.com/scyna/core/engine"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -45,21 +43,21 @@ func ConvertDateByInt(timestamp uint64) string {
 	return time.UnixMicro(int64(timestamp)).Format(time.RFC3339)
 }
 
-func Fatal(v ...any) {
-	if data, err := proto.Marshal(&scyna_engine.EndSessionSignal{ID: Session.ID(), Code: "1", Module: module}); err == nil {
-		Connection.Publish(scyna_engine.SESSION_END_CHANNEL, data)
-	}
-	log.Fatal(v)
-}
+// func Panic(v ...any) {
+// 	if data, err := proto.Marshal(&scyna_engine.EndSessionSignal{ID: Session.ID(), Code: "1", Module: module}); err == nil {
+// 		Connection.Publish(scyna_engine.SESSION_END_CHANNEL, data)
+// 	}
+// 	log.Fatal(v)
+// }
 
-func Fatalf(format string, v ...any) {
-	if data, err := proto.Marshal(&scyna_engine.EndSessionSignal{ID: Session.ID(), Code: "1", Module: module}); err == nil {
-		Connection.Publish(scyna_engine.SESSION_END_CHANNEL, data)
-	}
-	log.Fatalf(format, v)
-}
+// func Fatalf(format string, v ...any) {
+// 	if data, err := proto.Marshal(&scyna_engine.EndSessionSignal{ID: Session.ID(), Code: "1", Module: module}); err == nil {
+// 		Connection.Publish(scyna_engine.SESSION_END_CHANNEL, data)
+// 	}
+// 	log.Fatalf(format, v)
+// }
 
-func newMessageForType[R proto.Message]() R {
+func NewMessageForType[R proto.Message]() R {
 	var msg R
 	ref := reflect.New(reflect.TypeOf(msg).Elem())
 	return ref.Interface().(R)
