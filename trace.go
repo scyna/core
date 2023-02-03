@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/gocql/gocql"
-	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_engine "github.com/scyna/core/engine"
 )
 
 type TraceType uint32
@@ -31,7 +31,7 @@ type Trace struct {
 
 func (trace *Trace) Record() {
 	trace.Duration = uint64(time.Now().UnixNano() - trace.Time.UnixNano())
-	EmitSignal(TRACE_CREATED_CHANNEL, &scyna_proto.TraceCreatedSignal{
+	EmitSignal(scyna_engine.TRACE_CREATED_CHANNEL, &scyna_engine.TraceCreatedSignal{
 		ID:        trace.ID,
 		ParentID:  trace.ParentID,
 		Type:      uint32(trace.Type),

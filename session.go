@@ -4,7 +4,7 @@ import (
 	sync "sync"
 	"time"
 
-	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_engine "github.com/scyna/core/engine"
 )
 
 type session struct {
@@ -28,7 +28,7 @@ func NewSession(id uint64) *session {
 		for {
 			select {
 			case <-ticker.C:
-				EmitSignal(SESSION_UPDATE_CHANNEL, &scyna_proto.UpdateSessionSignal{ID: ret.id, Module: module})
+				EmitSignal(scyna_engine.SESSION_UPDATE_CHANNEL, &scyna_engine.UpdateSessionSignal{ID: ret.id, Module: module})
 			case <-ret.quit:
 				ticker.Stop()
 				return

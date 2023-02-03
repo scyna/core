@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"sync"
 
+	scyna_engine "github.com/scyna/core/engine"
 	scyna_proto "github.com/scyna/core/proto/generated"
 )
 
@@ -14,9 +15,9 @@ type settings struct {
 }
 
 func (s *settings) Remove(key string) bool {
-	request := scyna_proto.RemoveSettingRequest{Module: module, Key: key}
+	request := scyna_engine.RemoveSettingRequest{Module: module, Key: key}
 	var response scyna_proto.Error
-	if err := sendRequest(SETTING_REMOVE_URL, &request, &response); err.Code() == OK.Code() {
+	if err := sendRequest(scyna_engine.SETTING_REMOVE_URL, &request, &response); err.Code() == OK.Code() {
 		s.removed(key)
 		return true
 	}
@@ -24,9 +25,9 @@ func (s *settings) Remove(key string) bool {
 }
 
 func (s *settings) Write(key string, value string) bool {
-	request := scyna_proto.WriteSettingRequest{Module: module, Key: key, Value: value}
+	request := scyna_engine.WriteSettingRequest{Module: module, Key: key, Value: value}
 	var response scyna_proto.Error
-	if err := sendRequest(SETTING_WRITE_URL, &request, &response); err.Code() == OK.Code() {
+	if err := sendRequest(scyna_engine.SETTING_WRITE_URL, &request, &response); err.Code() == OK.Code() {
 		s.updated(key, value)
 		return true
 	}
@@ -43,9 +44,9 @@ func (s *settings) ReadString(key string) (bool, string) {
 	s.mutex.Unlock()
 
 	/*from manager*/
-	request := scyna_proto.ReadSettingRequest{Module: module, Key: key}
-	var response scyna_proto.ReadSettingResponse
-	if err := sendRequest(SETTING_READ_URL, &request, &response); err.Code() == OK.Code() {
+	request := scyna_engine.ReadSettingRequest{Module: module, Key: key}
+	var response scyna_engine.ReadSettingResponse
+	if err := sendRequest(scyna_engine.SETTING_READ_URL, &request, &response); err.Code() == OK.Code() {
 		s.updated(key, response.Value)
 		return true, response.Value
 	}
@@ -71,7 +72,7 @@ func (s *settings) ReadBool(key string) (bool, bool) {
 func (s *settings) ReadObject(key string, value interface{}) bool {
 	if ok, val := s.ReadString(key); ok {
 		if err := json.Unmarshal([]byte(val), value); err != nil {
-			LOG.Warning("ReadObjectSetting: " + err.Error())
+			LOG.Error("ReadObjectSetting: " + err.Error())
 			return false
 		}
 		return true
@@ -79,13 +80,13 @@ func (s *settings) ReadObject(key string, value interface{}) bool {
 	return false
 }
 
-func UpdateSettingHandler(data *scyna_proto.SettingUpdatedSignal) {
+func UpdateSettingHandler(data *scyna_engine.SettingUpdatedSignal) {
 	if data.Module == module {
 		Settings.updated(data.Key, data.Value)
 	}
 }
 
-func RemoveSettingHandler(data *scyna_proto.SettingRemovedSignal) {
+func RemoveSettingHandler(data *scyna_engine.SettingRemovedSignal) {
 	if data.Module == module {
 		Settings.removed(data.Key)
 	}

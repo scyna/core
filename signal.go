@@ -17,10 +17,10 @@ func RegisterSignal[R proto.Message](channel string, handler SignalHandler[R]) {
 		if err := proto.Unmarshal(m.Data, signal); err == nil {
 			handler(signal)
 		} else {
-			log.Print("Error in parsing data:", err)
+			LOG.Error("Error in parsing data:" + err.Error())
 		}
 	}); err != nil {
-		Fatal("Error in register SignalLite")
+		panic("Error in register SignalLite")
 	}
 }
 
