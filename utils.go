@@ -60,8 +60,7 @@ func Fatalf(format string, v ...any) {
 }
 
 func newMessageForType[R proto.Message]() R {
-	var ret R
-	ref := reflect.New(reflect.TypeOf(ret).Elem())
-	ret = ref.Interface().(R)
-	return ret
+	var msg R
+	ref := reflect.New(reflect.TypeOf(msg).Elem())
+	return ref.Interface().(R)
 }
