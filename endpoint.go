@@ -17,10 +17,7 @@ func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 	log.Println("Register Endpoint: ", url)
 
 	_, err := Connection.QueueSubscribe(SubscriberURL(url), "API", func(m *nats.Msg) {
-
-		var request R
-		ref := request.ProtoReflect().New()
-		request = ref.Interface().(R)
+		request := newMessageForType[R]()
 		ctx := Endpoint{
 			Context: Context{Logger{session: false}},
 			flushed: false,

@@ -3,6 +3,7 @@ package scyna
 import (
 	"fmt"
 	"log"
+	"reflect"
 	"regexp"
 	"strings"
 	"time"
@@ -56,4 +57,11 @@ func Fatalf(format string, v ...any) {
 		Connection.Publish(SESSION_END_CHANNEL, data)
 	}
 	log.Fatalf(format, v)
+}
+
+func newMessageForType[R proto.Message]() R {
+	var ret R
+	ref := reflect.New(reflect.TypeOf(ret).Elem())
+	ret = ref.Interface().(R)
+	return ret
 }

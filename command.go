@@ -27,7 +27,6 @@ func InitSingleWriter(keyspace string) {
 
 	_version = version
 	_query = fmt.Sprintf("INSERT INTO %s.event_store(event_id, entity_id, channel, data) VALUES(?,?,?,?) ", keyspace)
-	//log.Print("Version:", _version)
 }
 
 type Command struct {

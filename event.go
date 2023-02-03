@@ -1,7 +1,6 @@
 package scyna
 
 import (
-	reflect "reflect"
 	"time"
 
 	"github.com/nats-io/nats.go"
@@ -20,19 +19,10 @@ type eventStream struct {
 var eventStreams map[string]*eventStream = make(map[string]*eventStream)
 
 func RegisterEvent[R proto.Message](sender string, channel string, handler EventHandler[R]) {
-	if _, err := JetStream.StreamInfo(sender); err != nil {
-		panic("No stream `" + sender + "`")
-	}
-
-	if _, err := JetStream.ConsumerInfo(sender, module); err != nil {
-		panic("No consumer `" + module + "` for stream `" + sender + "`")
-	}
-
+	assureStreamReady(sender, module)
 	stream := createOrGetEventStream(sender)
-	subject := sender + "." + channel
-	var event R
-	ref := reflect.New(reflect.TypeOf(event).Elem())
-	event = ref.Interface().(R)
+	subject := buildSubject(sender, channel)
+	event := newMessageForType[R]()
 
 	stream.executors[subject] = func(m *nats.Msg) {
 		var msg scyna_proto.Event
@@ -102,4 +92,18 @@ func startEventStreams() {
 	for _, e := range eventStreams {
 		e.start()
 	}
+}
+
+func assureStreamReady(sender, receiver string) {
+	if _, err := JetStream.StreamInfo(sender); err != nil {
+		panic("No stream `" + sender + "`")
+	}
+
+	if _, err := JetStream.ConsumerInfo(sender, receiver); err != nil {
+		panic("No consumer `" + module + "` for stream `" + sender + "`")
+	}
+}
+
+func buildSubject(sender, channel string) string {
+	return sender + "." + channel
 }

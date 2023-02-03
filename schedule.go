@@ -3,7 +3,6 @@ package scyna
 import (
 	"fmt"
 	"log"
-	"reflect"
 	"time"
 
 	"github.com/nats-io/nats.go"
@@ -17,15 +16,7 @@ func RegisterTask[R proto.Message](sender string, channel string, handler TaskHa
 	durable := "task_" + channel
 	LOG.Info(fmt.Sprintf("Task: Channel %s, durable: %s", subject, durable))
 
-	var task R
-	ref := reflect.New(reflect.TypeOf(task).Elem())
-	task = ref.Interface().(R)
-
-	trace := Trace{
-		Path:      subject, //FIXME
-		SessionID: Session.ID(),
-		Type:      TRACE_TASK,
-	}
+	task := newMessageForType[R]()
 
 	sub, err := JetStream.PullSubscribe(subject, durable, nats.BindStream(module))
 
@@ -41,12 +32,15 @@ func RegisterTask[R proto.Message](sender string, channel string, handler TaskHa
 			}
 			m := messages[0]
 
-			trace.Time = time.Now()
-			trace.ID = ID.Next()
-
-			context := Context{
-				Logger{ID: trace.ID, session: false},
+			trace := Trace{
+				Path:      subject,
+				SessionID: Session.ID(),
+				Type:      TRACE_TASK,
+				Time:      time.Now(),
+				ID:        ID.Next(),
 			}
+
+			context := NewContext(trace.ID)
 
 			if err := proto.Unmarshal(m.Data, task); err != nil {
 				log.Print("Error in parsing data:", err)
@@ -54,7 +48,7 @@ func RegisterTask[R proto.Message](sender string, channel string, handler TaskHa
 				continue
 			}
 
-			handler(&context, task)
+			handler(context, task)
 			m.Ack()
 			trace.Record()
 		}
