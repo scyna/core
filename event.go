@@ -22,6 +22,14 @@ type eventStream struct {
 var eventStreams map[string]*eventStream = make(map[string]*eventStream)
 
 func RegisterEvent[R proto.Message](sender string, channel string, handler EventHandler[R]) {
+	if _, err := JetStream.StreamInfo(sender); err != nil {
+		panic("No stream `" + sender + "`")
+	}
+
+	if _, err := JetStream.ConsumerInfo(sender, module); err != nil {
+		panic("No consumer `" + module + "` for stream `" + sender + "`")
+	}
+
 	stream := createOrGetEventStream(sender)
 	subject := sender + "." + channel
 	LOG.Info(fmt.Sprintf("Events: subject = %s, receiver = %s", subject, stream.receiver))
