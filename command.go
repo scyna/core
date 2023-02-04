@@ -5,6 +5,7 @@ import (
 
 	"github.com/gocql/gocql"
 	"github.com/scylladb/gocqlx/v2/qb"
+	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -91,10 +92,25 @@ func (command *Command) Commit() Error {
 	_version = id
 
 	if len(command.channel) > 0 {
-		if err := command.context.PublishEvent(command.channel, command.event); err != nil {
-			command.context.Error(err.Message())
-			/*TODO: system alert and panic here*/
-			return err
+
+		eventMessage := &scyna_proto.Event{
+			TraceID: command.context.ID,
+			Entity:  command.entity,
+			Version: id,
+		}
+
+		if data, err := proto.Marshal(command.event); err != nil {
+			return BAD_DATA
+		} else {
+			eventMessage.Body = data
+		}
+
+		if data, err := proto.Marshal(eventMessage); err != nil {
+			return BAD_DATA
+		} else {
+			if _, err := JetStream.Publish(buildSubject(module, command.channel), data); err != nil {
+				return STREAM_ERROR
+			}
 		}
 	}
 	return nil

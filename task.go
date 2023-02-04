@@ -10,7 +10,9 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func RegisterTask[R proto.Message](sender string, channel string, handler EventHandler[R]) {
+type TaskHandler[R proto.Message] func(ctx *Context, data R)
+
+func RegisterTask[R proto.Message](sender string, channel string, handler TaskHandler[R]) {
 	assureStreamReady(sender, module)
 	stream := createOrGetEventStream(sender)
 	subject := buildSubject(sender, channel)

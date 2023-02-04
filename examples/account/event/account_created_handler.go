@@ -9,7 +9,7 @@ import (
 	"github.com/scyna/core/examples/account/service"
 )
 
-func AccountCreatedHandler(ctx *scyna.Context, event *proto.AccountCreated) {
+func AccountCreatedHandler(ctx *scyna.Event, event *proto.AccountCreated) {
 	ctx.Logger.Info("AccountCreated handler")
 	log.Print(event)
 	ctx.ScheduleTask(service.SEND_EMAIL_CHANNEL, time.Now(), 61, &proto.SendEmailTask{

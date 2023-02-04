@@ -10,7 +10,13 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type EventHandler[R proto.Message] func(ctx *Context, data R)
+type Event struct {
+	Context
+	Entity  uint64
+	Version uint64
+}
+
+type EventHandler[R proto.Message] func(ctx *Event, data R)
 
 type eventStream struct {
 	sender    string
@@ -44,7 +50,11 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 			ParentID:  msg.TraceID,
 		}
 
-		context := NewContext(trace.ID)
+		context := &Event{
+			Context: Context{Logger{ID: trace.ID, session: false}},
+			Entity:  msg.Entity,
+			Version: msg.Version,
+		}
 
 		if err := proto.Unmarshal(msg.Body, event); err == nil {
 			handler(context, event)

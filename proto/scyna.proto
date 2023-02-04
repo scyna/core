@@ -23,9 +23,8 @@ message Response {
 }
 
 message Event {
-  uint64 AggregateID = 1;
+  uint64 Entity = 1;
   uint64 Version = 2;
   bytes  Body = 3;
-  string Data = 4;
   uint64 TraceID = 5;
 }
