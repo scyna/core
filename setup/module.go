@@ -5,10 +5,10 @@ import (
 )
 
 type module struct {
-	code   string
-	secret string
-	batch  *gocql.Batch
-	events []string
+	code      string
+	secret    string
+	batch     *gocql.Batch
+	consumers []string
 }
 
 func NewModule(code string, secret string) *module {
@@ -21,8 +21,8 @@ func NewModule(code string, secret string) *module {
 	return ret
 }
 
-func (m *module) AddEventChannel(sender string) *module {
-	m.events = append(m.events, sender)
+func (m *module) AddConsumer(consumer string) *module {
+	m.consumers = append(m.consumers, consumer)
 	return m
 }
 
@@ -38,7 +38,7 @@ func (m *module) Build() {
 
 	CreateStreamIfMissing(m.code)
 
-	for _, e := range m.events {
-		CreateConsumerIfMissing(e, m.code)
+	for _, e := range m.consumers {
+		CreateConsumerIfMissing(m.code, e)
 	}
 }
