@@ -1,19 +1,26 @@
 package scyna_setup
 
+import "github.com/gocql/gocql"
+
 type client struct {
-	code   string
+	id     string
 	secret string
+	batch  *gocql.Batch
 }
 
-func NewClient(code, secret string) *client {
-	return &client{code: code, secret: secret}
+func NewClient(id, secret string) *client {
+	ret := &client{id: id, secret: secret, batch: DB.NewBatch(gocql.UnloggedBatch)}
+	ret.batch.Query("INSERT INTO scyna.client(id, secret) VALUES(?,?)", id, secret)
+	return ret
 }
 
 func (c *client) UseEndpoint(url string) *client {
-	/*TODO*/
+	c.batch.Query("INSERT INTO scyna.client_use_endpoint(client, url) VALUES(?,?)", c.id, url)
 	return c
 }
 
 func (c *client) Build() {
-	/*TODO*/
+	if err := DB.Session.ExecuteBatch(c.batch); err != nil {
+		panic("Error in creating client:" + err.Error())
+	}
 }
