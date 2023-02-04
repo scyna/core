@@ -5,7 +5,7 @@ import (
 	"github.com/scyna/core/examples/account/domain"
 )
 
-const ACCOUNT_TABLE = "chat_account.account"
+const ACCOUNT_TABLE = "ex_account.account"
 
 type accountRepository struct {
 	LOG scyna.Logger

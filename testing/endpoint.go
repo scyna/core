@@ -80,7 +80,7 @@ func (t *endpointTest) MatchEvent(event proto.Message) *endpointTest {
 func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 
 	streamName := scyna.Module()
-	if st.event != nil {
+	if len(st.channel) > 0 {
 		createStream(streamName)
 	}
 
@@ -147,6 +147,9 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 		}
 
 		subs.Unsubscribe()
+	}
+
+	if len(st.channel) > 0 {
 		deleteStream(streamName)
 	}
 }
