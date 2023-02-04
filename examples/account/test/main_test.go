@@ -12,7 +12,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	scyna_test.Init("scyna_account")
+	scyna_test.Init("scyna_test")
 	scyna.InitSingleWriter("ex_account")
 	domain.AttachRepositoryCreator(repository.NewRepository)
 

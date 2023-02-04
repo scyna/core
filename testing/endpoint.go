@@ -79,14 +79,8 @@ func (t *endpointTest) MatchEvent(event proto.Message) *endpointTest {
 
 func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 
-	streamName := getStreamName(st.channel)
-	if len(st.channel) > 0 && len(streamName) == 0 {
-		t.Fatal("Invalid channel format")
-	}
-
-	if len(streamName) > 0 {
-		createStream(streamName)
-	}
+	streamName := scyna.Module()
+	createStream(streamName)
 
 	var res = st.callEndpoint(t)
 	if st.status != res.Code {
@@ -119,7 +113,7 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 	}
 
 	if st.event != nil {
-		subs, err := scyna.JetStream.SubscribeSync(st.channel)
+		subs, err := scyna.JetStream.SubscribeSync(streamName + "." + st.channel)
 		if err != nil {
 			t.Fatal("Error in subscribe")
 		}
@@ -153,9 +147,7 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 		subs.Unsubscribe()
 	}
 
-	if len(streamName) > 0 {
-		deleteStream(streamName)
-	}
+	deleteStream(streamName)
 }
 
 func (st *endpointTest) callEndpoint(t *testing.T) *scyna_proto.Response {

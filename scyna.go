@@ -25,6 +25,10 @@ var httpClient *http.Client
 var module string
 var LOG *Logger
 
+func Module() string {
+	return module
+}
+
 func Release() {
 	releaseLog()
 	Session.release()
