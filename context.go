@@ -17,14 +17,14 @@ func NewContext(id uint64) *Context {
 }
 
 func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
-	msg := scyna_proto.Event{TraceID: ctx.ID}
+	event := scyna_proto.Event{TraceID: ctx.ID}
 	if data, err := proto.Marshal(data); err != nil {
 		return BAD_DATA
 	} else {
-		msg.Body = data
+		event.Body = data
 	}
 
-	if data, err := proto.Marshal(&msg); err != nil {
+	if data, err := proto.Marshal(&event); err != nil {
 		return BAD_DATA
 	} else {
 		if _, err := JetStream.Publish(buildSubject(module, channel), data); err != nil {
@@ -35,8 +35,16 @@ func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 }
 
 func (ctx *Context) ScheduleTask(channel string, start time.Time, interval int64, message proto.Message, loop uint64) (uint64, Error) {
-	var response scyna_proto.StartTaskResponse
+
+	task := scyna_proto.Task{TraceID: ctx.ID}
 	if data, err := proto.Marshal(message); err != nil {
+		return 0, BAD_DATA
+	} else {
+		task.Data = data
+	}
+
+	var response scyna_proto.StartTaskResponse
+	if data, err := proto.Marshal(&task); err != nil {
 		return 0, BAD_DATA
 	} else {
 		if err := ctx.SendRequest(scyna_proto.START_TASK_URL, &scyna_proto.StartTaskRequest{

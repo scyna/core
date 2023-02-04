@@ -23,3 +23,8 @@ message StartTaskResponse {
 message StopTaskRequest {
   uint64 Id = 1;
 }
+
+message Task {
+  uint64 TraceID = 1;
+  bytes  Data = 2;
+}

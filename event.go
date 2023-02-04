@@ -1,6 +1,7 @@
 package scyna
 
 import (
+	"log"
 	"time"
 
 	"github.com/nats-io/nats.go"
@@ -24,6 +25,8 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 	stream := createOrGetEventStream(sender)
 	subject := buildSubject(sender, channel)
 	event := scyna_utils.NewMessageForType[R]()
+
+	log.Print("Register event handler: ", subject)
 
 	stream.executors[subject] = func(m *nats.Msg) {
 		var msg scyna_proto.Event

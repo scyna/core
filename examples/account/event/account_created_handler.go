@@ -15,5 +15,5 @@ func AccountCreatedHandler(ctx *scyna.Context, event *proto.AccountCreated) {
 	ctx.ScheduleTask(service.SEND_EMAIL_CHANNEL, time.Now(), 61, &proto.SendEmailTask{
 		Email:   event.Email,
 		Content: "Just say hello",
-	}, 10)
+	}, 2)
 }

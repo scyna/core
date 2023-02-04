@@ -16,8 +16,8 @@ import (
 type SyncHandler[R proto.Message] func(ctx *Context, data R) *http.Request
 
 func RegisterSync[R proto.Message](channel string, receiver string, handler SyncHandler[R]) {
-	subject := module + ".sync." + channel
-	durable := "sync_" + channel + "_" + receiver
+	subject := module + "." + channel
+	durable := receiver
 	LOG.Info(fmt.Sprintf("Channel %s, durable: %s", subject, durable))
 	event := scyna_utils.NewMessageForType[R]()
 
