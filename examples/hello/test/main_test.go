@@ -10,7 +10,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	scyna_test.Init()
+	scyna_test.Init("scyna_test")
 
 	scyna.RegisterEndpoint(hello.HELLO_URL, hello.Hello)
 	scyna.RegisterEndpoint(hello.ADD_URL, hello.Add)

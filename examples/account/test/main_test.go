@@ -12,14 +12,13 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	scyna_test.Init()
+	scyna_test.Init("scyna_account")
 	scyna.InitSingleWriter("ex_account")
+	domain.AttachRepositoryCreator(repository.NewRepository)
 
 	/*register services*/
 	scyna.RegisterEndpoint(service.CREATE_ACCOUNT_URL, service.CreateAccountHandler)
 	scyna.RegisterEndpoint(service.GET_ACCOUNT_URL, service.GetAccountByEmailHandler)
-
-	domain.AttachRepositoryCreator(repository.NewRepository)
 
 	exitVal := m.Run()
 	cleanup()
