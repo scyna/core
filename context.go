@@ -27,7 +27,7 @@ func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 	if data, err := proto.Marshal(&msg); err != nil {
 		return BAD_DATA
 	} else {
-		if _, err := JetStream.Publish(channel, data); err != nil {
+		if _, err := JetStream.Publish(buildSubject(module, channel), data); err != nil {
 			return STREAM_ERROR
 		}
 	}
