@@ -10,9 +10,10 @@ func main() {
 	scyna.RemoteInit(scyna.RemoteConfig{
 		ManagerUrl: "http://localhost:8081",
 		Name:       "ex_account",
-		Secret:     "12345678",
+		Secret:     "123456",
 	})
 	defer scyna.Release()
+
 	scyna.RegisterEvent("ex_account", service.ACCOUNT_CREATED_CHANNEL, event.AccountCreatedHandler)
 	scyna.Start()
 }

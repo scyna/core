@@ -1,1 +1,1 @@
-INSERT INTO scyna.module(code,secret) VALUES ( 'scyna_test', '123456');
+INSERT INTO scyna.module(code,secret) VALUES ( 'ex_account', '123456');

@@ -16,7 +16,6 @@ func NewModule(code string, secret string) *module {
 		code:   code,
 		secret: secret,
 		batch:  DB.NewBatch(gocql.UnloggedBatch),
-		events: make([]string, 0, 10),
 	}
 	ret.batch.Query("INSERT INTO scyna.module(code, secret) VALUES(?,?)", code, secret)
 	return ret
@@ -37,9 +36,9 @@ func (m *module) Build() {
 		panic("Error in creating module:" + err.Error())
 	}
 
-	createStreamIfMissing(m.code)
+	CreateStreamIfMissing(m.code)
 
 	for _, e := range m.events {
-		createConsumerIfMissing(e, m.code)
+		CreateConsumerIfMissing(e, m.code)
 	}
 }

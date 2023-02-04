@@ -1,12 +1,18 @@
 package scyna_setup
 
 import (
+	"log"
 	"time"
 
 	"github.com/nats-io/nats.go"
 )
 
-func createStreamIfMissing(module string) {
+func CreateStreamIfMissing(module string) {
+	if _, err := JetStream.StreamInfo(module); err == nil {
+		log.Print("Stream:", module, " exists")
+		return
+	}
+
 	if _, err := JetStream.AddStream(&nats.StreamConfig{
 		Name:     module,
 		Subjects: []string{module + ".>"},
@@ -15,21 +21,25 @@ func createStreamIfMissing(module string) {
 	}); err != nil {
 		panic("Error in creating stream")
 	}
+
+	log.Print("Create stream:", module)
 }
 
-func createConsumerIfMissing(sender, receiver string) {
+func CreateConsumerIfMissing(sender, receiver string) {
 	if _, err := JetStream.StreamInfo(sender); err != nil {
 		panic("No stream `" + sender + "`")
 	}
 
-	if _, err := JetStream.ConsumerInfo(sender, receiver); err != nil {
+	if _, err := JetStream.ConsumerInfo(sender, receiver); err == nil {
+		log.Print("Consumer:", sender, " exists")
 		return
 	}
 
 	if _, err := JetStream.AddConsumer(sender, &nats.ConsumerConfig{
-		Durable:       receiver,
-		FilterSubject: sender + ".*",
+		Durable:   receiver,
+		AckPolicy: nats.AckExplicitPolicy,
 	}); err != nil {
-		panic("Error in creating stream")
+		panic("Error in creating consumer:" + err.Error())
 	}
+	log.Print("Create consumer:", sender, " for stream:", receiver)
 }
