@@ -57,3 +57,8 @@ message AuthenticateResponse{
   uint32 port = 2;
   /*something*/
 }
+
+message SendEmailTask{
+  string email = 1;
+  string content = 2;
+}

@@ -34,20 +34,23 @@ func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 	return nil
 }
 
-func (ctx *Context) ScheduleTask(task string, start time.Time, interval int64, data []byte, loop uint64) (Error, uint64) {
+func (ctx *Context) ScheduleTask(channel string, start time.Time, interval int64, message proto.Message, loop uint64) (uint64, Error) {
 	var response scyna_proto.StartTaskResponse
-	if err := ctx.SendRequest(scyna_proto.START_TASK_URL, &scyna_proto.StartTaskRequest{
-		Module:   module,
-		Topic:    fmt.Sprintf("%s.task.%s", module, task),
-		Data:     data,
-		Time:     start.Unix(),
-		Interval: interval,
-		Loop:     loop,
-	}, &response); err != OK {
-		return err, 0
+	if data, err := proto.Marshal(message); err != nil {
+		return 0, BAD_DATA
+	} else {
+		if err := ctx.SendRequest(scyna_proto.START_TASK_URL, &scyna_proto.StartTaskRequest{
+			Module:   module,
+			Topic:    fmt.Sprintf("%s.%s", module, channel),
+			Data:     data,
+			Time:     start.Unix(),
+			Interval: interval,
+			Loop:     loop,
+		}, &response); err != OK {
+			return 0, err
+		}
 	}
-
-	return nil, response.Id
+	return response.Id, nil
 }
 
 func (ctx *Context) SendRequest(url string, request proto.Message, response proto.Message) Error {
