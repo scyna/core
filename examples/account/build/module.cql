@@ -1,1 +1,0 @@
-INSERT INTO scyna.module(code,secret) VALUES ( 'ex_account', '123456');
