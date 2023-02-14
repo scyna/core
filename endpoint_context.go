@@ -57,7 +57,7 @@ func (ctx *Endpoint) Response(r proto.Message) {
 	ctx.tag(uint32(response.Code), r)
 }
 
-func (ctx *Endpoint) AuthDone(r proto.Message, token string, expired uint64) {
+func (ctx *Endpoint) Authenticate(r proto.Message, token string, expired uint64) {
 	response := scyna_proto.Response{Code: 200, Token: token, Expired: expired}
 
 	var err error
