@@ -36,12 +36,12 @@ func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 				log.Print("Bad Request: " + err.Error())
 				ctx.flushError(400, BAD_REQUEST)
 			}
-
 		} else {
 			if err := proto.Unmarshal(ctx.Request.Body, request); err != nil {
 				log.Print("Bad Request: " + err.Error())
 				ctx.flushError(400, BAD_REQUEST)
 			}
+			ctx.request = request
 		}
 
 		e := handler(&ctx, request)

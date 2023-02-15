@@ -14,6 +14,7 @@ type Endpoint struct {
 	Request scyna_proto.Request
 	Reply   string
 	flushed bool
+	request proto.Message
 }
 
 func (ctx *Endpoint) flushError(code int32, e Error) {
@@ -95,10 +96,21 @@ func (ctx *Endpoint) tag(code uint32, response proto.Message) {
 	if ctx.ID == 0 {
 		return
 	}
+
 	res, _ := json.Marshal(response)
 
-	EmitSignal(scyna_proto.ENDPOINT_DONE_CHANNEL, &scyna_proto.EndpointDoneSignal{
-		TraceID:  ctx.ID,
-		Response: string(res),
-	})
+	if ctx.Request.JSON {
+		EmitSignal(scyna_proto.ENDPOINT_DONE_CHANNEL, &scyna_proto.EndpointDoneSignal{
+			TraceID:  ctx.ID,
+			Response: string(res),
+			Request:  string(string(ctx.Request.Body)),
+		})
+	} else {
+		req, _ := json.Marshal(ctx.request)
+		EmitSignal(scyna_proto.ENDPOINT_DONE_CHANNEL, &scyna_proto.EndpointDoneSignal{
+			TraceID:  ctx.ID,
+			Response: string(res),
+			Request:  string(req),
+		})
+	}
 }
