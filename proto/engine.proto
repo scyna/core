@@ -141,10 +141,8 @@ message WriteCallSignal {
 
 /*Authentication*/
 message CreateAuthRequest {
-  string          Organization = 1;
-  string          Secret = 2;
-  string          UserID = 3;
-  repeated string Apps = 4;
+  string          UID = 1;
+  repeated string Apps = 2;
 }
 
 message CreateAuthResponse {

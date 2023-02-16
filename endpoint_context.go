@@ -58,18 +58,28 @@ func (ctx *Endpoint) Response(r proto.Message) {
 	ctx.tag(uint32(response.Code), r)
 }
 
-func (ctx *Endpoint) Authenticate(r proto.Message, token string, expired uint64) {
-	response := scyna_proto.Response{Code: 200, Token: token, Expired: expired}
-
-	var err error
-	if ctx.Request.JSON {
-		response.Body, err = json.Marshal(r)
-	} else {
-		response.Body, err = proto.Marshal(r)
-	}
-	if err != nil {
+func (ctx *Endpoint) Authenticate(uid string, apps []string, r proto.Message) {
+	var response scyna_proto.Response
+	var auth scyna_proto.CreateAuthResponse
+	if err := sendRequest(scyna_proto.AUTH_CREATE_URL,
+		&scyna_proto.CreateAuthRequest{UID: uid, Apps: apps},
+		&auth); err != nil {
 		response.Code = int32(500)
-		response.Body = []byte(err.Error())
+		response.Body = []byte("Can not create user session")
+	} else {
+		response.Token = auth.Token
+		response.Expired = auth.Expired
+
+		var err error
+		if ctx.Request.JSON {
+			response.Body, err = json.Marshal(r)
+		} else {
+			response.Body, err = proto.Marshal(r)
+		}
+		if err != nil {
+			response.Code = int32(500)
+			response.Body = []byte(err.Error())
+		}
 	}
 
 	ctx.flush(&response)
