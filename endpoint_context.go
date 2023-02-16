@@ -59,11 +59,11 @@ func (ctx *Endpoint) Response(r proto.Message) {
 }
 
 func (ctx *Endpoint) Authenticate(uid string, apps []string, r proto.Message) {
-	var response scyna_proto.Response
+	response := scyna_proto.Response{Code: 200}
 	var auth scyna_proto.CreateAuthResponse
 	if err := sendRequest(scyna_proto.AUTH_CREATE_URL,
 		&scyna_proto.CreateAuthRequest{UID: uid, Apps: apps},
-		&auth); err != nil {
+		&auth); err != OK {
 		response.Code = int32(500)
 		response.Body = []byte("Can not create user session")
 	} else {
