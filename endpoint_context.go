@@ -40,6 +40,11 @@ func (ctx *Endpoint) flushError(code int32, e Error) {
 	ctx.tag(uint32(response.Code), e_)
 }
 
+func (ctx *Endpoint) OK(r proto.Message) Error {
+	ctx.Response(r)
+	return OK
+}
+
 func (ctx *Endpoint) Response(r proto.Message) {
 	response := scyna_proto.Response{Code: 200}
 
