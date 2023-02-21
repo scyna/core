@@ -10,7 +10,11 @@ import (
 )
 
 type Context struct {
-	ID uint64
+	ID      uint64
+	Request scyna_proto.Request
+	Reply   string
+	flushed bool
+	request proto.Message
 }
 
 func NewContext(id uint64) *Context {

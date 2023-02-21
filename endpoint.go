@@ -11,16 +11,16 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type EndpointHandler[R proto.Message] func(ctx *Endpoint, request R) Error
-type EndpointLiteHandler func(ctx *Endpoint) Error
+type EndpointHandler[R proto.Message] func(ctx *Context, request R) Error
+type EndpointLiteHandler func(ctx *Context) Error
 
 func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 	log.Println("Register Endpoint: ", url)
 
 	_, err := Connection.QueueSubscribe(scyna_utils.SubscriberURL(url), "API", func(m *nats.Msg) {
 		request := scyna_utils.NewMessageForType[R]()
-		ctx := Endpoint{
-			Context: Context{ID: 0},
+		ctx := Context{
+			ID:      0,
 			flushed: false,
 			Reply:   m.Reply,
 		}
@@ -63,8 +63,8 @@ func RegisterEndpointLite(url string, handler EndpointLiteHandler) {
 	log.Println("Register EndpointLite:", url)
 
 	_, err := Connection.QueueSubscribe(scyna_utils.SubscriberURL(url), "API", func(m *nats.Msg) {
-		ctx := Endpoint{
-			Context: Context{ID: 0},
+		ctx := Context{
+			ID:      0,
 			Reply:   m.Reply,
 			flushed: false,
 		}
