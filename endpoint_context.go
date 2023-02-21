@@ -103,7 +103,7 @@ func (ctx *Endpoint) flush(response *scyna_proto.Response) {
 	}
 	err = Connection.Publish(ctx.Reply, bytes)
 	if err != nil {
-		LOG.Error(fmt.Sprintf("Nats publish to [%s] error: %s", ctx.Reply, err.Error()))
+		Session.Error(fmt.Sprintf("Nats publish to [%s] error: %s", ctx.Reply, err.Error()))
 	}
 }
 

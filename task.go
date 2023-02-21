@@ -23,7 +23,7 @@ func RegisterTask[R proto.Message](sender string, channel string, handler TaskHa
 	stream.executors[subject] = func(m *nats.Msg) {
 		var msg scyna_proto.Task
 		if err := proto.Unmarshal(m.Data, &msg); err != nil {
-			LOG.Error("Can not parse task data:" + err.Error())
+			Session.Error("Can not parse task data:" + err.Error())
 			return
 		}
 
@@ -41,7 +41,7 @@ func RegisterTask[R proto.Message](sender string, channel string, handler TaskHa
 		if err := proto.Unmarshal(msg.Data, task); err == nil {
 			handler(context, task)
 		} else {
-			LOG.Error("Error in parsing data:" + err.Error())
+			Session.Error("Error in parsing data:" + err.Error())
 		}
 		trace.Record()
 	}

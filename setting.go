@@ -71,7 +71,7 @@ func (s *settings) ReadBool(key string) (bool, bool) {
 func (s *settings) ReadObject(key string, value interface{}) bool {
 	if ok, val := s.ReadString(key); ok {
 		if err := json.Unmarshal([]byte(val), value); err != nil {
-			LOG.Error("ReadObjectSetting: " + err.Error())
+			Session.Error("ReadObjectSetting: " + err.Error())
 			return false
 		}
 		return true

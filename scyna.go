@@ -23,7 +23,6 @@ var Settings settings
 
 var httpClient *http.Client
 var module string
-var LOG *Logger
 
 func Module() string {
 	return module

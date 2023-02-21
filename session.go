@@ -1,6 +1,7 @@
 package scyna
 
 import (
+	"log"
 	sync "sync"
 	"time"
 
@@ -20,8 +21,6 @@ func NewSession(id uint64) *session {
 		sequence: 1,
 		quit:     make(chan struct{}),
 	}
-
-	LOG = &Logger{session: true, ID: id}
 
 	ticker := time.NewTicker(10 * time.Minute)
 	go func() {
@@ -51,4 +50,38 @@ func (s *session) NextSequence() uint64 {
 
 func (s *session) release() {
 	close(s.quit)
+}
+
+func (l *session) writeLog(level LogLevel, message string) {
+	message = formatLog(message)
+	log.Print(message)
+	if l.id > 0 {
+		AddLog(LogData{
+			ID:       l.id,
+			Sequence: Session.NextSequence(),
+			Level:    level,
+			Message:  message,
+			Session:  true,
+		})
+	}
+}
+
+func (l *session) Info(messsage string) {
+	l.writeLog(LOG_INFO, messsage)
+}
+
+func (l *session) Error(messsage string) {
+	l.writeLog(LOG_ERROR, messsage)
+}
+
+func (l *session) Warning(messsage string) {
+	l.writeLog(LOG_WARNING, messsage)
+}
+
+func (l *session) Debug(messsage string) {
+	l.writeLog(LOG_DEBUG, messsage)
+}
+
+func (l *session) Fatal(messsage string) {
+	l.writeLog(LOG_FATAL, messsage)
 }

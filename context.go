@@ -2,6 +2,7 @@ package scyna
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	scyna_proto "github.com/scyna/core/proto/generated"
@@ -9,11 +10,11 @@ import (
 )
 
 type Context struct {
-	Logger
+	ID uint64
 }
 
 func NewContext(id uint64) *Context {
-	return &Context{Logger{ID: id, session: false}}
+	return &Context{ID: id}
 }
 
 func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
@@ -82,4 +83,38 @@ func (ctx *Context) SaveTag(key string, value string) {
 		Key:     key,
 		Value:   value,
 	})
+}
+
+func (l *Context) writeLog(level LogLevel, message string) {
+	message = formatLog(message)
+	log.Print(message)
+	if l.ID > 0 {
+		AddLog(LogData{
+			ID:       l.ID,
+			Sequence: Session.NextSequence(),
+			Level:    level,
+			Message:  message,
+			Session:  false,
+		})
+	}
+}
+
+func (l *Context) Info(messsage string) {
+	l.writeLog(LOG_INFO, messsage)
+}
+
+func (l *Context) Error(messsage string) {
+	l.writeLog(LOG_ERROR, messsage)
+}
+
+func (l *Context) Warning(messsage string) {
+	l.writeLog(LOG_WARNING, messsage)
+}
+
+func (l *Context) Debug(messsage string) {
+	l.writeLog(LOG_DEBUG, messsage)
+}
+
+func (l *Context) Fatal(messsage string) {
+	l.writeLog(LOG_FATAL, messsage)
 }

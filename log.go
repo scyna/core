@@ -22,6 +22,14 @@ const (
 	LOG_FATAL   LogLevel = 5
 )
 
+type Logger interface {
+	Info(messsage string)
+	Error(messsage string)
+	Warning(messsage string)
+	Debug(messsage string)
+	Fatal(messsage string)
+}
+
 type LogData struct {
 	Level    LogLevel
 	Message  string
@@ -30,9 +38,8 @@ type LogData struct {
 	Session  bool
 }
 
-type Logger struct {
-	session bool
-	ID      uint64
+type TraceLogger struct {
+	TraceID uint64
 }
 
 var logQueue chan LogData
@@ -93,40 +100,6 @@ func releaseLog() {
 	if logQueue != nil {
 		close(logQueue)
 	}
-}
-
-func (l *Logger) writeLog(level LogLevel, message string) {
-	message = formatLog(message)
-	log.Print(message) //FIXME: for debug only
-	if l.ID > 0 {
-		AddLog(LogData{
-			ID:       l.ID,
-			Sequence: Session.NextSequence(),
-			Level:    level,
-			Message:  message,
-			Session:  l.session,
-		})
-	}
-}
-
-func (l *Logger) Info(messsage string) {
-	l.writeLog(LOG_INFO, messsage)
-}
-
-func (l *Logger) Error(messsage string) {
-	l.writeLog(LOG_ERROR, messsage)
-}
-
-func (l *Logger) Warning(messsage string) {
-	l.writeLog(LOG_WARNING, messsage)
-}
-
-func (l *Logger) Debug(messsage string) {
-	l.writeLog(LOG_DEBUG, messsage)
-}
-
-func (l *Logger) Fatal(messsage string) {
-	l.writeLog(LOG_FATAL, messsage)
 }
 
 func formatLog(message string) string {

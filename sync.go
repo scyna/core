@@ -18,7 +18,7 @@ type SyncHandler[R proto.Message] func(ctx *Context, data R) *http.Request
 func RegisterSync[R proto.Message](channel string, receiver string, handler SyncHandler[R]) {
 	subject := module + "." + channel
 	durable := receiver
-	LOG.Info(fmt.Sprintf("Channel %s, durable: %s", subject, durable))
+	Session.Info(fmt.Sprintf("Channel %s, durable: %s", subject, durable))
 	event := scyna_utils.NewMessageForType[R]()
 
 	sub, err := JetStream.PullSubscribe(subject, durable, nats.BindStream(module))
@@ -90,17 +90,17 @@ func sendSyncRequest(request *http.Request) bool {
 
 	response, err := HttpClient().Do(request)
 	if err != nil {
-		LOG.Warning("Sync:" + err.Error())
+		Session.Warning("Sync:" + err.Error())
 		return false
 	} else {
 		defer response.Body.Close()
 		bodyBytes, err := io.ReadAll(response.Body)
 		if err != nil {
-			LOG.Info("Sync error: " + err.Error())
+			Session.Info("Sync error: " + err.Error())
 			return true
 		}
 		bodyString := string(bodyBytes)
-		LOG.Info(fmt.Sprintf("Sync: %s - %d - %s", request.URL, response.StatusCode, bodyString))
+		Session.Info(fmt.Sprintf("Sync: %s - %d - %s", request.URL, response.StatusCode, bodyString))
 
 		if response.StatusCode >= 500 && response.StatusCode <= 599 {
 			return false

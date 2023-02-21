@@ -71,6 +71,6 @@ func (trace *Trace) Save() {
 		trace.RequestBody,
 	)
 	if err := DB.ExecuteBatch(qBatch); err != nil {
-		LOG.Error("Can not save trace - " + err.Error())
+		Session.Error("Can not save trace - " + err.Error())
 	}
 }

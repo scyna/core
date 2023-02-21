@@ -37,7 +37,7 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 	stream.executors[subject] = func(m *nats.Msg) {
 		var msg scyna_proto.Event
 		if err := proto.Unmarshal(m.Data, &msg); err != nil {
-			LOG.Error("Can not parse event data:" + err.Error())
+			Session.Error("Can not parse event data:" + err.Error())
 			return
 		}
 
@@ -51,7 +51,7 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 		}
 
 		context := &Event{
-			Context: Context{Logger{ID: trace.ID, session: false}},
+			Context: Context{ID: trace.ID},
 			Entity:  msg.Entity,
 			Version: msg.Version,
 		}
@@ -59,7 +59,7 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 		if err := proto.Unmarshal(msg.Body, event); err == nil {
 			handler(context, event)
 		} else {
-			LOG.Error("Error in parsing data:" + err.Error())
+			Session.Error("Error in parsing data:" + err.Error())
 		}
 		trace.Record()
 	}
