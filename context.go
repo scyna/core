@@ -18,6 +18,7 @@ type Context interface {
 	OK(r proto.Message) Error
 	Response(r proto.Message)
 	Authenticate(uid string, apps []string, r proto.Message)
+	TraceID() uint64
 }
 
 type Endpoint struct {
@@ -30,6 +31,10 @@ type Endpoint struct {
 
 func NewContext(id uint64) *Endpoint {
 	return &Endpoint{ID: id}
+}
+
+func (ctx *Endpoint) TraceID() uint64 {
+	return ctx.ID
 }
 
 func (ctx *Endpoint) PublishEvent(channel string, data proto.Message) Error {

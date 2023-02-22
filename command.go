@@ -30,7 +30,7 @@ func InitSingleWriter(keyspace string) {
 	_query = fmt.Sprintf("INSERT INTO %s.event_store(event_id, entity_id, channel, data) VALUES(?,?,?,?) ", keyspace)
 }
 
-func NewCommand(context *Endpoint) *Command {
+func NewCommand(context Context) *Command {
 	return &Command{
 		batch:   DB.NewBatch(gocql.UnloggedBatch),
 		entity:  0,
@@ -43,14 +43,14 @@ type Command struct {
 	channel string
 	event   proto.Message
 	entity  uint64
-	context *Endpoint
+	context Context
 }
 
 func (command *Command) Batch() *gocql.Batch {
 	return command.batch
 }
 
-func (command *Command) SetAggregateID(id uint64) *Command {
+func (command *Command) SetEntity(id uint64) *Command {
 	command.entity = id
 	return command
 }
@@ -94,7 +94,7 @@ func (command *Command) Commit() Error {
 	if len(command.channel) > 0 {
 
 		eventMessage := &scyna_proto.Event{
-			TraceID: command.context.ID,
+			TraceID: command.context.TraceID(),
 			Entity:  command.entity,
 			Version: id,
 		}
