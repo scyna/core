@@ -9,7 +9,18 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type Context struct {
+type Context interface {
+	Logger
+	PublishEvent(channel string, data proto.Message) Error
+	ScheduleTask(channel string, start time.Time, interval int64, message proto.Message, loop uint64) (uint64, Error)
+	SendRequest(url string, request proto.Message, response proto.Message) Error
+	SaveTag(key string, value string)
+	OK(r proto.Message) Error
+	Response(r proto.Message)
+	Authenticate(uid string, apps []string, r proto.Message)
+}
+
+type Endpoint struct {
 	ID      uint64
 	Request scyna_proto.Request
 	Reply   string
@@ -17,11 +28,11 @@ type Context struct {
 	request proto.Message
 }
 
-func NewContext(id uint64) *Context {
-	return &Context{ID: id}
+func NewContext(id uint64) *Endpoint {
+	return &Endpoint{ID: id}
 }
 
-func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
+func (ctx *Endpoint) PublishEvent(channel string, data proto.Message) Error {
 	event := scyna_proto.Event{TraceID: ctx.ID}
 	if data, err := proto.Marshal(data); err != nil {
 		return BAD_DATA
@@ -39,7 +50,7 @@ func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 	return nil
 }
 
-func (ctx *Context) ScheduleTask(channel string, start time.Time, interval int64, message proto.Message, loop uint64) (uint64, Error) {
+func (ctx *Endpoint) ScheduleTask(channel string, start time.Time, interval int64, message proto.Message, loop uint64) (uint64, Error) {
 
 	task := scyna_proto.Task{TraceID: ctx.ID}
 	if data, err := proto.Marshal(message); err != nil {
@@ -66,7 +77,7 @@ func (ctx *Context) ScheduleTask(channel string, start time.Time, interval int64
 	return response.Id, nil
 }
 
-func (ctx *Context) SendRequest(url string, request proto.Message, response proto.Message) Error {
+func (ctx *Endpoint) SendRequest(url string, request proto.Message, response proto.Message) Error {
 	trace := Trace{
 		ID:       ID.Next(),
 		ParentID: ctx.ID,
@@ -78,7 +89,7 @@ func (ctx *Context) SendRequest(url string, request proto.Message, response prot
 	return sendRequest_(&trace, url, request, response)
 }
 
-func (ctx *Context) SaveTag(key string, value string) {
+func (ctx *Endpoint) SaveTag(key string, value string) {
 	if ctx.ID == 0 {
 		return
 	}
@@ -89,7 +100,7 @@ func (ctx *Context) SaveTag(key string, value string) {
 	})
 }
 
-func (l *Context) writeLog(level LogLevel, message string) {
+func (l *Endpoint) writeLog(level LogLevel, message string) {
 	message = formatLog(message)
 	log.Print(message)
 	if l.ID > 0 {
@@ -103,22 +114,22 @@ func (l *Context) writeLog(level LogLevel, message string) {
 	}
 }
 
-func (l *Context) Info(messsage string) {
+func (l *Endpoint) Info(messsage string) {
 	l.writeLog(LOG_INFO, messsage)
 }
 
-func (l *Context) Error(messsage string) {
+func (l *Endpoint) Error(messsage string) {
 	l.writeLog(LOG_ERROR, messsage)
 }
 
-func (l *Context) Warning(messsage string) {
+func (l *Endpoint) Warning(messsage string) {
 	l.writeLog(LOG_WARNING, messsage)
 }
 
-func (l *Context) Debug(messsage string) {
+func (l *Endpoint) Debug(messsage string) {
 	l.writeLog(LOG_DEBUG, messsage)
 }
 
-func (l *Context) Fatal(messsage string) {
+func (l *Endpoint) Fatal(messsage string) {
 	l.writeLog(LOG_FATAL, messsage)
 }

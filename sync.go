@@ -13,7 +13,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type SyncHandler[R proto.Message] func(ctx *Context, data R) *http.Request
+type SyncHandler[R proto.Message] func(ctx *Endpoint, data R) *http.Request
 
 func RegisterSync[R proto.Message](channel string, receiver string, handler SyncHandler[R]) {
 	subject := module + "." + channel

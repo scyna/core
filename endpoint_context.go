@@ -9,7 +9,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (ctx *Context) flushError(code int32, e Error) {
+func (ctx *Endpoint) flushError(code int32, e Error) {
 	response := scyna_proto.Response{Code: code}
 
 	e_ := &scyna_proto.Error{
@@ -32,12 +32,12 @@ func (ctx *Context) flushError(code int32, e Error) {
 	ctx.tag(uint32(response.Code), e_)
 }
 
-func (ctx *Context) OK(r proto.Message) Error {
+func (ctx *Endpoint) OK(r proto.Message) Error {
 	ctx.Response(r)
 	return OK
 }
 
-func (ctx *Context) Response(r proto.Message) {
+func (ctx *Endpoint) Response(r proto.Message) {
 	response := scyna_proto.Response{Code: 200}
 
 	var err error
@@ -55,7 +55,7 @@ func (ctx *Context) Response(r proto.Message) {
 	ctx.tag(uint32(response.Code), r)
 }
 
-func (ctx *Context) Authenticate(uid string, apps []string, r proto.Message) {
+func (ctx *Endpoint) Authenticate(uid string, apps []string, r proto.Message) {
 	response := scyna_proto.Response{Code: 200}
 	var auth scyna_proto.CreateAuthResponse
 	if err := sendRequest(scyna_proto.AUTH_CREATE_URL,
@@ -83,7 +83,7 @@ func (ctx *Context) Authenticate(uid string, apps []string, r proto.Message) {
 	ctx.tag(200, r)
 }
 
-func (ctx *Context) flush(response *scyna_proto.Response) {
+func (ctx *Endpoint) flush(response *scyna_proto.Response) {
 	defer func() {
 		ctx.flushed = true
 	}()
@@ -99,7 +99,7 @@ func (ctx *Context) flush(response *scyna_proto.Response) {
 	}
 }
 
-func (ctx *Context) tag(code uint32, response proto.Message) {
+func (ctx *Endpoint) tag(code uint32, response proto.Message) {
 	if ctx.ID == 0 {
 		return
 	}

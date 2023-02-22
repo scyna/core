@@ -30,7 +30,7 @@ func InitSingleWriter(keyspace string) {
 	_query = fmt.Sprintf("INSERT INTO %s.event_store(event_id, entity_id, channel, data) VALUES(?,?,?,?) ", keyspace)
 }
 
-func NewCommand(context *Context) *Command {
+func NewCommand(context *Endpoint) *Command {
 	return &Command{
 		batch:   DB.NewBatch(gocql.UnloggedBatch),
 		entity:  0,
@@ -43,7 +43,7 @@ type Command struct {
 	channel string
 	event   proto.Message
 	entity  uint64
-	context *Context
+	context *Endpoint
 }
 
 func (command *Command) Batch() *gocql.Batch {
