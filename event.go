@@ -11,7 +11,7 @@ import (
 )
 
 type Event struct {
-	Endpoint
+	context
 	Entity  uint64
 	Version uint64
 }
@@ -51,9 +51,9 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 		}
 
 		context := &Event{
-			Endpoint: Endpoint{ID: trace.ID},
-			Entity:   msg.Entity,
-			Version:  msg.Version,
+			context: context{ID: trace.ID},
+			Entity:  msg.Entity,
+			Version: msg.Version,
 		}
 
 		if err := proto.Unmarshal(msg.Body, event); err == nil {

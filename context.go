@@ -21,23 +21,19 @@ type Context interface {
 	TraceID() uint64
 }
 
-type Endpoint struct {
-	ID      uint64
-	Request scyna_proto.Request
-	Reply   string
-	flushed bool
-	request proto.Message
+type context struct {
+	ID uint64
 }
 
 func NewContext(id uint64) *Endpoint {
-	return &Endpoint{ID: id}
+	return &Endpoint{context: context{ID: id}}
 }
 
-func (ctx *Endpoint) TraceID() uint64 {
+func (ctx *context) TraceID() uint64 {
 	return ctx.ID
 }
 
-func (ctx *Endpoint) PublishEvent(channel string, data proto.Message) Error {
+func (ctx *context) PublishEvent(channel string, data proto.Message) Error {
 	event := scyna_proto.Event{TraceID: ctx.ID}
 	if data, err := proto.Marshal(data); err != nil {
 		return BAD_DATA
@@ -55,7 +51,7 @@ func (ctx *Endpoint) PublishEvent(channel string, data proto.Message) Error {
 	return nil
 }
 
-func (ctx *Endpoint) ScheduleTask(channel string, start time.Time, interval int64, message proto.Message, loop uint64) (uint64, Error) {
+func (ctx *context) ScheduleTask(channel string, start time.Time, interval int64, message proto.Message, loop uint64) (uint64, Error) {
 
 	task := scyna_proto.Task{TraceID: ctx.ID}
 	if data, err := proto.Marshal(message); err != nil {
@@ -82,7 +78,7 @@ func (ctx *Endpoint) ScheduleTask(channel string, start time.Time, interval int6
 	return response.Id, nil
 }
 
-func (ctx *Endpoint) SendRequest(url string, request proto.Message, response proto.Message) Error {
+func (ctx *context) SendRequest(url string, request proto.Message, response proto.Message) Error {
 	trace := Trace{
 		ID:       ID.Next(),
 		ParentID: ctx.ID,
@@ -105,7 +101,7 @@ func (ctx *Endpoint) SaveTag(key string, value string) {
 	})
 }
 
-func (l *Endpoint) writeLog(level LogLevel, message string) {
+func (l *context) writeLog(level LogLevel, message string) {
 	message = formatLog(message)
 	log.Print(message)
 	if l.ID > 0 {
@@ -119,22 +115,22 @@ func (l *Endpoint) writeLog(level LogLevel, message string) {
 	}
 }
 
-func (l *Endpoint) Info(messsage string) {
+func (l *context) Info(messsage string) {
 	l.writeLog(LOG_INFO, messsage)
 }
 
-func (l *Endpoint) Error(messsage string) {
+func (l *context) Error(messsage string) {
 	l.writeLog(LOG_ERROR, messsage)
 }
 
-func (l *Endpoint) Warning(messsage string) {
+func (l *context) Warning(messsage string) {
 	l.writeLog(LOG_WARNING, messsage)
 }
 
-func (l *Endpoint) Debug(messsage string) {
+func (l *context) Debug(messsage string) {
 	l.writeLog(LOG_DEBUG, messsage)
 }
 
-func (l *Endpoint) Fatal(messsage string) {
+func (l *context) Fatal(messsage string) {
 	l.writeLog(LOG_FATAL, messsage)
 }

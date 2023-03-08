@@ -20,7 +20,7 @@ func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 	_, err := Connection.QueueSubscribe(scyna_utils.SubscriberURL(url), "API", func(m *nats.Msg) {
 		request := scyna_utils.NewMessageForType[R]()
 		ctx := Endpoint{
-			ID:      0,
+			context: context{ID: 0},
 			flushed: false,
 			Reply:   m.Reply,
 		}
@@ -64,7 +64,7 @@ func RegisterEndpointLite(url string, handler EndpointLiteHandler) {
 
 	_, err := Connection.QueueSubscribe(scyna_utils.SubscriberURL(url), "API", func(m *nats.Msg) {
 		ctx := Endpoint{
-			ID:      0,
+			context: context{ID: 0},
 			Reply:   m.Reply,
 			flushed: false,
 		}

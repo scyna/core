@@ -9,6 +9,14 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+type Endpoint struct {
+	context
+	Request scyna_proto.Request
+	Reply   string
+	flushed bool
+	request proto.Message
+}
+
 func (ctx *Endpoint) flushError(code int32, e Error) {
 	response := scyna_proto.Response{Code: code}
 
