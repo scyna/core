@@ -37,7 +37,7 @@ func RegisterTask[R proto.Message](sender string, channel string, handler TaskHa
 			ParentID:  msg.TraceID,
 		}
 
-		context := NewContext(trace.ID)
+		context := NewEndpoint(trace.ID)
 
 		if err := proto.Unmarshal(msg.Data, task); err == nil {
 			handler(context, task)

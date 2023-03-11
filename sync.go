@@ -51,7 +51,7 @@ func RegisterSync[R proto.Message](channel string, receiver string, handler Sync
 				ParentID:  msg.TraceID,
 			}
 
-			context := NewContext(trace.ID)
+			context := NewEndpoint(trace.ID)
 
 			if err := proto.Unmarshal(msg.Body, event); err != nil {
 				log.Print("Error in parsing data:", err)

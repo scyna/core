@@ -24,8 +24,12 @@ type context struct {
 	ID uint64
 }
 
-func NewContext(id uint64) *Endpoint {
+func NewEndpoint(id uint64) *Endpoint {
 	return &Endpoint{context: context{ID: id}}
+}
+
+func NewEvent(id uint64) *Event {
+	return &Event{context: context{ID: id}}
 }
 
 func (ctx *context) TraceID() uint64 {
