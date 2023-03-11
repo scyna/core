@@ -60,11 +60,11 @@ func UseDirectLog(count int) {
 						log.Println("saveSessionLog: " + err.Error())
 					}
 				} else {
-					if _, err := qb.Insert("scyna.log").
+					if err := qb.Insert("scyna.log").
 						Columns("trace_id", "time", "seq", "level", "message").
 						Query(DB).
 						Bind(l.ID, time_, l.Sequence, l.Level, l.Message).
-						ExecCASRelease(); err != nil {
+						ExecRelease(); err != nil {
 						log.Println("saveServiceLog: " + err.Error())
 					}
 				}
