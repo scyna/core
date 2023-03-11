@@ -12,7 +12,6 @@ import (
 
 type eventTest[R proto.Message] struct {
 	channel         string
-	input           R
 	event           proto.Message
 	exactEventMatch bool
 	handler         scyna.EventHandler[R]
@@ -20,11 +19,6 @@ type eventTest[R proto.Message] struct {
 
 func EventTest[R proto.Message](handler scyna.EventHandler[R]) *eventTest[R] {
 	return &eventTest[R]{handler: handler}
-}
-
-func (t *eventTest[R]) Input(event R) *eventTest[R] {
-	t.input = event
-	return t
 }
 
 func (t *eventTest[R]) PublishEventTo(channel string) *eventTest[R] {
@@ -44,14 +38,14 @@ func (t *eventTest[R]) MatchEvent(event proto.Message) *eventTest[R] {
 	return t
 }
 
-func (st *eventTest[R]) Run(t *testing.T) {
+func (st *eventTest[R]) Run(t *testing.T, input R) {
 	streamName := scyna.Module()
 	if len(st.channel) > 0 {
 		createStream(streamName)
 	}
 
 	ctx := scyna.NewEvent(scyna.ID.Next())
-	st.handler(ctx, st.input)
+	st.handler(ctx, input)
 
 	if st.event != nil {
 		subs, err := scyna.JetStream.SubscribeSync(streamName + "." + st.channel)
