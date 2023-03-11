@@ -1,7 +1,6 @@
 package scyna
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -12,14 +11,13 @@ import (
 type Context interface {
 	Logger
 	PublishEvent(channel string, data proto.Message) Error
-	ScheduleTask(channel string, start time.Time, interval int64, message proto.Message, loop uint64) (uint64, Error)
 	SendRequest(url string, request proto.Message, response proto.Message) Error
 	SaveTag(key string, value string)
 	OK(r proto.Message) Error
 	Response(r proto.Message)
 	Authenticate(uid string, apps []string, r proto.Message)
 	TraceID() uint64
-	Task() *TaskBuilder
+	Task(channel string) *TaskBuilder
 }
 
 type context struct {
@@ -34,8 +32,8 @@ func (ctx *context) TraceID() uint64 {
 	return ctx.ID
 }
 
-func (ctx *context) Task() *TaskBuilder {
-	return &TaskBuilder{ctx: ctx}
+func (ctx *context) Task(channel string) *TaskBuilder {
+	return &TaskBuilder{ctx: ctx, channel: channel}
 }
 
 func (ctx *context) PublishEvent(channel string, data proto.Message) Error {
@@ -54,33 +52,6 @@ func (ctx *context) PublishEvent(channel string, data proto.Message) Error {
 		}
 	}
 	return nil
-}
-
-func (ctx *context) ScheduleTask(channel string, start time.Time, interval int64, message proto.Message, loop uint64) (uint64, Error) {
-
-	task := scyna_proto.Task{TraceID: ctx.ID}
-	if data, err := proto.Marshal(message); err != nil {
-		return 0, BAD_DATA
-	} else {
-		task.Data = data
-	}
-
-	var response scyna_proto.StartTaskResponse
-	if data, err := proto.Marshal(&task); err != nil {
-		return 0, BAD_DATA
-	} else {
-		if err := ctx.SendRequest(scyna_proto.START_TASK_URL, &scyna_proto.StartTaskRequest{
-			Module:   module,
-			Topic:    fmt.Sprintf("%s.%s", module, channel),
-			Data:     data,
-			Time:     start.Unix(),
-			Interval: interval,
-			Loop:     loop,
-		}, &response); err != OK {
-			return 0, err
-		}
-	}
-	return response.Id, nil
 }
 
 func (ctx *context) SendRequest(url string, request proto.Message, response proto.Message) Error {

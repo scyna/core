@@ -55,11 +55,6 @@ type TaskBuilder struct {
 	time    time.Time
 }
 
-func (t *TaskBuilder) Channel(channel string) *TaskBuilder {
-	t.channel = channel
-	return t
-}
-
 func (t *TaskBuilder) Data(data proto.Message) *TaskBuilder {
 	t.message = data
 	return t
@@ -70,29 +65,29 @@ func (t *TaskBuilder) Time(time time.Time) *TaskBuilder {
 	return t
 }
 
-func (t *TaskBuilder) ScheduleOne() {
-	t.schedule(1, 1000)
+func (t *TaskBuilder) ScheduleOne() Error {
+	return t.schedule(1, 1000)
 }
 
-func (t *TaskBuilder) ScheduleSome(count uint64, interval int64) {
-	t.schedule(count, interval)
+func (t *TaskBuilder) ScheduleSome(count uint64, interval int64) Error {
+	return t.schedule(count, interval)
 }
 
-func (t *TaskBuilder) ScheduleRepeat(interval int64) {
-	t.schedule(0, interval)
+func (t *TaskBuilder) ScheduleRepeat(interval int64) Error {
+	return t.schedule(0, interval)
 }
 
-func (t *TaskBuilder) schedule(count uint64, interval int64) (uint64, Error) {
+func (t *TaskBuilder) schedule(count uint64, interval int64) Error {
 	task := scyna_proto.Task{TraceID: t.ctx.ID}
 	if data, err := proto.Marshal(t.message); err != nil {
-		return 0, BAD_DATA
+		return BAD_DATA
 	} else {
 		task.Data = data
 	}
 
 	var response scyna_proto.StartTaskResponse
 	if data, err := proto.Marshal(&task); err != nil {
-		return 0, BAD_DATA
+		return BAD_DATA
 	} else {
 		if err := t.ctx.SendRequest(scyna_proto.START_TASK_URL, &scyna_proto.StartTaskRequest{
 			Module:   module,
@@ -102,9 +97,8 @@ func (t *TaskBuilder) schedule(count uint64, interval int64) (uint64, Error) {
 			Interval: interval,
 			Loop:     count,
 		}, &response); err != OK {
-			return 0, err
+			return err
 		}
 	}
-	return response.Id, nil
-
+	return nil
 }
