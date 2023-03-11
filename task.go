@@ -1,6 +1,7 @@
 package scyna
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -45,4 +46,65 @@ func RegisterTask[R proto.Message](sender string, channel string, handler TaskHa
 		}
 		trace.Record()
 	}
+}
+
+type TaskBuilder struct {
+	ctx     *context
+	channel string
+	message proto.Message
+	time    time.Time
+}
+
+func (t *TaskBuilder) Channel(channel string) *TaskBuilder {
+	t.channel = channel
+	return t
+}
+
+func (t *TaskBuilder) Data(data proto.Message) *TaskBuilder {
+	t.message = data
+	return t
+}
+
+func (t *TaskBuilder) Time(time time.Time) *TaskBuilder {
+	t.time = time
+	return t
+}
+
+func (t *TaskBuilder) ScheduleOne() {
+	t.schedule(1, 1000)
+}
+
+func (t *TaskBuilder) ScheduleSome(count uint64, interval int64) {
+	t.schedule(count, interval)
+}
+
+func (t *TaskBuilder) ScheduleRepeat(interval int64) {
+	t.schedule(0, interval)
+}
+
+func (t *TaskBuilder) schedule(count uint64, interval int64) (uint64, Error) {
+	task := scyna_proto.Task{TraceID: t.ctx.ID}
+	if data, err := proto.Marshal(t.message); err != nil {
+		return 0, BAD_DATA
+	} else {
+		task.Data = data
+	}
+
+	var response scyna_proto.StartTaskResponse
+	if data, err := proto.Marshal(&task); err != nil {
+		return 0, BAD_DATA
+	} else {
+		if err := t.ctx.SendRequest(scyna_proto.START_TASK_URL, &scyna_proto.StartTaskRequest{
+			Module:   module,
+			Topic:    fmt.Sprintf("%s.%s", module, t.channel),
+			Data:     data,
+			Time:     t.time.Unix(),
+			Interval: interval,
+			Loop:     count,
+		}, &response); err != OK {
+			return 0, err
+		}
+	}
+	return response.Id, nil
+
 }

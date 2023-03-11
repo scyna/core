@@ -19,6 +19,7 @@ type Context interface {
 	Response(r proto.Message)
 	Authenticate(uid string, apps []string, r proto.Message)
 	TraceID() uint64
+	Task() *TaskBuilder
 }
 
 type context struct {
@@ -31,6 +32,10 @@ func NewContext(id uint64) *Endpoint {
 
 func (ctx *context) TraceID() uint64 {
 	return ctx.ID
+}
+
+func (ctx *context) Task() *TaskBuilder {
+	return &TaskBuilder{ctx: ctx}
 }
 
 func (ctx *context) PublishEvent(channel string, data proto.Message) Error {
