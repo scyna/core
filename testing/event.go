@@ -21,18 +21,18 @@ func EventTest[R proto.Message](handler scyna.EventHandler[R]) *eventTest[R] {
 	return &eventTest[R]{handler: handler}
 }
 
-func (t *eventTest[R]) PublishEventTo(channel string) *eventTest[R] {
+func (t *eventTest[R]) OutputChannel(channel string) *eventTest[R] {
 	t.channel = channel
 	return t
 }
 
-func (t *eventTest[R]) ExpectEvent(event R) *eventTest[R] {
+func (t *eventTest[R]) ExpectOutputEvent(event R) *eventTest[R] {
 	t.event = event
 	t.exactEventMatch = true
 	return t
 }
 
-func (t *eventTest[R]) MatchEvent(event proto.Message) *eventTest[R] {
+func (t *eventTest[R]) MatchOutputEvent(event proto.Message) *eventTest[R] {
 	t.event = event
 	t.exactEventMatch = false
 	return t

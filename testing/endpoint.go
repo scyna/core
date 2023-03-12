@@ -31,7 +31,7 @@ func (t *endpointTest) WithRequest(request proto.Message) *endpointTest {
 	return t
 }
 
-func (t *endpointTest) PublishEventTo(channel string) *endpointTest {
+func (t *endpointTest) OutputChannel(channel string) *endpointTest {
 	t.channel = channel
 	return t
 }
@@ -65,13 +65,13 @@ func (t *endpointTest) MatchResponse(response proto.Message) *endpointTest {
 	return t
 }
 
-func (t *endpointTest) ExpectEvent(event proto.Message) *endpointTest {
+func (t *endpointTest) ExpectOutputEvent(event proto.Message) *endpointTest {
 	t.event = event
 	t.exactEventMatch = true
 	return t
 }
 
-func (t *endpointTest) MatchEvent(event proto.Message) *endpointTest {
+func (t *endpointTest) MatchOutputEvent(event proto.Message) *endpointTest {
 	t.event = event
 	t.exactEventMatch = false
 	return t

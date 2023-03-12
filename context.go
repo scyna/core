@@ -12,7 +12,7 @@ type Context interface {
 	Logger
 	PublishEvent(channel string, data proto.Message) Error
 	SendRequest(url string, request proto.Message, response proto.Message) Error
-	SaveTag(key string, value string)
+	Tag(key string, value string)
 	OK(r proto.Message) Error
 	Response(r proto.Message)
 	Authenticate(uid string, apps []string, r proto.Message)
@@ -70,7 +70,7 @@ func (ctx *context) SendRequest(url string, request proto.Message, response prot
 	return sendRequest_(&trace, url, request, response)
 }
 
-func (ctx *Endpoint) SaveTag(key string, value string) {
+func (ctx *context) Tag(key string, value string) {
 	if ctx.ID == 0 {
 		return
 	}
