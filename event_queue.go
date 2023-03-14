@@ -6,7 +6,7 @@ import (
 
 type DomainEventHandler[E any] func(event E)
 
-var domainEventQueue chan any = make(chan any)
+var eventQueue chan any = make(chan any)
 
 type eventEntry struct {
 	executors []func(event any)
@@ -31,7 +31,7 @@ func RegisterDomainEvent[E any](handler DomainEventHandler[E]) {
 
 func startDomainEventLoop() {
 	go func() {
-		for event := range domainEventQueue {
+		for event := range eventQueue {
 			reg, ok := eventRegistrations[reflect.TypeOf(event)]
 			if ok {
 				for _, ex := range reg.executors {

@@ -41,7 +41,7 @@ func (ctx *context) Task(channel string) *TaskBuilder {
 }
 
 func (ctx *context) RaiseDomainEvent(event any) {
-	domainEventQueue <- event
+	eventQueue <- event
 }
 
 func (ctx *context) PublishEvent(channel string, data proto.Message) Error {
