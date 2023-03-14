@@ -8,43 +8,23 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type Context interface {
-	Logger
-	PublishEvent(channel string, data proto.Message) Error
-	SendRequest(url string, request proto.Message, response proto.Message) Error
-	Tag(key string, value string)
-	OK(r proto.Message) Error
-	Response(r proto.Message)
-	Authenticate(uid string, apps []string, r proto.Message)
-	TraceID() uint64
-	Task(channel string) *TaskBuilder
-}
-
-type context struct {
+type Context struct {
 	ID uint64
 }
 
-func NewEndpoint(id uint64) *Endpoint {
-	return &Endpoint{context: context{ID: id}}
-}
-
-func NewEvent(id uint64) *Event {
-	return &Event{context: context{ID: id}}
-}
-
-func (ctx *context) TraceID() uint64 {
+func (ctx *Context) TraceID() uint64 {
 	return ctx.ID
 }
 
-func (ctx *context) Task(channel string) *TaskBuilder {
+func (ctx *Context) Task(channel string) *TaskBuilder {
 	return &TaskBuilder{ctx: ctx, channel: channel}
 }
 
-func (ctx *context) RaiseDomainEvent(event any) {
-	eventQueue <- event
+func (ctx *Context) RaiseEvent(channel string, event proto.Message) {
+	eventQueue <- eventItem{channel: channel, data: event, parentTrace: ctx.ID}
 }
 
-func (ctx *context) PublishEvent(channel string, data proto.Message) Error {
+func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 	event := scyna_proto.Event{TraceID: ctx.ID}
 	if data, err := proto.Marshal(data); err != nil {
 		return BAD_DATA
@@ -62,7 +42,7 @@ func (ctx *context) PublishEvent(channel string, data proto.Message) Error {
 	return nil
 }
 
-func (ctx *context) SendRequest(url string, request proto.Message, response proto.Message) Error {
+func (ctx *Context) SendRequest(url string, request proto.Message, response proto.Message) Error {
 	trace := Trace{
 		ID:       ID.Next(),
 		ParentID: ctx.ID,
@@ -74,7 +54,7 @@ func (ctx *context) SendRequest(url string, request proto.Message, response prot
 	return sendRequest_(&trace, url, request, response)
 }
 
-func (ctx *context) Tag(key string, value string) {
+func (ctx *Context) Tag(key string, value string) {
 	if ctx.ID == 0 {
 		return
 	}
@@ -85,7 +65,7 @@ func (ctx *context) Tag(key string, value string) {
 	})
 }
 
-func (l *context) writeLog(level LogLevel, message string) {
+func (l *Context) writeLog(level LogLevel, message string) {
 	message = formatLog(message)
 	log.Print(message)
 	if l.ID > 0 {
@@ -99,22 +79,22 @@ func (l *context) writeLog(level LogLevel, message string) {
 	}
 }
 
-func (l *context) Info(messsage string) {
+func (l *Context) Info(messsage string) {
 	l.writeLog(LOG_INFO, messsage)
 }
 
-func (l *context) Error(messsage string) {
+func (l *Context) Error(messsage string) {
 	l.writeLog(LOG_ERROR, messsage)
 }
 
-func (l *context) Warning(messsage string) {
+func (l *Context) Warning(messsage string) {
 	l.writeLog(LOG_WARNING, messsage)
 }
 
-func (l *context) Debug(messsage string) {
+func (l *Context) Debug(messsage string) {
 	l.writeLog(LOG_DEBUG, messsage)
 }
 
-func (l *context) Fatal(messsage string) {
+func (l *Context) Fatal(messsage string) {
 	l.writeLog(LOG_FATAL, messsage)
 }

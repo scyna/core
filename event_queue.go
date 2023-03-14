@@ -1,41 +1,65 @@
 package scyna
 
 import (
+	"log"
 	"reflect"
+	"time"
+
+	"google.golang.org/protobuf/proto"
 )
 
-type DomainEventHandler[E any] func(event E)
+type DomainEventHandler[E any] func(ctx *Event, event E)
 
-var eventQueue chan any = make(chan any)
-
-type eventEntry struct {
-	executors []func(event any)
+type eventItem struct {
+	channel     string
+	parentTrace uint64
+	data        proto.Message
 }
 
-var eventRegistrations map[reflect.Type]*eventEntry = make(map[reflect.Type]*eventEntry)
+type eventRegistrationEntry struct {
+	executors []func(event eventItem)
+}
 
-func RegisterDomainEvent[E any](handler DomainEventHandler[E]) {
-	var tmp E
-	myType := reflect.TypeOf(tmp)
+var eventQueue chan eventItem = make(chan eventItem)
+var eventRegistrations map[string]*eventRegistrationEntry = make(map[string]*eventRegistrationEntry)
 
-	reg, ok := eventRegistrations[myType]
+func RegisterDomainEvent[E proto.Message](channel string, handler DomainEventHandler[E]) {
+
+	reg, ok := eventRegistrations[channel]
 	if !ok {
-		eventRegistrations[myType] = &eventEntry{}
+		eventRegistrations[channel] = &eventRegistrationEntry{}
 	}
 
-	reg.executors = append(reg.executors, func(event any) {
-		val, _ := reflect.ValueOf(event).Interface().(E)
-		handler(val)
+	reg.executors = append(reg.executors, func(event eventItem) {
+		val, ok := reflect.ValueOf(event.data).Interface().(E)
+		if !ok {
+			log.Print("Event type not match to EventHandler")
+			return
+		}
+
+		trace := Trace{
+			ID:        ID.Next(),
+			Type:      TRACE_DOMAIN_EVENT,
+			Path:      channel,
+			SessionID: Session.ID(),
+			Time:      time.Now(),
+			ParentID:  event.parentTrace,
+		}
+
+		ctx := NewEvent(trace.ID)
+		handler(ctx, val)
+
+		trace.Record()
 	})
 }
 
 func startDomainEventLoop() {
 	go func() {
 		for event := range eventQueue {
-			reg, ok := eventRegistrations[reflect.TypeOf(event)]
+			reg, ok := eventRegistrations[event.channel]
 			if ok {
-				for _, ex := range reg.executors {
-					ex(event)
+				for _, executor := range reg.executors {
+					executor(event)
 				}
 			}
 		}

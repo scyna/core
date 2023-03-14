@@ -11,7 +11,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type TaskHandler[R proto.Message] func(ctx Context, data R)
+type TaskHandler[R proto.Message] func(ctx *Context, data R)
 
 func RegisterTask[R proto.Message](sender string, channel string, handler TaskHandler[R]) {
 	assureStreamReady(sender, module)
@@ -37,7 +37,7 @@ func RegisterTask[R proto.Message](sender string, channel string, handler TaskHa
 			ParentID:  msg.TraceID,
 		}
 
-		context := NewEndpoint(trace.ID)
+		context := &Context{ID: trace.ID}
 
 		if err := proto.Unmarshal(msg.Data, task); err == nil {
 			handler(context, task)
@@ -49,7 +49,7 @@ func RegisterTask[R proto.Message](sender string, channel string, handler TaskHa
 }
 
 type TaskBuilder struct {
-	ctx     *context
+	ctx     *Context
 	channel string
 	message proto.Message
 	time    time.Time

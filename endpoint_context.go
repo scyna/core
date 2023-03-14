@@ -10,11 +10,15 @@ import (
 )
 
 type Endpoint struct {
-	context
+	Context
 	Request scyna_proto.Request
 	Reply   string
 	flushed bool
 	request proto.Message
+}
+
+func NewEndpoint(id uint64) *Endpoint {
+	return &Endpoint{Context: Context{ID: id}}
 }
 
 func (ctx *Endpoint) flushError(code int32, e Error) {

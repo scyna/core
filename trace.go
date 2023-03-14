@@ -11,10 +11,11 @@ import (
 type TraceType uint32
 
 const (
-	TRACE_ENDPOINT TraceType = 1
-	TRACE_EVENT    TraceType = 2
-	TRACE_SYNC     TraceType = 4
-	TRACE_TASK     TraceType = 5
+	TRACE_ENDPOINT     TraceType = 1
+	TRACE_EVENT        TraceType = 2
+	TRACE_SYNC         TraceType = 4
+	TRACE_TASK         TraceType = 5
+	TRACE_DOMAIN_EVENT TraceType = 6
 )
 
 type Trace struct {

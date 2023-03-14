@@ -11,9 +11,13 @@ import (
 )
 
 type Event struct {
-	context
+	Context
 	Entity  uint64
 	Version uint64
+}
+
+func NewEvent(id uint64) *Event {
+	return &Event{Context: Context{ID: id}}
 }
 
 type EventHandler[R proto.Message] func(ctx *Event, data R)
@@ -51,7 +55,7 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 		}
 
 		context := &Event{
-			context: context{ID: trace.ID},
+			Context: Context{ID: trace.ID},
 			Entity:  msg.Entity,
 			Version: msg.Version,
 		}
