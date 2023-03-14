@@ -40,6 +40,10 @@ func (ctx *context) Task(channel string) *TaskBuilder {
 	return &TaskBuilder{ctx: ctx, channel: channel}
 }
 
+func (ctx *context) RaiseDomainEvent(event any) {
+	domainEventQueue <- event
+}
+
 func (ctx *context) PublishEvent(channel string, data proto.Message) Error {
 	event := scyna_proto.Event{TraceID: ctx.ID}
 	if data, err := proto.Marshal(data); err != nil {

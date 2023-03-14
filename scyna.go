@@ -36,6 +36,7 @@ func Release() {
 }
 
 func Start() {
+	startDomainEventLoop()
 	startEventStreams()
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
