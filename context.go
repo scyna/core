@@ -24,6 +24,13 @@ func (ctx *Context) RaiseEvent(channel string, event proto.Message) {
 	eventQueue <- eventItem{channel: channel, data: event, parentTrace: ctx.ID}
 }
 
+func (ctx *Context) RaiseEventWithDelay(duration time.Duration, channel string, event proto.Message) {
+	go func() {
+		eventQueue <- eventItem{channel: channel, data: event, parentTrace: ctx.ID}
+	}()
+
+}
+
 func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 	event := scyna_proto.Event{TraceID: ctx.ID}
 	if data, err := proto.Marshal(data); err != nil {
