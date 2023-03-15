@@ -68,6 +68,7 @@ func (t *endpointTest) ExpectEvent(channel string, event proto.Message) *endpoin
 }
 
 func (t *endpointTest) MatchEvent(channel string, event proto.Message) *endpointTest {
+	t.channel = channel
 	t.event = event
 	t.exactEventMatch = false
 	return t
