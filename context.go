@@ -20,15 +20,14 @@ func (ctx *Context) Task(channel string) *TaskBuilder {
 	return &TaskBuilder{ctx: ctx, channel: channel}
 }
 
-func (ctx *Context) RaiseEvent(channel string, event proto.Message) {
-	eventQueue <- eventItem{channel: channel, data: event, parentTrace: ctx.ID}
+func (ctx *Context) RaiseEvent(event proto.Message) {
+	eventQueue <- eventItem{data: event, parentTrace: ctx.ID}
 }
 
-func (ctx *Context) RaiseEventWithDelay(duration time.Duration, channel string, event proto.Message) {
+func (ctx *Context) RaiseEventWithDelay(duration time.Duration, event proto.Message) {
 	go func() {
-		eventQueue <- eventItem{channel: channel, data: event, parentTrace: ctx.ID}
+		eventQueue <- eventItem{data: event, parentTrace: ctx.ID}
 	}()
-
 }
 
 func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {

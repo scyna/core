@@ -11,7 +11,6 @@ import (
 type DomainEventHandler[E any] func(ctx *Event, event E)
 
 type eventItem struct {
-	channel     string
 	parentTrace uint64
 	data        proto.Message
 }
@@ -21,13 +20,15 @@ type eventRegistrationEntry struct {
 }
 
 var eventQueue chan eventItem = make(chan eventItem)
-var eventRegistrations map[string]*eventRegistrationEntry = make(map[string]*eventRegistrationEntry)
+var eventRegistrations map[reflect.Type]*eventRegistrationEntry = make(map[reflect.Type]*eventRegistrationEntry)
 
-func RegisterDomainEvent[E proto.Message](channel string, handler DomainEventHandler[E]) {
+func RegisterDomainEvent[E proto.Message](handler DomainEventHandler[E]) {
+	var tmp E
+	t := reflect.TypeOf(tmp)
 
-	reg, ok := eventRegistrations[channel]
+	reg, ok := eventRegistrations[t]
 	if !ok {
-		eventRegistrations[channel] = &eventRegistrationEntry{}
+		eventRegistrations[t] = &eventRegistrationEntry{}
 	}
 
 	reg.executors = append(reg.executors, func(event eventItem) {
@@ -40,7 +41,6 @@ func RegisterDomainEvent[E proto.Message](channel string, handler DomainEventHan
 		trace := Trace{
 			ID:        ID.Next(),
 			Type:      TRACE_DOMAIN_EVENT,
-			Path:      channel,
 			SessionID: Session.ID(),
 			Time:      time.Now(),
 			ParentID:  event.parentTrace,
@@ -56,11 +56,13 @@ func RegisterDomainEvent[E proto.Message](channel string, handler DomainEventHan
 func startDomainEventLoop() {
 	go func() {
 		for event := range eventQueue {
-			reg, ok := eventRegistrations[event.channel]
+			reg, ok := eventRegistrations[reflect.TypeOf(event.data)]
 			if ok {
 				for _, executor := range reg.executors {
 					executor(event)
 				}
+			} else {
+				log.Print("No handler attached to event")
 			}
 		}
 	}()
