@@ -21,13 +21,7 @@ func (ctx *Context) Task(channel string) *TaskBuilder {
 }
 
 func (ctx *Context) RaiseEvent(event proto.Message) {
-	eventQueue <- eventItem{data: event, parentTrace: ctx.ID}
-}
-
-func (ctx *Context) RaiseEventWithDelay(duration time.Duration, event proto.Message) {
-	go func() {
-		eventQueue <- eventItem{data: event, parentTrace: ctx.ID}
-	}()
+	eventQueue <- eventItem{Data: event, parentTrace: ctx.ID}
 }
 
 func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {

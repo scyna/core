@@ -12,7 +12,7 @@ type DomainEventHandler[E any] func(ctx *Event, event E)
 
 type eventItem struct {
 	parentTrace uint64
-	data        proto.Message
+	Data        proto.Message
 }
 
 type eventRegistrationEntry struct {
@@ -32,7 +32,7 @@ func RegisterDomainEvent[E proto.Message](handler DomainEventHandler[E]) {
 	}
 
 	reg.executors = append(reg.executors, func(event eventItem) {
-		val, ok := reflect.ValueOf(event.data).Interface().(E)
+		val, ok := reflect.ValueOf(event.Data).Interface().(E)
 		if !ok {
 			log.Print("Event type not match to EventHandler")
 			return
@@ -53,10 +53,15 @@ func RegisterDomainEvent[E proto.Message](handler DomainEventHandler[E]) {
 	})
 }
 
+func EventQueue() chan eventItem {
+	return eventQueue
+}
+
 func startDomainEventLoop() {
+	log.Print("Starting Domain Event Loop")
 	go func() {
 		for event := range eventQueue {
-			reg, ok := eventRegistrations[reflect.TypeOf(event.data)]
+			reg, ok := eventRegistrations[reflect.TypeOf(event.Data)]
 			if ok {
 				for _, executor := range reg.executors {
 					executor(event)

@@ -31,11 +31,6 @@ func (t *endpointTest) WithRequest(request proto.Message) *endpointTest {
 	return t
 }
 
-func (t *endpointTest) OutputChannel(channel string) *endpointTest {
-	t.channel = channel
-	return t
-}
-
 func (t *endpointTest) ExpectError(err scyna.Error) *endpointTest {
 	e_ := scyna_proto.Error{
 		Code:    err.Code(),
@@ -65,20 +60,32 @@ func (t *endpointTest) MatchResponse(response proto.Message) *endpointTest {
 	return t
 }
 
-func (t *endpointTest) ExpectOutputEvent(event proto.Message) *endpointTest {
+func (t *endpointTest) ExpectEvent(channel string, event proto.Message) *endpointTest {
+	t.channel = channel
 	t.event = event
 	t.exactEventMatch = true
 	return t
 }
 
-func (t *endpointTest) MatchOutputEvent(event proto.Message) *endpointTest {
+func (t *endpointTest) MatchEvent(channel string, event proto.Message) *endpointTest {
+	t.event = event
+	t.exactEventMatch = false
+	return t
+}
+
+func (t *endpointTest) ExpectDomainEvent(event proto.Message) *endpointTest {
+	t.event = event
+	t.exactEventMatch = true
+	return t
+}
+
+func (t *endpointTest) MatchDomainEvent(event proto.Message) *endpointTest {
 	t.event = event
 	t.exactEventMatch = false
 	return t
 }
 
 func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
-
 	streamName := scyna.Module()
 	if len(st.channel) > 0 {
 		createStream(streamName)
@@ -115,38 +122,53 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 	}
 
 	if st.event != nil {
-		subs, err := scyna.JetStream.SubscribeSync(streamName + "." + st.channel)
-		if err != nil {
-			t.Fatal("Error in subscribe")
-		}
-
-		msg, err := subs.NextMsg(time.Second)
-		if err != nil {
-			t.Fatal("Timeout")
-		}
-
-		var event scyna_proto.Event
-		if err := proto.Unmarshal(msg.Data, &event); err != nil {
-			log.Print("Register unmarshal error response data:", err.Error())
-			t.Fatal("Can not parse received event")
-		}
-
-		receivedEvent := proto.Clone(st.event)
-		if proto.Unmarshal(event.Body, receivedEvent) != nil {
-			t.Fatal("Can not parse received event")
-		}
-
-		if st.exactEventMatch {
-			if !proto.Equal(st.event, receivedEvent) {
-				t.Fatal("Event not match")
+		if len(st.channel) > 0 {
+			subs, err := scyna.JetStream.SubscribeSync(streamName + "." + st.channel)
+			if err != nil {
+				t.Fatal("Error in subscribe")
 			}
+
+			msg, err := subs.NextMsg(time.Second)
+			if err != nil {
+				t.Fatal("Timeout")
+			}
+
+			var event scyna_proto.Event
+			if err := proto.Unmarshal(msg.Data, &event); err != nil {
+				log.Print("Register unmarshal error response data:", err.Error())
+				t.Fatal("Can not parse received event")
+			}
+
+			receivedEvent := proto.Clone(st.event)
+			if proto.Unmarshal(event.Body, receivedEvent) != nil {
+				t.Fatal("Can not parse received event")
+			}
+
+			if st.exactEventMatch {
+				if !proto.Equal(st.event, receivedEvent) {
+					t.Fatal("Event not match")
+				}
+			} else {
+				if !matchMessage(st.event, receivedEvent) {
+					t.Fatal("Event not match")
+				}
+			}
+			subs.Unsubscribe()
 		} else {
-			if !matchMessage(st.event, receivedEvent) {
-				t.Fatal("Event not match")
+			receivedEvent := nextEvent()
+			if receivedEvent == nil {
+				t.Fatal("No event received")
+			}
+			if st.exactEventMatch {
+				if !proto.Equal(st.event, receivedEvent) {
+					t.Fatal("Event not match")
+				}
+			} else {
+				if !matchMessage(st.event, receivedEvent) {
+					t.Fatal("Event not match")
+				}
 			}
 		}
-
-		subs.Unsubscribe()
 	}
 
 	if len(st.channel) > 0 {
