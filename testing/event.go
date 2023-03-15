@@ -21,18 +21,27 @@ func EventTest[R proto.Message](handler scyna.EventHandler[R]) *eventTest[R] {
 	return &eventTest[R]{handler: handler}
 }
 
-func (t *eventTest[R]) OutputChannel(channel string) *eventTest[R] {
+func (t *eventTest[R]) ExpectEvent(channel string, event R) *eventTest[R] {
 	t.channel = channel
-	return t
-}
-
-func (t *eventTest[R]) ExpectOutputEvent(event R) *eventTest[R] {
 	t.event = event
 	t.exactEventMatch = true
 	return t
 }
 
-func (t *eventTest[R]) MatchOutputEvent(event proto.Message) *eventTest[R] {
+func (t *eventTest[R]) MatchEvent(channel string, event proto.Message) *eventTest[R] {
+	t.channel = channel
+	t.event = event
+	t.exactEventMatch = false
+	return t
+}
+
+func (t *eventTest[R]) ExpectDomainEvent(event R) *eventTest[R] {
+	t.event = event
+	t.exactEventMatch = true
+	return t
+}
+
+func (t *eventTest[R]) MatchDomainEvent(event proto.Message) *eventTest[R] {
 	t.event = event
 	t.exactEventMatch = false
 	return t
@@ -48,38 +57,56 @@ func (st *eventTest[R]) Run(t *testing.T, input R) {
 	st.handler(ctx, input)
 
 	if st.event != nil {
-		subs, err := scyna.JetStream.SubscribeSync(streamName + "." + st.channel)
-		if err != nil {
-			t.Fatal("Error in subscribe")
-		}
-
-		msg, err := subs.NextMsg(time.Second)
-		if err != nil {
-			t.Fatal("Timeout")
-		}
-
-		var event scyna_proto.Event
-		if err := proto.Unmarshal(msg.Data, &event); err != nil {
-			log.Print("Register unmarshal error response data:", err.Error())
-			t.Fatal("Can not parse received event")
-		}
-
-		receivedEvent := proto.Clone(st.event)
-		if proto.Unmarshal(event.Body, receivedEvent) != nil {
-			t.Fatal("Can not parse received event")
-		}
-
-		if st.exactEventMatch {
-			if !proto.Equal(st.event, receivedEvent) {
-				t.Fatal("Event not match")
+		if len(st.channel) > 0 {
+			subs, err := scyna.JetStream.SubscribeSync(streamName + "." + st.channel)
+			if err != nil {
+				t.Fatal("Error in subscribe")
 			}
+
+			msg, err := subs.NextMsg(time.Second)
+			if err != nil {
+				t.Fatal("Timeout")
+			}
+
+			var event scyna_proto.Event
+			if err := proto.Unmarshal(msg.Data, &event); err != nil {
+				log.Print("Register unmarshal error response data:", err.Error())
+				t.Fatal("Can not parse received event")
+			}
+
+			receivedEvent := proto.Clone(st.event)
+			if proto.Unmarshal(event.Body, receivedEvent) != nil {
+				t.Fatal("Can not parse received event")
+			}
+
+			if st.exactEventMatch {
+				if !proto.Equal(st.event, receivedEvent) {
+					t.Fatal("Event not match")
+				}
+			} else {
+				if !matchMessage(st.event, receivedEvent) {
+					t.Fatal("Event not match")
+				}
+			}
+
+			subs.Unsubscribe()
 		} else {
-			if !matchMessage(st.event, receivedEvent) {
-				t.Fatal("Event not match")
+			time.Sleep(time.Millisecond * 100)
+			receivedEvent := nextEvent()
+			if receivedEvent == nil {
+				t.Fatal("No event received")
+			}
+
+			if st.exactEventMatch {
+				if !proto.Equal(st.event, receivedEvent) {
+					t.Fatal("Event not match")
+				}
+			} else {
+				if !matchMessage(st.event, receivedEvent) {
+					t.Fatal("Event not match")
+				}
 			}
 		}
-
-		subs.Unsubscribe()
 	}
 
 	if len(st.channel) > 0 {

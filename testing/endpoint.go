@@ -155,6 +155,7 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 			}
 			subs.Unsubscribe()
 		} else {
+			time.Sleep(time.Millisecond * 100)
 			receivedEvent := nextEvent()
 			if receivedEvent == nil {
 				t.Fatal("No event received")
