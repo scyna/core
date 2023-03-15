@@ -35,7 +35,7 @@ func (t *eventTest[R]) MatchEvent(channel string, event proto.Message) *eventTes
 	return t
 }
 
-func (t *eventTest[R]) ExpectDomainEvent(event R) *eventTest[R] {
+func (t *eventTest[R]) ExpectDomainEvent(event proto.Message) *eventTest[R] {
 	t.event = event
 	t.exactEventMatch = true
 	return t
