@@ -28,7 +28,10 @@ func RegisterDomainEvent[E proto.Message](handler DomainEventHandler[E]) {
 
 	reg, ok := eventRegistrations[t]
 	if !ok {
-		eventRegistrations[t] = &eventRegistrationEntry{}
+		reg = &eventRegistrationEntry{
+			executors: make([]func(event eventItem), 0),
+		}
+		eventRegistrations[t] = reg
 	}
 
 	reg.executors = append(reg.executors, func(event eventItem) {
