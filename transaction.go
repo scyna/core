@@ -1,5 +1,7 @@
 package scyna
 
+/*FIXME: need a new solution for event sourcing*/
+
 import (
 	"fmt"
 
