@@ -16,8 +16,8 @@ func (ctx *Context) TraceID() uint64 {
 	return ctx.ID
 }
 
-func (ctx *Context) Task(channel string) *TaskBuilder {
-	return &TaskBuilder{ctx: ctx, channel: channel}
+func (ctx *Context) Task(channel string) *taskBuilder {
+	return &taskBuilder{ctx: ctx, channel: channel}
 }
 
 func (ctx *Context) RaiseEvent(event proto.Message) {

@@ -91,11 +91,11 @@ func DirectInit(name string, c *scyna_proto.Configuration) {
 	hosts := strings.Split(c.DBHost, ",")
 	initScylla(hosts, c.DBUsername, c.DBPassword, c.DBLocation)
 
-	Settings.Init()
+	Settings.init()
 
 	/*registration*/
-	RegisterSignal(scyna_proto.SETTING_UPDATE_CHANNEL+module, UpdateSettingHandler)
-	RegisterSignal(scyna_proto.SETTING_REMOVE_CHANNEL+module, RemoveSettingHandler)
+	RegisterSignal(scyna_proto.SETTING_UPDATE_CHANNEL+module, updateSettingHandler)
+	RegisterSignal(scyna_proto.SETTING_REMOVE_CHANNEL+module, removeSettingHandler)
 }
 
 func initScylla(host []string, username string, password string, location string) {

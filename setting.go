@@ -79,13 +79,13 @@ func (s *settings) ReadObject(key string, value interface{}) bool {
 	return false
 }
 
-func UpdateSettingHandler(data *scyna_proto.SettingUpdatedSignal) {
+func updateSettingHandler(data *scyna_proto.SettingUpdatedSignal) {
 	if data.Module == module {
 		Settings.updated(data.Key, data.Value)
 	}
 }
 
-func RemoveSettingHandler(data *scyna_proto.SettingRemovedSignal) {
+func removeSettingHandler(data *scyna_proto.SettingRemovedSignal) {
 	if data.Module == module {
 		Settings.removed(data.Key)
 	}
@@ -103,6 +103,6 @@ func (s *settings) removed(key string) {
 	delete(s.data, key)
 }
 
-func (s *settings) Init() {
+func (s *settings) init() {
 	s.data = make(map[string]string)
 }

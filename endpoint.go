@@ -12,7 +12,6 @@ import (
 )
 
 type EndpointHandler[R proto.Message] func(ctx *Endpoint, request R) Error
-type EndpointLiteHandler func(ctx *Endpoint) Error
 
 func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 	log.Println("Register Endpoint: ", url)
@@ -56,38 +55,6 @@ func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 
 	if err != nil {
 		panic("Can not register endpoint:" + url)
-	}
-}
-
-func RegisterEndpointLite(url string, handler EndpointLiteHandler) {
-	log.Println("Register EndpointLite:", url)
-
-	_, err := Connection.QueueSubscribe(scyna_utils.SubscriberURL(url), "API", func(m *nats.Msg) {
-		ctx := Endpoint{
-			Context: Context{ID: 0},
-			Reply:   m.Reply,
-			flushed: false,
-		}
-
-		if err := proto.Unmarshal(m.Data, &ctx.Request); err != nil {
-			log.Print("Register unmarshal error response data:", err.Error())
-			return
-		}
-
-		ctx.ID = ctx.Request.TraceID
-
-		e := handler(&ctx)
-		if !ctx.flushed {
-			if e == OK {
-				ctx.flushError(200, OK)
-			} else {
-				ctx.flushError(400, e)
-			}
-		}
-	})
-
-	if err != nil {
-		panic("Can not register command:" + url)
 	}
 }
 

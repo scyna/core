@@ -28,3 +28,6 @@ message Event {
   bytes  Body = 3;
   uint64 TraceID = 5;
 }
+
+message EmptyRequest {
+}

@@ -96,34 +96,6 @@ func (ctx *Endpoint) AuthOK(token string, expired uint64, r proto.Message) Error
 	return OK
 }
 
-// func (ctx *Endpoint) Authenticate(uid string, apps []string, r proto.Message) {
-// 	response := scyna_proto.Response{Code: 200}
-// 	var auth scyna_proto.CreateAuthResponse
-// 	if err := sendRequest(scyna_proto.AUTH_CREATE_URL,
-// 		&scyna_proto.CreateAuthRequest{UID: uid, Apps: apps},
-// 		&auth); err != OK {
-// 		response.Code = int32(500)
-// 		response.Body = []byte("Can not create user session")
-// 	} else {
-// 		response.Token = auth.Token
-// 		response.Expired = auth.Expired
-
-// 		var err error
-// 		if ctx.Request.JSON {
-// 			response.Body, err = json.Marshal(r)
-// 		} else {
-// 			response.Body, err = proto.Marshal(r)
-// 		}
-// 		if err != nil {
-// 			response.Code = int32(500)
-// 			response.Body = []byte(err.Error())
-// 		}
-// 	}
-
-// 	ctx.flush(&response)
-// 	ctx.tag(200, r)
-// }
-
 func (ctx *Endpoint) flush(response *scyna_proto.Response) {
 	defer func() {
 		ctx.flushed = true

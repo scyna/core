@@ -48,36 +48,36 @@ func RegisterTask[R proto.Message](sender string, channel string, handler TaskHa
 	}
 }
 
-type TaskBuilder struct {
+type taskBuilder struct {
 	ctx     *Context
 	channel string
 	message proto.Message
 	time    time.Time
 }
 
-func (t *TaskBuilder) Data(data proto.Message) *TaskBuilder {
+func (t *taskBuilder) Data(data proto.Message) *taskBuilder {
 	t.message = data
 	return t
 }
 
-func (t *TaskBuilder) Time(time time.Time) *TaskBuilder {
+func (t *taskBuilder) Time(time time.Time) *taskBuilder {
 	t.time = time
 	return t
 }
 
-func (t *TaskBuilder) ScheduleOne() Error {
+func (t *taskBuilder) ScheduleOne() Error {
 	return t.schedule(1, 1000)
 }
 
-func (t *TaskBuilder) ScheduleSome(count uint64, interval int64) Error {
+func (t *taskBuilder) ScheduleSome(count uint64, interval int64) Error {
 	return t.schedule(count, interval)
 }
 
-func (t *TaskBuilder) ScheduleRepeat(interval int64) Error {
+func (t *taskBuilder) ScheduleRepeat(interval int64) Error {
 	return t.schedule(0, interval)
 }
 
-func (t *TaskBuilder) schedule(count uint64, interval int64) Error {
+func (t *taskBuilder) schedule(count uint64, interval int64) Error {
 	task := scyna_proto.Task{TraceID: t.ctx.ID}
 	if data, err := proto.Marshal(t.message); err != nil {
 		return BAD_DATA
