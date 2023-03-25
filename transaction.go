@@ -30,15 +30,15 @@ func InitSingleWriter(keyspace string) {
 	_query = fmt.Sprintf("INSERT INTO %s.event_store(event_id, entity_id, channel, data) VALUES(?,?,?,?) ", keyspace)
 }
 
-func NewCommand(context Context) *Command {
-	return &Command{
+func NewTransaction(context Context) *transaction {
+	return &transaction{
 		batch:   DB.NewBatch(gocql.UnloggedBatch),
 		entity:  0,
 		context: context,
 	}
 }
 
-type Command struct {
+type transaction struct {
 	batch   *gocql.Batch
 	channel string
 	event   proto.Message
@@ -46,60 +46,60 @@ type Command struct {
 	context Context
 }
 
-func (command *Command) Batch() *gocql.Batch {
-	return command.batch
+func (trans *transaction) Batch() *gocql.Batch {
+	return trans.batch
 }
 
-func (command *Command) SetEntity(id uint64) *Command {
-	command.entity = id
-	return command
+func (trans *transaction) SetEntity(id uint64) *transaction {
+	trans.entity = id
+	return trans
 }
 
-func (command *Command) SetEvent(event proto.Message) *Command {
-	command.event = event
-	return command
+func (trans *transaction) SetEvent(event proto.Message) *transaction {
+	trans.event = event
+	return trans
 }
 
-func (command *Command) SetChannel(channel string) *Command {
-	command.channel = channel
-	return command
+func (trans *transaction) SetChannel(channel string) *transaction {
+	trans.channel = channel
+	return trans
 }
 
-func (command *Command) Commit() Error {
+func (trans *transaction) Commit() Error {
 	if _version == 0 {
 		panic("SingleWriter is not initialized")
 	}
 
-	if (command.entity == 0) || (command.event == nil) {
+	if (trans.entity == 0) || (trans.event == nil) {
 		return BAD_DATA
 	}
 
 	var id = _version + 1
 
-	bytes, err := proto.Marshal(command.event)
+	bytes, err := proto.Marshal(trans.event)
 	if err != nil {
-		command.context.Error("Can not marshal event data")
+		trans.context.Error("Can not marshal event data")
 		return BAD_DATA
 	}
 
-	command.batch.Query(_query, id, command.entity, command.channel, bytes)
+	trans.batch.Query(_query, id, trans.entity, trans.channel, bytes)
 
-	if err := DB.ExecuteBatch(command.batch); err != nil {
-		command.context.Error(err.Error())
+	if err := DB.ExecuteBatch(trans.batch); err != nil {
+		trans.context.Error(err.Error())
 		return SERVER_ERROR
 	}
 
 	_version = id
 
-	if len(command.channel) > 0 {
+	if len(trans.channel) > 0 {
 
 		eventMessage := &scyna_proto.Event{
-			TraceID: command.context.TraceID(),
-			Entity:  command.entity,
+			TraceID: trans.context.TraceID(),
+			Entity:  trans.entity,
 			Version: id,
 		}
 
-		if data, err := proto.Marshal(command.event); err != nil {
+		if data, err := proto.Marshal(trans.event); err != nil {
 			return BAD_DATA
 		} else {
 			eventMessage.Body = data
@@ -108,7 +108,7 @@ func (command *Command) Commit() Error {
 		if data, err := proto.Marshal(eventMessage); err != nil {
 			return BAD_DATA
 		} else {
-			if _, err := JetStream.Publish(buildSubject(module, command.channel), data); err != nil {
+			if _, err := JetStream.Publish(buildSubject(module, trans.channel), data); err != nil {
 				return STREAM_ERROR
 			}
 		}
