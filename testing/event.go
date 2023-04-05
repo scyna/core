@@ -22,7 +22,7 @@ func Event[R proto.Message](handler scyna.EventHandler[R]) *eventTest[R] {
 	return &eventTest[R]{handler: handler}
 }
 
-func (t *eventTest[R]) WithEvent(event R) *eventTest[R] {
+func (t *eventTest[R]) WithData(event R) *eventTest[R] {
 	t.input = event
 	return t
 }
@@ -40,16 +40,14 @@ func (t *eventTest[R]) ExpectEvent(event proto.Message, channel ...string) *even
 	return t
 }
 
-func (t *eventTest[R]) ExpectEventLike(event proto.Message, channel ...string) *eventTest[R] {
-	if len(channel) > 1 {
-		panic("Wrong parametter ")
-	}
-	if len(channel) == 1 {
-		t.channel = channel[0]
-	}
-
+func (t *eventTest[R]) ExpectEventLike(event proto.Message) *eventTest[R] {
 	t.event = event
 	t.exactEventMatch = false
+	return t
+}
+
+func (t *eventTest[R]) FromChannel(channel string) *eventTest[R] {
+	t.channel = channel
 	return t
 }
 

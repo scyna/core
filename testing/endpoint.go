@@ -90,28 +90,20 @@ func (t *endpointTest) ExpectResponseLike(response proto.Message) *endpointTest 
 	return t
 }
 
-func (t *endpointTest) ExpectEvent(event proto.Message, channel ...string) *endpointTest {
-	if len(channel) > 1 {
-		panic("Wrong parametter ")
-	}
-	if len(channel) == 1 {
-		t.channel = channel[0]
-	}
+func (t *endpointTest) ExpectEvent(event proto.Message) *endpointTest {
 	t.event = event
 	t.exactEventMatch = true
 	return t
 }
 
-func (t *endpointTest) ExpectEventLike(event proto.Message, channel ...string) *endpointTest {
-	if len(channel) > 1 {
-		panic("Wrong parametter ")
-	}
-	if len(channel) == 1 {
-		t.channel = channel[0]
-	}
-
+func (t *endpointTest) ExpectEventLike(event proto.Message) *endpointTest {
 	t.event = event
 	t.exactEventMatch = false
+	return t
+}
+
+func (t *endpointTest) FromChannel(channel string) *endpointTest {
+	t.channel = channel
 	return t
 }
 
