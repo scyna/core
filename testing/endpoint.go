@@ -22,7 +22,37 @@ type endpointTest struct {
 	exactResponseMatch bool
 }
 
-func EndpointTest(url string) *endpointTest {
+type endpointTestResult struct {
+	t         *testing.T
+	eventData []byte
+	response  *scyna_proto.Response
+}
+
+func (result *endpointTestResult) DecodeResponse(response proto.Message) *endpointTestResult {
+	if result.response == nil {
+		result.t.Fatal("No response")
+	}
+
+	if proto.Unmarshal(result.response.Body, response) != nil {
+		result.t.Fatal("Error in decode response")
+	}
+
+	return result
+}
+
+func (result *endpointTestResult) DecodeEvent(event proto.Message) *endpointTestResult {
+	if result.eventData == nil {
+		result.t.Fatal("No event")
+	}
+
+	if proto.Unmarshal(result.eventData, event) != nil {
+		result.t.Fatal("Error in decode event")
+	}
+
+	return result
+}
+
+func Endpoint(url string) *endpointTest {
 	return &endpointTest{url: url}
 }
 
@@ -53,73 +83,65 @@ func (t *endpointTest) ExpectResponse(response proto.Message) *endpointTest {
 	return t
 }
 
-func (t *endpointTest) MatchResponse(response proto.Message) *endpointTest {
+func (t *endpointTest) ExpectResponseLike(response proto.Message) *endpointTest {
 	t.status = 200
 	t.response = response
 	t.exactResponseMatch = false
 	return t
 }
 
-func (t *endpointTest) ExpectEvent(channel string, event proto.Message) *endpointTest {
-	t.channel = channel
+func (t *endpointTest) ExpectEvent(event proto.Message, channel ...string) *endpointTest {
+	if len(channel) > 1 {
+		panic("Wrong parametter ")
+	}
+	if len(channel) == 1 {
+		t.channel = channel[0]
+	}
 	t.event = event
 	t.exactEventMatch = true
 	return t
 }
 
-func (t *endpointTest) MatchEvent(channel string, event proto.Message) *endpointTest {
-	t.channel = channel
+func (t *endpointTest) ExpectEventLike(event proto.Message, channel ...string) *endpointTest {
+	if len(channel) > 1 {
+		panic("Wrong parametter ")
+	}
+	if len(channel) == 1 {
+		t.channel = channel[0]
+	}
+
 	t.event = event
 	t.exactEventMatch = false
 	return t
 }
 
-func (t *endpointTest) ExpectDomainEvent(event proto.Message) *endpointTest {
-	t.event = event
-	t.exactEventMatch = true
-	return t
-}
-
-func (t *endpointTest) MatchDomainEvent(event proto.Message) *endpointTest {
-	t.event = event
-	t.exactEventMatch = false
-	return t
-}
-
-func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
+func (st *endpointTest) Run(t *testing.T) *endpointTestResult {
 	streamName := scyna.Module()
 	if len(st.channel) > 0 {
 		createStream(streamName)
 	}
 
 	var res = st.callEndpoint(t)
+	ret := &endpointTestResult{response: res}
 	if st.status != res.Code {
 		t.Fatalf("Expect status %d but actually %d with response %s", st.status, res.Code, string(res.Body))
 	}
 
-	if len(response) == 0 {
-		if st.response != nil {
-			tmp := proto.Clone(st.response)
-			if err := proto.Unmarshal(res.Body, tmp); err != nil {
-				t.Fatal("Can not parse response body")
-			}
-
-			if st.exactResponseMatch {
-				if !proto.Equal(tmp, st.response) {
-					t.Fatal("Response not match")
-				}
-			} else {
-				if !matchMessage(tmp, st.response) {
-					t.Fatal("Response not match")
-				}
-			}
-		}
-	} else if len(response) == 1 {
-		if err := proto.Unmarshal(res.Body, response[0]); err != nil {
+	if st.response != nil {
+		tmp := proto.Clone(st.response)
+		if err := proto.Unmarshal(res.Body, tmp); err != nil {
 			t.Fatal("Can not parse response body")
 		}
-	} else {
-		t.Fatal("Too many parametter")
+
+		if st.exactResponseMatch {
+			if !proto.Equal(tmp, st.response) {
+				t.Fatal("Response not match")
+			}
+		} else {
+			if !matchMessage(tmp, st.response) {
+				t.Fatal("Response not match")
+			}
+		}
 	}
 
 	if st.event != nil {
@@ -135,6 +157,7 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 			}
 
 			var event scyna_proto.Event
+			ret.eventData = msg.Data
 			if err := proto.Unmarshal(msg.Data, &event); err != nil {
 				log.Print("Register unmarshal error response data:", err.Error())
 				t.Fatal("Can not parse received event")
@@ -161,6 +184,7 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 			if receivedEvent == nil {
 				t.Fatal("No event received")
 			}
+			ret.eventData, _ = proto.Marshal(receivedEvent)
 			if st.exactEventMatch {
 				if !proto.Equal(st.event, receivedEvent) {
 					t.Fatal("Event not match")
@@ -176,6 +200,8 @@ func (st *endpointTest) Run(t *testing.T, response ...proto.Message) {
 	if len(st.channel) > 0 {
 		deleteStream(streamName)
 	}
+
+	return ret
 }
 
 func (st *endpointTest) callEndpoint(t *testing.T) *scyna_proto.Response {

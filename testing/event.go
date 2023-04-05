@@ -15,46 +15,52 @@ type eventTest[R proto.Message] struct {
 	event           proto.Message
 	exactEventMatch bool
 	handler         scyna.EventHandler[R]
+	input           R
 }
 
-func EventTest[R proto.Message](handler scyna.EventHandler[R]) *eventTest[R] {
+func Event[R proto.Message](handler scyna.EventHandler[R]) *eventTest[R] {
 	return &eventTest[R]{handler: handler}
 }
 
-func (t *eventTest[R]) ExpectEvent(channel string, event R) *eventTest[R] {
-	t.channel = channel
+func (t *eventTest[R]) WithEvent(event R) *eventTest[R] {
+	t.input = event
+	return t
+}
+
+func (t *eventTest[R]) ExpectEvent(event proto.Message, channel ...string) *eventTest[R] {
+	if len(channel) > 1 {
+		panic("Wrong parametter ")
+	}
+	if len(channel) == 1 {
+		t.channel = channel[0]
+	}
+
 	t.event = event
 	t.exactEventMatch = true
 	return t
 }
 
-func (t *eventTest[R]) MatchEvent(channel string, event proto.Message) *eventTest[R] {
-	t.channel = channel
+func (t *eventTest[R]) ExpectEventLike(event proto.Message, channel ...string) *eventTest[R] {
+	if len(channel) > 1 {
+		panic("Wrong parametter ")
+	}
+	if len(channel) == 1 {
+		t.channel = channel[0]
+	}
+
 	t.event = event
 	t.exactEventMatch = false
 	return t
 }
 
-func (t *eventTest[R]) ExpectDomainEvent(event proto.Message) *eventTest[R] {
-	t.event = event
-	t.exactEventMatch = true
-	return t
-}
-
-func (t *eventTest[R]) MatchDomainEvent(event proto.Message) *eventTest[R] {
-	t.event = event
-	t.exactEventMatch = false
-	return t
-}
-
-func (st *eventTest[R]) Run(t *testing.T, input R) {
+func (st *eventTest[R]) Run(t *testing.T) {
 	streamName := scyna.Module()
 	if len(st.channel) > 0 {
 		createStream(streamName)
 	}
 
 	ctx := scyna.NewEvent(scyna.ID.Next())
-	st.handler(ctx, input)
+	st.handler(ctx, st.input)
 
 	if st.event != nil {
 		if len(st.channel) > 0 {
