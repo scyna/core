@@ -10,18 +10,45 @@ import (
 
 type SignalHandler[R proto.Message] func(data R)
 
-func RegisterSignal[R proto.Message](channel string, handler SignalHandler[R]) {
+type SignalScope int
+
+const SIGNAL_SCOPE_MODULE SignalScope = 1
+const SIGNAL_SCOPE_SESSION SignalScope = 2
+
+func RegisterSignal[R proto.Message](channel string, handler SignalHandler[R], scope ...SignalScope) {
 	log.Print("Register SignalLite:", channel)
+
+	if len(scope) > 1 {
+		panic("Invalid scope parametter")
+	}
+	signalScope := SIGNAL_SCOPE_MODULE
+
+	if len(scope) == 1 {
+		signalScope = scope[0]
+	}
+
 	signal := scyna_utils.NewMessageForType[R]()
 
-	if _, err := Connection.QueueSubscribe(channel, module, func(m *nats.Msg) {
-		if err := proto.Unmarshal(m.Data, signal); err == nil {
-			handler(signal)
-		} else {
-			Session.Error("Error in parsing data:" + err.Error())
+	if signalScope == SIGNAL_SCOPE_MODULE {
+		if _, err := Connection.QueueSubscribe(channel, module, func(m *nats.Msg) {
+			if err := proto.Unmarshal(m.Data, signal); err == nil {
+				handler(signal)
+			} else {
+				Session.Error("Error in parsing data:" + err.Error())
+			}
+		}); err != nil {
+			panic("Error in register SignalLite")
 		}
-	}); err != nil {
-		panic("Error in register SignalLite")
+	} else {
+		if _, err := Connection.Subscribe(channel, func(m *nats.Msg) {
+			if err := proto.Unmarshal(m.Data, signal); err == nil {
+				handler(signal)
+			} else {
+				Session.Error("Error in parsing data:" + err.Error())
+			}
+		}); err != nil {
+			panic("Error in register SignalLite")
+		}
 	}
 }
 

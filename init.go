@@ -94,8 +94,8 @@ func DirectInit(name string, c *scyna_proto.Configuration) {
 	Settings.init()
 
 	/*registration*/
-	RegisterSignal(scyna_proto.SETTING_UPDATE_CHANNEL+module, updateSettingHandler)
-	RegisterSignal(scyna_proto.SETTING_REMOVE_CHANNEL+module, removeSettingHandler)
+	RegisterSignal(scyna_proto.SETTING_UPDATE_CHANNEL+module, updateSettingHandler, SIGNAL_SCOPE_SESSION)
+	RegisterSignal(scyna_proto.SETTING_REMOVE_CHANNEL+module, removeSettingHandler, SIGNAL_SCOPE_SESSION)
 }
 
 func initScylla(host []string, username string, password string, location string) {
