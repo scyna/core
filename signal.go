@@ -29,7 +29,7 @@ func RegisterSignal[R proto.Message](channel string, handler SignalHandler[R], s
 
 	signal := scyna_utils.NewMessageForType[R]()
 
-	f := func(m *nats.Msg) {
+	cb := func(m *nats.Msg) {
 		if err := proto.Unmarshal(m.Data, signal); err == nil {
 			handler(signal)
 		} else {
@@ -38,11 +38,11 @@ func RegisterSignal[R proto.Message](channel string, handler SignalHandler[R], s
 	}
 
 	if signalScope == SIGNAL_SCOPE_MODULE {
-		if _, err := Connection.QueueSubscribe(channel, module, f); err != nil {
+		if _, err := Connection.QueueSubscribe(channel, module, cb); err != nil {
 			panic("Error in register SignalLite")
 		}
 	} else {
-		if _, err := Connection.Subscribe(channel, f); err != nil {
+		if _, err := Connection.Subscribe(channel, cb); err != nil {
 			panic("Error in register SignalLite")
 		}
 	}
