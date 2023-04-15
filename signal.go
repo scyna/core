@@ -29,24 +29,20 @@ func RegisterSignal[R proto.Message](channel string, handler SignalHandler[R], s
 
 	signal := scyna_utils.NewMessageForType[R]()
 
+	f := func(m *nats.Msg) {
+		if err := proto.Unmarshal(m.Data, signal); err == nil {
+			handler(signal)
+		} else {
+			Session.Error("Error in parsing data:" + err.Error())
+		}
+	}
+
 	if signalScope == SIGNAL_SCOPE_MODULE {
-		if _, err := Connection.QueueSubscribe(channel, module, func(m *nats.Msg) {
-			if err := proto.Unmarshal(m.Data, signal); err == nil {
-				handler(signal)
-			} else {
-				Session.Error("Error in parsing data:" + err.Error())
-			}
-		}); err != nil {
+		if _, err := Connection.QueueSubscribe(channel, module, f); err != nil {
 			panic("Error in register SignalLite")
 		}
 	} else {
-		if _, err := Connection.Subscribe(channel, func(m *nats.Msg) {
-			if err := proto.Unmarshal(m.Data, signal); err == nil {
-				handler(signal)
-			} else {
-				Session.Error("Error in parsing data:" + err.Error())
-			}
-		}); err != nil {
+		if _, err := Connection.Subscribe(channel, f); err != nil {
 			panic("Error in register SignalLite")
 		}
 	}
