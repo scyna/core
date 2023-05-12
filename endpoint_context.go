@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	scyna_const "github.com/scyna/core/const"
 	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
@@ -69,7 +70,7 @@ func (ctx *Endpoint) Response(r proto.Message) {
 
 func (ctx *Endpoint) Authenticate(uid string, apps []string) (string, uint64, Error) {
 	var auth scyna_proto.CreateAuthResponse
-	if err := sendRequest(scyna_proto.AUTH_CREATE_URL,
+	if err := sendRequest(scyna_const.AUTH_CREATE_URL,
 		&scyna_proto.CreateAuthRequest{UID: uid, Apps: apps},
 		&auth); err != OK {
 		return "", 0, SERVER_ERROR
@@ -120,14 +121,14 @@ func (ctx *Endpoint) tag(code uint32, response proto.Message) {
 	res, _ := json.Marshal(response)
 
 	if ctx.Request.JSON {
-		EmitSignal(scyna_proto.ENDPOINT_DONE_CHANNEL, &scyna_proto.EndpointDoneSignal{
+		EmitSignal(scyna_const.ENDPOINT_DONE_CHANNEL, &scyna_proto.EndpointDoneSignal{
 			TraceID:  ctx.ID,
 			Response: string(res),
 			Request:  string(string(ctx.Request.Body)),
 		})
 	} else {
 		req, _ := json.Marshal(ctx.request)
-		EmitSignal(scyna_proto.ENDPOINT_DONE_CHANNEL, &scyna_proto.EndpointDoneSignal{
+		EmitSignal(scyna_const.ENDPOINT_DONE_CHANNEL, &scyna_proto.EndpointDoneSignal{
 			TraceID:  ctx.ID,
 			Response: string(res),
 			Request:  string(req),

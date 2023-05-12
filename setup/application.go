@@ -1,6 +1,9 @@
 package scyna_setup
 
-import "github.com/gocql/gocql"
+import (
+	"github.com/gocql/gocql"
+	scyna_const "github.com/scyna/core/const"
+)
 
 type application struct {
 	code  string
@@ -10,12 +13,12 @@ type application struct {
 
 func NewApplication(code, auth string) *application {
 	ret := &application{code: code, auth: auth, batch: DB.NewBatch(gocql.UnloggedBatch)}
-	ret.batch.Query("INSERT INTO scyna.application(code, auth_url) VALUES(?,?)", code, auth)
+	ret.batch.Query("INSERT INTO "+scyna_const.APPLICATION_TABLE+"(code, auth_url) VALUES(?,?)", code, auth)
 	return ret
 }
 
 func (c *application) UseEndpoint(url string) *application {
-	c.batch.Query("INSERT INTO scyna.application_use_endpoint(application, url) VALUES(?,?)", c.code, url)
+	c.batch.Query("INSERT INTO "+scyna_const.APP_USE_ENDPOINT_TABLE+"(application, url) VALUES(?,?)", c.code, url)
 	return c
 }
 

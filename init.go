@@ -12,6 +12,7 @@ import (
 	"github.com/gocql/gocql"
 	"github.com/nats-io/nats.go"
 	"github.com/scylladb/gocqlx/v2"
+	scyna_const "github.com/scyna/core/const"
 	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
@@ -34,7 +35,7 @@ func RemoteInit(config RemoteConfig) {
 		log.Fatal("Bad authentication request")
 	}
 
-	req, err := http.NewRequest("POST", config.ManagerUrl+scyna_proto.SESSION_CREATE_URL, bytes.NewBuffer(data))
+	req, err := http.NewRequest("POST", config.ManagerUrl+scyna_const.SESSION_CREATE_URL, bytes.NewBuffer(data))
 	if err != nil {
 		log.Fatal("Error in create http request:", err)
 	}
@@ -94,8 +95,8 @@ func DirectInit(name string, c *scyna_proto.Configuration) {
 	Settings.init()
 
 	/*registration*/
-	RegisterSignal(scyna_proto.SETTING_UPDATE_CHANNEL+module, updateSettingHandler, SIGNAL_SCOPE_SESSION)
-	RegisterSignal(scyna_proto.SETTING_REMOVE_CHANNEL+module, removeSettingHandler, SIGNAL_SCOPE_SESSION)
+	RegisterSignal(scyna_const.SETTING_UPDATE_CHANNEL+module, updateSettingHandler, SIGNAL_SCOPE_SESSION)
+	RegisterSignal(scyna_const.SETTING_REMOVE_CHANNEL+module, removeSettingHandler, SIGNAL_SCOPE_SESSION)
 }
 
 func initScylla(host []string, username string, password string, location string) {

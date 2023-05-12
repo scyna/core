@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go"
+	scyna_const "github.com/scyna/core/const"
 	scyna_proto "github.com/scyna/core/proto/generated"
 	scyna_utils "github.com/scyna/core/utils"
 	"google.golang.org/protobuf/proto"
@@ -89,7 +90,7 @@ func (t *taskBuilder) schedule(count uint64, interval int64) Error {
 	if data, err := proto.Marshal(&task); err != nil {
 		return BAD_DATA
 	} else {
-		if err := t.ctx.SendRequest(scyna_proto.START_TASK_URL, &scyna_proto.StartTaskRequest{
+		if err := t.ctx.SendRequest(scyna_const.START_TASK_URL, &scyna_proto.StartTaskRequest{
 			Module:   module,
 			Topic:    fmt.Sprintf("%s.%s", module, t.channel),
 			Data:     data,

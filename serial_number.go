@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	scyna_const "github.com/scyna/core/const"
 	scyna_proto "github.com/scyna/core/proto/generated"
 )
 
@@ -33,7 +34,7 @@ func (sn *serialNumber) Next() string {
 	} else {
 		request := scyna_proto.GetSNRequest{Key: sn.key}
 		var response scyna_proto.GetSNResponse
-		if r := sendRequest(scyna_proto.GEN_GET_SN_URL, &request, &response); r.Code() == 0 {
+		if r := sendRequest(scyna_const.GEN_GET_SN_URL, &request, &response); r.Code() == 0 {
 			sn.prefix = response.Prefix
 			sn.next = response.Start
 			sn.last = response.End

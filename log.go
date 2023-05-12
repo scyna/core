@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/scylladb/gocqlx/v2/qb"
+	scyna_const "github.com/scyna/core/const"
 	scyna_proto "github.com/scyna/core/proto/generated"
 	scyna_utils "github.com/scyna/core/utils"
 )
@@ -52,7 +53,7 @@ func UseDirectLog(count int) {
 			for l := range logQueue {
 				time_ := time.Now()
 				if l.Session {
-					if err := qb.Insert("scyna.session_log").
+					if err := qb.Insert(scyna_const.SESSION_LOG_TABLE).
 						Columns("session_id", "day", "time", "seq", "level", "message").
 						Query(DB).
 						Bind(l.ID, scyna_utils.GetDayByTime(time_), time_, l.Sequence, l.Level, l.Message).
@@ -60,7 +61,7 @@ func UseDirectLog(count int) {
 						log.Println("saveSessionLog: " + err.Error())
 					}
 				} else {
-					if err := qb.Insert("scyna.log").
+					if err := qb.Insert(scyna_const.LOG_TABLE).
 						Columns("trace_id", "time", "seq", "level", "message").
 						Query(DB).
 						Bind(l.ID, time_, l.Sequence, l.Level, l.Message).
@@ -88,7 +89,7 @@ func UseRemoteLog(count int) {
 					Session: l.Session,
 					SEQ:     l.Sequence,
 				}
-				EmitSignal(scyna_proto.LOG_CREATED_CHANNEL, &event)
+				EmitSignal(scyna_const.LOG_CREATED_CHANNEL, &event)
 			}
 		}()
 	}

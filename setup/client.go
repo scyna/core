@@ -1,6 +1,9 @@
 package scyna_setup
 
-import "github.com/gocql/gocql"
+import (
+	"github.com/gocql/gocql"
+	scyna_const "github.com/scyna/core/const"
+)
 
 type client struct {
 	id     string
@@ -10,12 +13,12 @@ type client struct {
 
 func NewClient(id, secret string) *client {
 	ret := &client{id: id, secret: secret, batch: DB.NewBatch(gocql.UnloggedBatch)}
-	ret.batch.Query("INSERT INTO scyna.client(id, secret) VALUES(?,?)", id, secret)
+	ret.batch.Query("INSERT INTO "+scyna_const.CLIENT_TABLE+"(id, secret) VALUES(?,?)", id, secret)
 	return ret
 }
 
 func (c *client) UseEndpoint(url string) *client {
-	c.batch.Query("INSERT INTO scyna.client_use_endpoint(client, url) VALUES(?,?)", c.id, url)
+	c.batch.Query("INSERT INTO "+scyna_const.CLIENT_USE_ENDPOINT_TABLE+"(client, url) VALUES(?,?)", c.id, url)
 	return c
 }
 

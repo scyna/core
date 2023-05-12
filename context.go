@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	scyna_const "github.com/scyna/core/const"
 	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
@@ -60,7 +61,7 @@ func (ctx *Context) Tag(key string, value string) {
 	if ctx.ID == 0 {
 		return
 	}
-	EmitSignal(scyna_proto.TAG_CREATED_CHANNEL, &scyna_proto.TagCreatedSignal{
+	EmitSignal(scyna_const.TAG_CREATED_CHANNEL, &scyna_proto.TagCreatedSignal{
 		TraceID: ctx.ID,
 		Key:     key,
 		Value:   value,
