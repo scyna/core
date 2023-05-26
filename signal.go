@@ -12,8 +12,8 @@ type SignalHandler[R proto.Message] func(data R)
 
 type SignalScope int
 
-const SIGNAL_SCOPE_MODULE SignalScope = 1
-const SIGNAL_SCOPE_SESSION SignalScope = 2
+const SIGNAL_SCOPE_MODULE SignalScope = 1  // a instance of module
+const SIGNAL_SCOPE_SESSION SignalScope = 2 // all instances of module
 
 func RegisterSignal[R proto.Message](channel string, handler SignalHandler[R], scope ...SignalScope) {
 	log.Print("Register SignalLite:", channel)
