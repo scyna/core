@@ -18,8 +18,6 @@ message Response {
   int32  Code = 1;
   bytes  Body = 2;
   uint64 SessionID = 3;
-  string Token = 4;
-  uint64 Expired = 5;
 }
 
 message Event {

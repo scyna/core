@@ -3,10 +3,8 @@ package scyna
 import (
 	"time"
 
-	"github.com/gocql/gocql"
 	scyna_const "github.com/scyna/core/const"
 	scyna_proto "github.com/scyna/core/proto/generated"
-	scyna_utils "github.com/scyna/core/utils"
 )
 
 type TraceType uint32
@@ -45,34 +43,4 @@ func (trace *Trace) Record() {
 		SessionID: trace.SessionID,
 		Status:    trace.Status,
 	})
-}
-
-func (trace *Trace) Save() {
-	day := scyna_utils.GetDayByTime(time.Now())
-	trace.Duration = uint64(time.Now().UnixNano() - trace.Time.UnixNano())
-	qBatch := DB.NewBatch(gocql.LoggedBatch)
-	qBatch.Query("INSERT INTO "+scyna_const.TRACE_TABLE+"(type, path, day, id, time, duration, session_id, source, status) VALUES (?,?,?,?,?,?,?,?,?)",
-		trace.Type,
-		trace.Path,
-		day,
-		trace.ID,
-		trace.Time,
-		trace.Duration,
-		trace.SessionID,
-		trace.Source,
-		trace.Status,
-	)
-	qBatch.Query("INSERT INTO "+scyna_const.APP_HAS_TRACE_TABLE+"(app_code, trace_id, day) VALUES (?,?,?)",
-		trace.Source,
-		trace.ID,
-		day,
-	)
-	qBatch.Query("INSERT INTO "+scyna_const.TAG_TABLE+"(trace_id, key, value) VALUES (?,?,?)",
-		trace.ID,
-		"request",
-		trace.RequestBody,
-	)
-	if err := DB.ExecuteBatch(qBatch); err != nil {
-		Session.Error("Can not save trace - " + err.Error())
-	}
 }

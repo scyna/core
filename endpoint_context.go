@@ -68,35 +68,6 @@ func (ctx *Endpoint) Response(r proto.Message) {
 	ctx.tag(uint32(response.Code), r)
 }
 
-func (ctx *Endpoint) Authenticate(uid string, apps []string) (string, uint64, Error) {
-	var auth scyna_proto.CreateAuthResponse
-	if err := sendRequest(scyna_const.AUTH_CREATE_URL,
-		&scyna_proto.CreateAuthRequest{UID: uid, Apps: apps},
-		&auth); err != OK {
-		return "", 0, SERVER_ERROR
-	}
-	return auth.Token, auth.Expired, nil
-}
-
-func (ctx *Endpoint) AuthOK(token string, expired uint64, r proto.Message) Error {
-	response := scyna_proto.Response{Code: 200, Token: token, Expired: expired}
-
-	var err error
-	if ctx.Request.JSON {
-		response.Body, err = json.Marshal(r)
-	} else {
-		response.Body, err = proto.Marshal(r)
-	}
-	if err != nil {
-		response.Code = int32(500)
-		response.Body = []byte(err.Error())
-	}
-
-	ctx.flush(&response)
-	ctx.tag(uint32(response.Code), r)
-	return OK
-}
-
 func (ctx *Endpoint) flush(response *scyna_proto.Response) {
 	defer func() {
 		ctx.flushed = true

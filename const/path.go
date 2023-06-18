@@ -10,9 +10,6 @@ const (
 	SETTING_WRITE_URL  = BASEPATH + "/setting/write"
 	SETTING_READ_URL   = BASEPATH + "/setting/read"
 	SETTING_REMOVE_URL = BASEPATH + "/setting/remove"
-	AUTH_CREATE_URL    = BASEPATH + "/auth/create"
-	AUTH_GET_URL       = BASEPATH + "/auth/get"
-	AUTH_LOGOUT_URL    = BASEPATH + "/auth/logout"
 	START_TASK_URL     = BASEPATH + "/task/start"
 	STOP_TASK_URL      = BASEPATH + "/task/stop"
 )
