@@ -10,7 +10,7 @@ option  go_package = "./;scyna_proto";
 message Request {
   uint64 TraceID = 1;
   bytes  Body = 2;
-  string Data = 4;
+  bytes  Data = 4;
   bool   JSON = 3;
 }
 

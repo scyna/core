@@ -42,7 +42,7 @@ func (ctx *Endpoint) flushError(code int32, e Error) {
 		response.Body = []byte(err.Error())
 	}
 	ctx.flush(&response)
-	ctx.tag(uint32(response.Code), e_)
+	ctx.tag(e_)
 }
 
 func (ctx *Endpoint) OK(r proto.Message) Error {
@@ -65,7 +65,7 @@ func (ctx *Endpoint) Response(r proto.Message) {
 	}
 
 	ctx.flush(&response)
-	ctx.tag(uint32(response.Code), r)
+	ctx.tag(r)
 }
 
 func (ctx *Endpoint) flush(response *scyna_proto.Response) {
@@ -84,7 +84,7 @@ func (ctx *Endpoint) flush(response *scyna_proto.Response) {
 	}
 }
 
-func (ctx *Endpoint) tag(code uint32, response proto.Message) {
+func (ctx *Endpoint) tag(response proto.Message) {
 	if ctx.ID == 0 {
 		return
 	}
