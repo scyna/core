@@ -20,4 +20,5 @@ const (
 	LOG_TABLE                 = KEYSPACE + ".log"
 	APPLICATION_TABLE         = KEYSPACE + ".application"
 	APP_HAS_TRACE_TABLE       = KEYSPACE + ".app_has_trace"
+	AUTHENTICATION_TABLE      = KEYSPACE + ".authentication"
 )
