@@ -12,6 +12,9 @@ const (
 	SETTING_REMOVE_URL = BASEPATH + "/setting/remove"
 	START_TASK_URL     = BASEPATH + "/task/start"
 	STOP_TASK_URL      = BASEPATH + "/task/stop"
+	AUTH_CREATE_URL    = BASEPATH + "/auth/create"
+	AUTH_GET_URL       = BASEPATH + "/auth/get"
+	AUTH_LOGOUT_URL    = BASEPATH + "/auth/logout"
 )
 
 const (

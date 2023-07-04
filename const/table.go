@@ -18,4 +18,6 @@ const (
 	SPAN_TABLE                = KEYSPACE + ".span"
 	TAG_TABLE                 = KEYSPACE + ".tag"
 	LOG_TABLE                 = KEYSPACE + ".log"
+	APPLICATION_TABLE         = KEYSPACE + ".application"
+	APP_HAS_TRACE_TABLE       = KEYSPACE + ".app_has_trace"
 )
