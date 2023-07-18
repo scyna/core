@@ -15,6 +15,8 @@ message Configuration {
   string DBUsername = 5;
   string DBPassword = 6;
   string DBLocation = 7;
+  string DBPemFile = 8;
+  bool isAWSKeyspaces = 9;
 }
 
 /*session*/

@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aws/aws-sigv4-auth-cassandra-gocql-driver-plugin/sigv4"
 	"github.com/gocql/gocql"
 	"github.com/nats-io/nats.go"
 	"github.com/scylladb/gocqlx/v2"
@@ -90,7 +91,11 @@ func DirectInit(name string, c *scyna_proto.Configuration) {
 
 	/*init db*/
 	hosts := strings.Split(c.DBHost, ",")
-	initScylla(hosts, c.DBUsername, c.DBPassword, c.DBLocation)
+	if c.IsAWSKeyspaces {
+		initKeyspaces(c.DBHost, c.DBUsername, c.DBPassword, c.DBLocation, c.DBPemFile)
+	} else {
+		initScylla(hosts, c.DBUsername, c.DBPassword, c.DBLocation)
+	}
 
 	Settings.init()
 
@@ -110,6 +115,28 @@ func initScylla(host []string, username string, password string, location string
 	//TODO: Config connect with TLS/SSL
 
 	log.Printf("Connect to db: %s\n", host)
+
+	var err error
+	DB, err = gocqlx.WrapSession(cluster.CreateSession())
+	if err != nil {
+		panic(fmt.Sprintf("Can not create session: Host = %s, Error = %s ", host, err.Error()))
+	}
+}
+
+func initKeyspaces(host string, accessKey string, secretKey string, region string, pemFile string) {
+	cluster := gocql.NewCluster(host)
+	var auth sigv4.AwsAuthenticator = sigv4.NewAwsAuthenticator()
+	auth.Region = region
+	auth.AccessKeyId = accessKey
+	auth.SecretAccessKey = secretKey
+
+	cluster.Authenticator = auth
+
+	cluster.SslOpts = &gocql.SslOptions{
+		CaPath: pemFile,
+	}
+	cluster.Consistency = gocql.LocalQuorum
+	cluster.DisableInitialHostLookup = true
 
 	var err error
 	DB, err = gocqlx.WrapSession(cluster.CreateSession())
