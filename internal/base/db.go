@@ -14,8 +14,8 @@ type DB struct {
 }
 
 var (
-	OBJECT_NOT_FOUND = NewError(8, "Object Not Found")
-	OBJECT_EXISTS    = NewError(9, "Object Exists")
+	OBJECT_NOT_FOUND = NewError(10, "Object Not Found")
+	OBJECT_EXISTS    = NewError(11, "Object Exists")
 )
 
 func NewDB(host []string, username string, password string, location string) *DB {

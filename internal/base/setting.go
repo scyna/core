@@ -12,11 +12,11 @@ import (
 type Settings struct {
 	data   map[string]string /*cache*/
 	mutex  sync.Mutex
-	conn   *Connection
+	conn   *Nats
 	module string
 }
 
-func (s *Settings) Init(module string, conn *Connection) {
+func (s *Settings) Init(module string, conn *Nats) {
 	s.data = make(map[string]string)
 }
 

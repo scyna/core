@@ -9,34 +9,34 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type Connection struct {
-	Nats   *nats.Conn
+type Nats struct {
+	Conn   *nats.Conn
 	Stream nats.JetStreamContext
 }
 
-func (c *Connection) SendRequest(url string, data proto.Message) *Error {
+func (c *Nats) SendRequest(url string, data proto.Message) *Error {
 	/*TODO*/
 	return nil
 }
 
-func (c *Connection) SendAndReceive(url string, request proto.Message, response proto.Message) *Error {
+func (c *Nats) SendAndReceive(url string, request proto.Message, response proto.Message) *Error {
 	/*TODO*/
 	return nil
 }
 
-func (c *Connection) EmitSignal(channel string, signal proto.Message) error {
+func (c *Nats) EmitSignal(channel string, signal proto.Message) error {
 	data, err := proto.Marshal(signal)
 	if err == nil {
-		c.Nats.Publish(channel, data)
+		c.Conn.Publish(channel, data)
 	}
 	return err
 }
 
-func (c *Connection) Close() {
-	c.Nats.Close()
+func (c *Nats) Close() {
+	c.Conn.Close()
 }
 
-func NewConnection(urls string, userName string, password string) *Connection {
+func NewConnection(urls string, userName string, password string) *Nats {
 	var err error
 	var natsUrls []string
 	for _, n := range strings.Split(urls, ",") {
@@ -61,5 +61,5 @@ func NewConnection(urls string, userName string, password string) *Connection {
 		panic("Init: " + err.Error())
 	}
 
-	return &Connection{Nats: conn, Stream: stream}
+	return &Nats{Conn: conn, Stream: stream}
 }
