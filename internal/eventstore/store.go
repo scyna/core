@@ -168,10 +168,8 @@ func (e *EventStore[T]) syncRow(id any, version int64) bool {
 		return false
 	}
 
-	if err := p.Update(data); err != nil {
-		log.Print("Projection update error:", err)
-		return true /*FIXME: MUST be FALSE or ALERT to ADMIN*/
-	}
+	p.Update(data)
+
 	return true
 }
 

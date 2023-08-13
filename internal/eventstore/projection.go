@@ -1,14 +1,15 @@
 package eventstore
 
 import (
-	"github.com/scyna/core/internal/base"
+	"log"
+
 	"google.golang.org/protobuf/proto"
 )
 
-type Projector[T proto.Message] func(T) *base.Error
+type Projector[T proto.Message] func(T) error
 
 type IProjection interface {
-	Update(data []byte) *base.Error
+	Update(data []byte)
 	ParseEvent([]byte) proto.Message
 }
 
@@ -24,13 +25,16 @@ func NewProjection[T proto.Message](execute Projector[T], eventType proto.Messag
 	}
 }
 
-func (p *Projection[T]) Update(data []byte) *base.Error {
+func (p *Projection[T]) Update(data []byte) {
 	var model T
 	if err := proto.Unmarshal(data, model); err != nil {
-		return base.BAD_DATA
+		return
 	}
 
-	return p.Execute(model)
+	if err := p.Execute(model); err != nil {
+		log.Print("projection/Update:", err)
+		return
+	}
 }
 
 func (p *Projection[T]) ParseEvent(event []byte) proto.Message {
