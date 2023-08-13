@@ -13,11 +13,6 @@ type DB struct {
 	Session *gocql.Session
 }
 
-var (
-	OBJECT_NOT_FOUND = NewError(10, "Object Not Found")
-	OBJECT_EXISTS    = NewError(11, "Object Exists")
-)
-
 func NewDB(host []string, username string, password string, location string) *DB {
 	cluster := gocql.NewCluster(host...)
 	cluster.Authenticator = gocql.PasswordAuthenticator{Username: username, Password: password}

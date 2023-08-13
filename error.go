@@ -3,14 +3,16 @@ package scyna
 import "github.com/scyna/core/internal/base"
 
 var (
-	OK                 = NewError(0, "Success")
-	SERVER_ERROR       = NewError(1, "Server Error")
-	BAD_REQUEST        = NewError(2, "Bad Request")
-	PERMISSION_ERROR   = NewError(4, "Permission Error")
-	REQUEST_INVALID    = NewError(5, "Request Invalid")
-	MODULE_NOT_EXISTED = NewError(6, "Module Not Existed")
-	BAD_DATA           = NewError(7, "Bad Data")
-	STREAM_ERROR       = NewError(8, "Stream Error")
+	OK                = base.OK
+	SERVER_ERROR      = base.SERVER_ERROR
+	BAD_REQUEST       = base.BAD_REQUEST
+	PERMISSION_ERROR  = base.PERMISSION_ERROR
+	REQUEST_INVALID   = base.REQUEST_INVALID
+	MODULE_NOT_EXISTS = base.MODULE_NOT_EXISTS
+	BAD_DATA          = base.BAD_DATA
+	STREAM_ERROR      = base.STREAM_ERROR
+	OBJECT_NOT_FOUND  = base.OBJECT_NOT_FOUND
+	OBJECT_EXISTS     = base.OBJECT_EXISTS
 )
 
 type Error interface {
