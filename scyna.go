@@ -10,6 +10,8 @@ import (
 
 	"github.com/nats-io/nats.go"
 	"github.com/scyna/core/internal/base"
+	"github.com/scyna/core/internal/eventstore"
+	"google.golang.org/protobuf/proto"
 )
 
 const REQUEST_TIMEOUT = 10
@@ -55,4 +57,8 @@ func HttpClient() *http.Client {
 		}
 	}
 	return httpClient
+}
+
+func NewEventStore[T proto.Message](table string) *eventstore.EventStore[T] {
+	return eventstore.NewEventStore[T](DB, table)
 }

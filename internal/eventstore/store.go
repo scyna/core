@@ -12,19 +12,26 @@ import (
 
 type EventStore[T proto.Message] struct {
 	Table       string
-	projections map[string]func(T) error
+	projections map[string]IProjection
 	db          *base.DB
 }
 
-func NewEventStore[T proto.Message](table string) *EventStore[T] {
+func NewEventStore[T proto.Message](db *base.DB, table string) *EventStore[T] {
 	return &EventStore[T]{
 		Table:       table,
-		projections: make(map[string]func(T) error),
+		projections: make(map[string]IProjection),
+		db:          db,
 	}
 }
 
-func (e *EventStore[T]) RegisterProjection(name string, projection func(T) error) {
-	e.projections[name] = projection
+func (e *EventStore[T]) RegisterProjector(event proto.Message, projector Projector[T]) {
+	name := reflect.TypeOf(event).Elem().Name()
+
+	if _, ok := e.projections[name]; ok {
+		log.Fatalf("Projection for event %s already registered", name)
+	}
+
+	e.projections[name] = NewProjection[T](projector, event)
 }
 
 func (e *EventStore[T]) ReadModel(id any) (*Model[T], *base.Error) {
@@ -135,9 +142,9 @@ func (e *EventStore[T]) doSync(id any, version int64) bool {
 		return false
 	}
 
-	// if !e.markSynced(id, version) {
-	// 	return false
-	// }
+	if !e.markSynced(id, version) {
+		return false
+	}
 	return true
 }
 
@@ -154,40 +161,25 @@ func (e *EventStore[T]) syncRow(id any, version int64) bool {
 		log.Print("syncRow:", err)
 	}
 
+	p, ok := e.projections[type_]
+
+	if !ok {
+		log.Print("No projection for type=", type_)
+		return false
+	}
+
+	if err := p.Update(data); err != nil {
+		log.Print("Projection update error:", err)
+		return true /*FIXME: MUST be FALSE or ALERT to ADMIN*/
+	}
 	return true
 }
 
-// bool SyncRow(object id, long version)
-// {
-// 	try
-// 	{
-// 		var rs = Engine.DB.Session.Execute(getSyncRowQuery.Bind(id, version));
-// 		var row = rs.First();
-// 		if (row is null) return false;
-
-// 		var type = row.GetValue<string>("type");
-// 		var data = row.GetValue<byte[]>("data");
-// 		var event_ = row.GetValue<byte[]>("event");
-
-// 		foreach (var p in projections)
-// 		{
-// 			if (p.Matched(type))
-// 			{
-// 				p.Update(event_, data);
-// 				//Console.WriteLine($"Run projection = {type}");
-// 				return true;
-// 			}
-// 		}
-
-// 		Console.WriteLine($"No projection for type={type}");
-// 		/*TODO: CAN BE EXIT and ALERT to ADMIN*/
-
-// 		return false;
-// 	}
-// 	catch (InvalidOperationException) { return false; }
-// 	catch (Exception e)
-// 	{
-// 		Engine.LOG.Error(e.Message);
-// 		return true; /*FIXME: MUST be FALSE or ALERT to ADMIN*/
-// 	}
-// }
+func (e *EventStore[T]) markSynced(id any, version int64) bool {
+	if err := e.db.Execute("UPDATE "+e.Table+
+		" SET state=? WHERE id=? AND version=?", 2, id, version); err != nil {
+		log.Print("markSynced:", err)
+		return false
+	}
+	return true
+}

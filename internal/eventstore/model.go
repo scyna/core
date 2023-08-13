@@ -18,20 +18,7 @@ func (m *Model[T]) CommitAndProject(event proto.Message) *base.Error {
 	if err := m.store.UpdateWriteModel(m, event); err != nil {
 		return err
 	}
-	/*TODO: update read model here*/
+
+	m.store.UpdateReadModel(m.ID)
 	return nil
 }
-
-// public void CommitAndProject(IMessage event_)
-// {
-// 	this.Event = event_;
-// 	store.UpdateWriteModel(this, event_);
-// 	store.UpdateReadModel(ID);
-// }
-
-// public void CommitAndPublish(string channel, IMessage event_)
-// {
-// 	this.Event = event_;
-// 	store.UpdateWriteModel(this, event_);
-// 	store.PublishToEventStream(channel, event_);
-// }
