@@ -161,7 +161,7 @@ func (e *EventStore[T]) syncRow(id any, version int64) bool {
 	var data []byte
 	var event []byte
 
-	if err := e.db.QueryOne("SELECT type,data,event FROM"+e.Table+
+	if err := e.db.QueryOne("SELECT type,data,event FROM "+e.Table+
 		" WHERE id=? AND version=? LIMIT 1", id, version).Scan(&type_, &data, &event); err != nil {
 		if err == gocql.ErrNotFound {
 			return false
@@ -213,16 +213,15 @@ func (e *EventStore[T]) ListActivity(id any, position int64, count int32) []Acti
 
 	var version int64
 	var type_ string
-	var data []byte
 	var event []byte
 	var created time.Time
 
-	rs := e.db.QueryMany("SELECT version,type,data,event,created FROM"+e.Table+
+	rs := e.db.QueryMany("SELECT version,type,event,created FROM "+e.Table+
 		" WHERE id=? AND version<? LIMIT ?", id, position, count)
 
 	var ret []Activity
 	for rs.Next() {
-		if err := rs.Scan(&version, &type_, &data, &event, &created); err == nil {
+		if err := rs.Scan(&version, &type_, &event, &created); err == nil {
 			ret = append(ret, Activity{
 				Version: version,
 				Type:    type_,
