@@ -12,7 +12,7 @@ type client struct {
 }
 
 func NewClient(id, secret string) *client {
-	ret := &client{id: id, secret: secret, batch: DB.NewBatch(gocql.UnloggedBatch)}
+	ret := &client{id: id, secret: secret, batch: DB.Session.NewBatch(gocql.UnloggedBatch)}
 	ret.batch.Query("INSERT INTO "+scyna_const.CLIENT_TABLE+"(id, secret) VALUES(?,?)", id, secret)
 	return ret
 }

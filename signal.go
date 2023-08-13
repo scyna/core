@@ -38,11 +38,11 @@ func RegisterSignal[R proto.Message](channel string, handler SignalHandler[R], s
 	}
 
 	if signalScope == SIGNAL_SCOPE_MODULE {
-		if _, err := Connection.QueueSubscribe(channel, module, cb); err != nil {
+		if _, err := Nats.QueueSubscribe(channel, module, cb); err != nil {
 			panic("Error in register SignalLite")
 		}
 	} else {
-		if _, err := Connection.Subscribe(channel, cb); err != nil {
+		if _, err := Nats.Subscribe(channel, cb); err != nil {
 			panic("Error in register SignalLite")
 		}
 	}
@@ -50,6 +50,6 @@ func RegisterSignal[R proto.Message](channel string, handler SignalHandler[R], s
 
 func EmitSignal(channel string, signal proto.Message) {
 	if data, err := proto.Marshal(signal); err == nil {
-		Connection.Publish(channel, data)
+		Nats.Publish(channel, data)
 	}
 }

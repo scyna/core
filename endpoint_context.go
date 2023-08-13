@@ -78,7 +78,7 @@ func (ctx *Endpoint) flush(response *scyna_proto.Response) {
 		log.Print("Register marshal error response data:", err.Error())
 		return
 	}
-	err = Connection.Publish(ctx.Reply, bytes)
+	err = Nats.Publish(ctx.Reply, bytes)
 	if err != nil {
 		Session.Error(fmt.Sprintf("Nats publish to [%s] error: %s", ctx.Reply, err.Error()))
 	}

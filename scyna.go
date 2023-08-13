@@ -9,15 +9,15 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go"
-	"github.com/scylladb/gocqlx/v2"
+	"github.com/scyna/core/internal/base"
 )
 
 const REQUEST_TIMEOUT = 10
 
-var Connection *nats.Conn
+var Nats *nats.Conn
 var JetStream nats.JetStreamContext
 var Session *session
-var DB gocqlx.Session
+var DB *base.DB
 var ID generator
 var Settings settings
 
@@ -31,7 +31,7 @@ func Module() string {
 func Release() {
 	releaseLog()
 	Session.release()
-	Connection.Close()
+	Nats.Close()
 	DB.Close()
 }
 

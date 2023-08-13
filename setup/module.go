@@ -16,7 +16,7 @@ func NewModule(code string, secret string) *module {
 	ret := &module{
 		code:   code,
 		secret: secret,
-		batch:  DB.NewBatch(gocql.UnloggedBatch),
+		batch:  DB.Session.NewBatch(gocql.UnloggedBatch),
 	}
 	ret.batch.Query("INSERT INTO "+scyna_const.MODULE_TABLE+"(code, secret) VALUES(?,?)", code, secret)
 	return ret

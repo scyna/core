@@ -1,23 +1,19 @@
 package scyna_setup
 
 import (
-	"fmt"
-	"log"
 	"strings"
-	"time"
 
-	"github.com/gocql/gocql"
 	"github.com/nats-io/nats.go"
-	"github.com/scylladb/gocqlx/v2"
+	"github.com/scyna/core/internal/base"
 )
 
 var Connection *nats.Conn
 var JetStream nats.JetStreamContext
-var DB gocqlx.Session
+var DB *base.DB
 
 func Init() {
 	initNATS()
-	initScylla([]string{"127.0.0.1"}, "", "", "")
+	DB = base.NewDB([]string{"127.0.0.1"}, "", "", "")
 }
 
 func initNATS() {
@@ -30,22 +26,5 @@ func initNATS() {
 	JetStream, err = Connection.JetStream()
 	if err != nil {
 		panic("Init: " + err.Error())
-	}
-}
-
-func initScylla(host []string, username string, password string, location string) {
-	cluster := gocql.NewCluster(host...)
-	cluster.Authenticator = gocql.PasswordAuthenticator{Username: username, Password: password}
-	cluster.PoolConfig.HostSelectionPolicy = gocql.DCAwareRoundRobinPolicy(location)
-	cluster.ConnectTimeout = time.Second * 10
-	cluster.DisableInitialHostLookup = true
-	cluster.Consistency = gocql.Quorum
-
-	log.Printf("Connect to db: %s\n", host)
-
-	var err error
-	DB, err = gocqlx.WrapSession(cluster.CreateSession())
-	if err != nil {
-		panic(fmt.Sprintf("Can not create session: Host = %s, Error = %s ", host, err.Error()))
 	}
 }
