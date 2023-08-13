@@ -2,6 +2,7 @@ package eventstore
 
 import (
 	"log"
+	"math"
 	"reflect"
 	"time"
 
@@ -9,6 +10,13 @@ import (
 	"github.com/scyna/core/internal/base"
 	"google.golang.org/protobuf/proto"
 )
+
+type Activity struct {
+	Type    string
+	Event   proto.Message
+	Version int64
+	Time    time.Time
+}
 
 type EventStore[T proto.Message] struct {
 	Table       string
@@ -180,4 +188,48 @@ func (e *EventStore[T]) markSynced(id any, version int64) bool {
 		return false
 	}
 	return true
+}
+
+func (e *EventStore[T]) parseEvent(type_ string, data []byte) proto.Message {
+	p, ok := e.projections[type_]
+
+	if !ok {
+		return nil
+	}
+
+	return p.ParseEvent(data)
+}
+
+func (e *EventStore[T]) ListActivity(id any, position int64, count int32) []Activity {
+	if position == 0 {
+		position = math.MaxInt64
+	}
+	if count == 0 {
+		count = 50
+	}
+	if count > 100 {
+		count = 100
+	}
+
+	var version int64
+	var type_ string
+	var data []byte
+	var event []byte
+	var created time.Time
+
+	rs := e.db.QueryMany("SELECT version,type,data,event,created FROM"+e.Table+
+		" WHERE id=? AND version<? LIMIT ?", id, position, count)
+
+	var ret []Activity
+	for rs.Next() {
+		if err := rs.Scan(&version, &type_, &data, &event, &created); err == nil {
+			ret = append(ret, Activity{
+				Version: version,
+				Type:    type_,
+				Event:   e.parseEvent(type_, event),
+				Time:    created,
+			})
+		}
+	}
+	return ret
 }
