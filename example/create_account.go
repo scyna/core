@@ -34,5 +34,5 @@ func CreateAccountHandler(ctx *scyna.Endpoint, request *PROTO.CreateAccountReque
 	}
 	ctx.RaiseEvent(model.Event)
 
-	return nil
+	return ctx.OK(&PROTO.CreateAccountResponse{ID: model.Data.ID})
 }
