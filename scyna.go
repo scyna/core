@@ -59,6 +59,13 @@ func HttpClient() *http.Client {
 	return httpClient
 }
 
-func NewEventStore[T proto.Message](table string) *eventstore.EventStore[T] {
+type EventStore[T proto.Message] interface {
+	ReadModel(id any) (*eventstore.Model[T], *base.Error)
+	CreateModel(id any) (*eventstore.Model[T], *base.Error)
+	RegisterProjector(event proto.Message, projector eventstore.Projector[T])
+	ListActivity(id any, position int64, count int32) []eventstore.Activity
+}
+
+func NewEventStore[T proto.Message](table string) EventStore[T] {
 	return eventstore.NewEventStore[T](DB, table)
 }

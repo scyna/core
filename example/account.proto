@@ -1,0 +1,31 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option  go_package = "./;PROTO";
+option csharp_namespace = "ex.account.PROTO";
+option java_package = "ex.account.PROTO";
+
+message AccountModel
+{
+    int64   ID = 1;
+    string  Email = 2;
+    string  Password = 3;
+    string  Name = 4;
+}
+
+message CreateAccountRequest {
+    string Email = 1;
+    string Password = 2;
+    string Name  = 3;
+}
+
+message CreateAccountResponse {
+    int64 ID = 1;
+}
+
+message AccountCreated
+{
+    int64 ID = 1;
+    string Email = 2;
+    string Password = 3;
+    string Name  = 4;
+}
