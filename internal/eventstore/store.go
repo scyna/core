@@ -222,12 +222,14 @@ func (e *EventStore[T]) ListActivity(id any, position int64, count int32) []Acti
 	var ret []Activity
 	for rs.Next() {
 		if err := rs.Scan(&version, &type_, &event, &created); err == nil {
-			ret = append(ret, Activity{
-				Version: version,
-				Type:    type_,
-				Event:   e.parseEvent(type_, event),
-				Time:    created,
-			})
+			if data := e.parseEvent(type_, event); data != nil {
+				ret = append(ret, Activity{
+					Version: version,
+					Type:    type_,
+					Event:   data,
+					Time:    created,
+				})
+			}
 		}
 	}
 	return ret
