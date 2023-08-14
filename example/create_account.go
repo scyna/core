@@ -2,7 +2,8 @@ package example
 
 import (
 	scyna "github.com/scyna/core"
-	"github.com/scyna/core/example/PROTO"
+	PROTO "github.com/scyna/core/example/generated"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var store scyna.EventStore[*PROTO.AccountModel] = scyna.NewEventStore[*PROTO.AccountModel]("account")
@@ -20,6 +21,7 @@ func CreateAccountHandler(ctx *scyna.Endpoint, request *PROTO.CreateAccountReque
 		Email:    request.Email,
 		Name:     request.Name,
 		Password: request.Password,
+		Created:  timestamppb.Now(),
 	}
 
 	if err := model.CommitAndProject(&PROTO.AccountCreated{

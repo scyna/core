@@ -4,12 +4,30 @@ option  go_package = "./;PROTO";
 option csharp_namespace = "ex.account.PROTO";
 option java_package = "ex.account.PROTO";
 
+import "google/protobuf/timestamp.proto";
+
 message AccountModel
 {
-    int64   ID = 1;
-    string  Email = 2;
-    string  Password = 3;
-    string  Name = 4;
+    google.protobuf.Timestamp Created = 1;
+    int64   ID = 2;
+    string  Email = 3;
+    string  Password = 4;
+    string  Name = 5;
+
+    AccountState State = 6;
+    AccountData Data = 7;
+}
+
+enum AccountState
+{
+    ACTIVE = 0;
+    INACTIVE = 1;
+    DELETED = 2;
+}
+
+message AccountData 
+{
+
 }
 
 message CreateAccountRequest {
