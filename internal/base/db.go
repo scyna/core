@@ -28,6 +28,13 @@ func NewDB(host []string, username string, password string, location string) *DB
 	return &DB{Session: session}
 }
 
+func (db *DB) Batch() *batch {
+	return &batch{
+		batch: db.Session.NewBatch(gocql.LoggedBatch),
+		db:    db,
+	}
+}
+
 func (db *DB) QueryOne(query string, args ...interface{}) *gocql.Query {
 	return db.Session.Query(addLimitOne(query), args...).
 		WithContext(context.Background()).

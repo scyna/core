@@ -22,7 +22,12 @@ func CreateAccountHandler(ctx *scyna.Endpoint, request *PROTO.CreateAccountReque
 		Name:     request.Name,
 		Password: request.Password,
 		Created:  timestamppb.Now(),
+		State:    PROTO.AccountState_ACTIVE,
 	}
+
+	model.Data.Email = ""
+	model.Data.GetRegistering().Otp = "1234567"
+	model.Data.Working = nil
 
 	if err := model.CommitAndProject(&PROTO.AccountCreated{
 		ID:       model.Data.ID,

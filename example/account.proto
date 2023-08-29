@@ -13,9 +13,13 @@ message AccountModel
     string  Email = 3;
     string  Password = 4;
     string  Name = 5;
-
+    
     AccountState State = 6;
-    AccountData Data = 7;
+
+    oneof Working {
+        RegisteringData Registering = 7;
+        ActivatedData Activated = 8;
+    }
 }
 
 enum AccountState
@@ -25,10 +29,17 @@ enum AccountState
     DELETED = 2;
 }
 
-message AccountData 
-{
 
+message RegisteringData 
+{
+    string Otp = 1;
 }
+
+message ActivatedData 
+{
+    string Tmp = 1;
+}
+
 
 message CreateAccountRequest {
     string Email = 1;
