@@ -1,17 +1,16 @@
-package example
+package services
 
 import (
 	scyna "github.com/scyna/core"
-	PROTO "github.com/scyna/core/example/generated"
+	PROTO "github.com/scyna/core/example/proto/generated"
+	"github.com/scyna/core/example/shared"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
-
-var store scyna.EventStore[*PROTO.AccountModel] = scyna.NewEventStore[*PROTO.AccountModel]("account")
 
 func CreateAccountHandler(ctx *scyna.Endpoint, request *PROTO.CreateAccountRequest) scyna.Error {
 	ctx.Info("CreateAccountHandler")
 
-	model, err := store.CreateModel("a@gmail.com")
+	model, err := shared.Store.CreateModel("a@gmail.com")
 	if err != nil {
 		return err
 	}
