@@ -4,7 +4,6 @@ import (
 	"log"
 	"time"
 
-	scyna_const "github.com/scyna/core/const"
 	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
 )
@@ -47,25 +46,14 @@ func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 
 func (ctx *Context) SendRequest(url string, request proto.Message, response proto.Message) Error {
 	trace := Trace{
-		ID:       ID.Next(),
-		ParentID: ctx.ID,
-		Time:     time.Now(),
-		Path:     url,
-		Type:     TRACE_ENDPOINT,
-		Source:   module,
+		ID:        ID.Next(),
+		ParentID:  ctx.ID,
+		Time:      time.Now(),
+		Path:      url,
+		Type:      TRACE_ENDPOINT,
+		SessionID: Session.ID(),
 	}
 	return sendRequest_(&trace, url, request, response)
-}
-
-func (ctx *Context) Tag(key string, value string) {
-	if ctx.ID == 0 {
-		return
-	}
-	EmitSignal(scyna_const.TAG_CREATED_CHANNEL, &scyna_proto.TagCreatedSignal{
-		TraceID: ctx.ID,
-		Key:     key,
-		Value:   value,
-	})
 }
 
 func (l *Context) writeLog(level LogLevel, message string) {
@@ -77,7 +65,6 @@ func (l *Context) writeLog(level LogLevel, message string) {
 			Sequence: Session.NextSequence(),
 			Level:    level,
 			Message:  message,
-			Session:  false,
 		})
 	}
 }

@@ -20,7 +20,6 @@ func (ctx *HttpContext) reset() {
 	ctx.Request.TraceID = uint64(0)
 	ctx.Response.Body = ctx.Response.Body[0:0]
 	ctx.Response.Code = int32(0)
-	ctx.Response.SessionID = uint64(0)
 }
 
 func newHttpContext() *HttpContext {
@@ -30,9 +29,8 @@ func newHttpContext() *HttpContext {
 			TraceID: 0,
 		},
 		Response: scyna_proto.Response{
-			Body:      make([]byte, 0),
-			SessionID: 0,
-			Code:      200,
+			Body: make([]byte, 0),
+			Code: 200,
 		},
 	}
 }

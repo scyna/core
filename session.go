@@ -62,7 +62,6 @@ func (l *session) writeLog(level LogLevel, message string) {
 			Sequence: Session.NextSequence(),
 			Level:    level,
 			Message:  message,
-			Session:  true,
 		})
 	}
 }

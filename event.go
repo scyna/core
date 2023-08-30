@@ -12,8 +12,6 @@ import (
 
 type Event struct {
 	Context
-	Entity  uint64
-	Version uint64
 }
 
 func NewEvent(id uint64) *Event {
@@ -54,11 +52,7 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 			ParentID:  msg.TraceID,
 		}
 
-		context := &Event{
-			Context: Context{ID: trace.ID},
-			Entity:  msg.Entity,
-			Version: msg.Version,
-		}
+		context := &Event{Context: Context{ID: trace.ID}}
 
 		if err := proto.Unmarshal(msg.Body, event); err == nil {
 			handler(context, event)

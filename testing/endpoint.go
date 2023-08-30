@@ -197,17 +197,7 @@ func (st *endpointTest) Run(t *testing.T) *endpointTestResult {
 }
 
 func (st *endpointTest) callEndpoint(t *testing.T) *scyna_proto.Response {
-	context := scyna.Trace{
-		ID:       scyna.ID.Next(),
-		ParentID: 0,
-		Time:     time.Now(),
-		Path:     st.url,
-		Type:     scyna.TRACE_ENDPOINT,
-		Source:   "scyna.test",
-	}
-	defer context.Record()
-
-	req := scyna_proto.Request{TraceID: context.ID, JSON: false}
+	req := scyna_proto.Request{TraceID: scyna.ID.Next(), JSON: false}
 	res := scyna_proto.Response{}
 
 	if st.request != nil {
@@ -229,7 +219,5 @@ func (st *endpointTest) callEndpoint(t *testing.T) *scyna_proto.Response {
 		t.Fatal("Bad Request:", err)
 	}
 
-	context.SessionID = res.SessionID
-	context.Status = res.Code
 	return &res
 }

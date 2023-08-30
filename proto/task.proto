@@ -1,11 +1,11 @@
 syntax = "proto3";
 
 package scyna;
-option  java_package = "io.scyna.proto";
+option  java_package = "scyna.proto";
 option  java_multiple_files = true;
 option  csharp_namespace = "scyna.proto";
-option  optimize_for = CODE_SIZE;
 option  go_package = "./;scyna_proto";
+option  optimize_for = CODE_SIZE;
 
 message StartTaskRequest {
   string Module = 1;

@@ -42,7 +42,7 @@ func (ctx *Endpoint) flushError(code int32, e Error) {
 		response.Body = []byte(err.Error())
 	}
 	ctx.flush(&response)
-	ctx.tag(e_)
+	ctx.complete(response.Code, e_)
 }
 
 func (ctx *Endpoint) OK(r proto.Message) Error {
@@ -65,14 +65,13 @@ func (ctx *Endpoint) Response(r proto.Message) {
 	}
 
 	ctx.flush(&response)
-	ctx.tag(r)
+	ctx.complete(response.Code, r)
 }
 
 func (ctx *Endpoint) flush(response *scyna_proto.Response) {
 	defer func() {
 		ctx.flushed = true
 	}()
-	response.SessionID = Session.ID()
 	bytes, err := proto.Marshal(response)
 	if err != nil {
 		log.Print("Register marshal error response data:", err.Error())
@@ -84,25 +83,28 @@ func (ctx *Endpoint) flush(response *scyna_proto.Response) {
 	}
 }
 
-func (ctx *Endpoint) tag(response proto.Message) {
+func (ctx *Endpoint) complete(code int32, response proto.Message) {
 	if ctx.ID == 0 {
 		return
 	}
 
 	res, _ := json.Marshal(response)
-
 	if ctx.Request.JSON {
 		EmitSignal(scyna_const.ENDPOINT_DONE_CHANNEL, &scyna_proto.EndpointDoneSignal{
-			TraceID:  ctx.ID,
-			Response: string(res),
-			Request:  string(string(ctx.Request.Body)),
+			TraceID:   ctx.ID,
+			Response:  string(res),
+			Request:   string(string(ctx.Request.Body)),
+			Status:    code,
+			SessionID: Session.ID(),
 		})
 	} else {
 		req, _ := json.Marshal(ctx.request)
 		EmitSignal(scyna_const.ENDPOINT_DONE_CHANNEL, &scyna_proto.EndpointDoneSignal{
-			TraceID:  ctx.ID,
-			Response: string(res),
-			Request:  string(req),
+			TraceID:   ctx.ID,
+			Response:  string(res),
+			Request:   string(req),
+			Status:    code,
+			SessionID: Session.ID(),
 		})
 	}
 }

@@ -8,7 +8,6 @@ const (
 	GEN_ID_TABLE              = KEYSPACE + ".gen_id"
 	GEN_SN_TABLE              = KEYSPACE + ".gen_sn"
 	SESSION_TABLE             = KEYSPACE + ".session"
-	SESSION_LOG_TABLE         = KEYSPACE + ".session_log"
 	TODO_TABLE                = KEYSPACE + ".todo"
 	DOING_TABLE               = KEYSPACE + ".doing"
 	TASK_TABLE                = KEYSPACE + ".task"
