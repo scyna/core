@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package scyna;
+option  java_package = "scyna.proto";
+option  java_multiple_files = true;
+option  csharp_namespace = "scyna.proto";
+option  go_package = "./;scyna_proto";
+option  optimize_for = CODE_SIZE;
+
+message LogCreatedSignal {
+  uint64 Time = 1;
+  uint64 ID = 4;
+  uint64 SEQ = 5;
+  string Text = 3;
+  uint32 Level = 2;
+}
+
+message TraceCreatedSignal {
+  uint64 ID = 1;
+  uint64 ParentID = 2;
+  uint32 Type = 3;
+  uint64 Time = 4;
+  uint64 Duration = 5;
+  string Path = 6;
+  uint64 SessionID = 8;
+  uint32 Status = 9;
+}
+
+message EndpointDoneSignal {
+  uint64 TraceID = 1;
+  int32 Status = 2;
+  string Response = 3;
+  string Request = 4;
+  uint64 SessionID = 5;
+}

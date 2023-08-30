@@ -14,16 +14,6 @@ type Nats struct {
 	Stream nats.JetStreamContext
 }
 
-func (c *Nats) SendRequest(url string, data proto.Message) *Error {
-	/*TODO*/
-	return nil
-}
-
-func (c *Nats) SendAndReceive(url string, request proto.Message, response proto.Message) *Error {
-	/*TODO*/
-	return nil
-}
-
 func (c *Nats) EmitSignal(channel string, signal proto.Message) error {
 	data, err := proto.Marshal(signal)
 	if err == nil {

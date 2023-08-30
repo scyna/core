@@ -35,7 +35,6 @@ type LogData struct {
 	Message  string
 	ID       uint64
 	Sequence uint64
-	Session  bool
 }
 
 type TraceLogger struct {
@@ -51,28 +50,10 @@ func UseDirectLog(count int) {
 		go func() {
 			for l := range logQueue {
 				time_ := time.Now()
-				if l.Session {
-					if err := DB.Execute("INSERT INTO "+scyna_const.SESSION_LOG_TABLE+
-						" (session_id, day, time, seq, level, message) VALUES (?, ?, ?, ?, ?, ?)",
-						l.ID, scyna_utils.GetDayByTime(time_), time_, l.Sequence, l.Level, l.Message); err != nil {
-						// if err := qb.Insert(scyna_const.SESSION_LOG_TABLE).
-						// 	Columns("session_id", "day", "time", "seq", "level", "message").
-						// 	Query(DB).
-						// 	Bind(l.ID, scyna_utils.GetDayByTime(time_), time_, l.Sequence, l.Level, l.Message).
-						// 	ExecRelease(); err != nil {
-						log.Println("saveSessionLog: " + err.Error())
-					}
-				} else {
-					if err := DB.Execute("INSERT INTO "+scyna_const.LOG_TABLE+
-						" (trace_id, time, seq, level, message) VALUES (?, ?, ?, ?, ?)",
-						l.ID, time_, l.Sequence, l.Level, l.Message); err != nil {
-						// if err := qb.Insert(scyna_const.LOG_TABLE).
-						// 	Columns("trace_id", "time", "seq", "level", "message").
-						// 	Query(DB).
-						// 	Bind(l.ID, time_, l.Sequence, l.Level, l.Message).
-						// 	ExecRelease(); err != nil {
-						log.Println("saveServiceLog: " + err.Error())
-					}
+				if err := DB.Execute("INSERT INTO "+scyna_const.LOG_TABLE+
+					" (source, day, time, seq, level, message) VALUES (?, ?, ?, ?, ?, ?)",
+					l.ID, scyna_utils.GetDayByTime(time_), time_, l.Sequence, l.Level, l.Message); err != nil {
+					log.Println("saveSessionLog: " + err.Error())
 				}
 			}
 		}()
@@ -87,12 +68,11 @@ func UseRemoteLog(count int) {
 			for l := range logQueue {
 				time_ := time.Now().UnixMicro()
 				event := scyna_proto.LogCreatedSignal{
-					Time:    uint64(time_),
-					ID:      l.ID,
-					Level:   uint32(l.Level),
-					Text:    l.Message,
-					Session: l.Session,
-					SEQ:     l.Sequence,
+					Time:  uint64(time_),
+					ID:    l.ID,
+					Level: uint32(l.Level),
+					Text:  l.Message,
+					SEQ:   l.Sequence,
 				}
 				EmitSignal(scyna_const.LOG_CREATED_CHANNEL, &event)
 			}

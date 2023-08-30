@@ -60,11 +60,12 @@ func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 
 func sendRequest(url string, request proto.Message, response proto.Message) Error {
 	trace := Trace{
-		ID:       ID.Next(),
-		ParentID: 0,
-		Time:     time.Now(),
-		Path:     url,
-		Type:     TRACE_ENDPOINT,
+		ID:        ID.Next(),
+		ParentID:  0,
+		Time:      time.Now(),
+		Path:      url,
+		Type:      TRACE_ENDPOINT,
+		SessionID: Session.ID(),
 	}
 	return sendRequest_(&trace, url, request, response)
 }
@@ -94,8 +95,8 @@ func sendRequest_(trace *Trace, url string, request proto.Message, response prot
 		return BAD_REQUEST
 	}
 
-	trace.SessionID = res.SessionID
-	trace.Status = res.Code
+	trace.Status = uint32(res.Code)
+
 	if res.Code == 200 {
 		if err := proto.Unmarshal(res.Body, response); err == nil {
 			return OK
@@ -106,5 +107,6 @@ func sendRequest_(trace *Trace, url string, request proto.Message, response prot
 			return NewError(ret.Code, ret.Message)
 		}
 	}
+
 	return SERVER_ERROR
 }

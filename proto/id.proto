@@ -7,22 +7,20 @@ option  csharp_namespace = "scyna.proto";
 option  go_package = "./;scyna_proto";
 option  optimize_for = CODE_SIZE;
 
-message Request
-{
-  uint64 TraceID = 1;
-  bytes  Body = 2;
-  bytes  Data = 4;
-  bool   JSON = 3;
+message GetIDRequest {}
+message GetIDResponse {
+  uint32 prefix = 1;
+  uint64 start = 2;
+  uint64 end = 3;
 }
 
-message Response 
-{
-  int32  Code = 1;
-  bytes  Body = 2;
+message GetSNRequest {
+  string key = 1;
 }
 
-message Event 
-{
-  uint64 TraceID = 1;
-  bytes  Body = 2;
+message GetSNResponse {
+  uint32 prefix = 1;
+  uint64 start = 2;
+  uint64 end = 3;
 }
+

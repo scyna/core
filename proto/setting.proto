@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package scyna;
+option  java_package = "scyna.proto";
+option  java_multiple_files = true;
+option  csharp_namespace = "scyna.proto";
+option  go_package = "./;scyna_proto";
+option  optimize_for = CODE_SIZE;
+
+message WriteSettingRequest {
+  string Module = 1;
+  string Key = 2;
+  string Value = 3;
+}
+
+message ReadSettingRequest {
+  string Module = 1;
+  string Key = 2;
+}
+
+message ReadSettingResponse {
+  string Value = 1;
+}
+
+message SettingUpdatedSignal {
+  string Module = 1;
+  string Key = 2;
+  string Value = 3;
+}
+
+message RemoveSettingRequest {
+  string Module = 1;
+  string Key = 2;
+}
+
+message SettingRemovedSignal {
+  string Module = 1;
+  string Key = 2;
+}
