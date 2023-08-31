@@ -16,7 +16,7 @@ const (
 	TRACE_DOMAIN_EVENT TraceType = 4
 )
 
-type Trace struct {
+type trace struct {
 	ParentID  uint64
 	ID        uint64
 	Type      TraceType
@@ -27,12 +27,13 @@ type Trace struct {
 	Status    uint32
 }
 
-type endpointTrace struct {
-}
-
-func CreateTrace(type_ TraceType, parent uint64, path string) *Trace {
-	return &Trace{
-		ParentID:  parent,
+func CreateTrace(path string, type_ TraceType, parent ...uint64) *trace {
+	var parent_ uint64 = 0
+	if len(parent) == 1 {
+		parent_ = parent[0]
+	}
+	return &trace{
+		ParentID:  parent_,
 		ID:        ID.Next(),
 		Type:      type_,
 		Time:      time.Now(),
@@ -41,7 +42,7 @@ func CreateTrace(type_ TraceType, parent uint64, path string) *Trace {
 	}
 }
 
-func (trace *Trace) Record() {
+func (trace *trace) Record() {
 	trace.Duration = uint64(time.Now().UnixNano() - trace.Time.UnixNano())
 	EmitSignal(scyna_const.TRACE_CREATED_CHANNEL, &scyna_proto.TraceCreatedSignal{
 		ID:        trace.ID,
@@ -53,12 +54,4 @@ func (trace *Trace) Record() {
 		SessionID: trace.SessionID,
 		Status:    trace.Status,
 	})
-}
-
-func CreateEndpointTrace(parent uint64, event string) *endpointTrace {
-	return &endpointTrace{ /*TODO*/ }
-}
-
-func (trace *endpointTrace) Record() {
-	/*TODO*/
 }

@@ -59,18 +59,11 @@ func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 }
 
 func sendRequest(url string, request proto.Message, response proto.Message) Error {
-	trace := Trace{
-		ID:        ID.Next(),
-		ParentID:  0,
-		Time:      time.Now(),
-		Path:      url,
-		Type:      TRACE_ENDPOINT,
-		SessionID: Session.ID(),
-	}
-	return sendRequest_(&trace, url, request, response)
+	trace := CreateTrace(url, TRACE_ENDPOINT)
+	return sendRequest_(trace, url, request, response)
 }
 
-func sendRequest_(trace *Trace, url string, request proto.Message, response proto.Message) Error {
+func sendRequest_(trace *trace, url string, request proto.Message, response proto.Message) Error {
 	defer trace.Record()
 
 	req := scyna_proto.Request{TraceID: trace.ID, JSON: false}

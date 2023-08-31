@@ -2,7 +2,6 @@ package scyna
 
 import (
 	"log"
-	"time"
 
 	"github.com/nats-io/nats.go"
 	scyna_proto "github.com/scyna/core/proto/generated"
@@ -42,15 +41,7 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 			Session.Error("Can not parse event data:" + err.Error())
 			return
 		}
-
-		trace := Trace{
-			ID:        ID.Next(),
-			Type:      TRACE_EVENT,
-			Path:      subject,
-			SessionID: Session.ID(),
-			Time:      time.Now(),
-			ParentID:  msg.TraceID,
-		}
+		trace := CreateTrace(subject, TRACE_EVENT, msg.TraceID)
 
 		context := &Event{Context: Context{ID: trace.ID}}
 

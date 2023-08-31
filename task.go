@@ -28,15 +28,7 @@ func RegisterTask[R proto.Message](sender string, channel string, handler TaskHa
 			Session.Error("Can not parse task data:" + err.Error())
 			return
 		}
-
-		trace := Trace{
-			ID:        ID.Next(),
-			Type:      TRACE_EVENT,
-			Path:      subject,
-			SessionID: Session.ID(),
-			Time:      time.Now(),
-			ParentID:  msg.TraceID,
-		}
+		trace := CreateTrace(subject, TRACE_TASK, msg.TraceID)
 
 		context := &Context{ID: trace.ID}
 

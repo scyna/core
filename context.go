@@ -2,7 +2,6 @@ package scyna
 
 import (
 	"log"
-	"time"
 
 	scyna_proto "github.com/scyna/core/proto/generated"
 	"google.golang.org/protobuf/proto"
@@ -45,15 +44,8 @@ func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 }
 
 func (ctx *Context) SendRequest(url string, request proto.Message, response proto.Message) Error {
-	trace := Trace{
-		ID:        ID.Next(),
-		ParentID:  ctx.ID,
-		Time:      time.Now(),
-		Path:      url,
-		Type:      TRACE_ENDPOINT,
-		SessionID: Session.ID(),
-	}
-	return sendRequest_(&trace, url, request, response)
+	trace := CreateTrace(url, TRACE_ENDPOINT, ctx.ID)
+	return sendRequest_(trace, url, request, response)
 }
 
 func (l *Context) writeLog(level LogLevel, message string) {

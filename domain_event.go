@@ -3,7 +3,6 @@ package scyna
 import (
 	"log"
 	"reflect"
-	"time"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -41,13 +40,7 @@ func RegisterDomainEvent[E proto.Message](handler DomainEventHandler[E]) {
 			return
 		}
 
-		trace := Trace{
-			ID:        ID.Next(),
-			Type:      TRACE_DOMAIN_EVENT,
-			SessionID: Session.ID(),
-			Time:      time.Now(),
-			ParentID:  event.parentTrace,
-		}
+		trace := CreateTrace(t.Name(), TRACE_DOMAIN_EVENT, event.parentTrace)
 
 		ctx := NewEvent(trace.ID)
 		handler(ctx, val)
