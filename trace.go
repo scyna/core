@@ -25,6 +25,7 @@ type trace struct {
 	Path      string
 	SessionID uint64
 	Status    uint32
+	Source    string
 }
 
 func CreateTrace(path string, type_ TraceType, parent ...uint64) *trace {
@@ -39,6 +40,7 @@ func CreateTrace(path string, type_ TraceType, parent ...uint64) *trace {
 		Time:      time.Now(),
 		Path:      path,
 		SessionID: Session.ID(),
+		Source:    Module(),
 	}
 }
 
@@ -53,5 +55,6 @@ func (trace *trace) Record() {
 		Path:      trace.Path,
 		SessionID: trace.SessionID,
 		Status:    trace.Status,
+		Source:    trace.Source,
 	})
 }

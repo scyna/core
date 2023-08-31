@@ -24,6 +24,7 @@ message TraceCreatedSignal {
   string Path = 6;
   uint64 SessionID = 8;
   uint32 Status = 9;
+  string Source = 10;
 }
 
 message EndpointDoneSignal {
