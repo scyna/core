@@ -11,4 +11,5 @@ message Error
 {
   int32  Code = 1;
   string Message = 2;
+  int64 Trace = 3;
 }

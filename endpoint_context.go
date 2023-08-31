@@ -28,6 +28,7 @@ func (ctx *Endpoint) flushError(code int32, e Error) {
 	e_ := &scyna_proto.Error{
 		Code:    e.Code(),
 		Message: e.Message(),
+		Trace:   int64(ctx.ID),
 	}
 
 	var err error
