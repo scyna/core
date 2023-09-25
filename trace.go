@@ -4,7 +4,7 @@ import (
 	"time"
 
 	scyna_const "github.com/scyna/core/const"
-	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_proto "github.com/scyna/core/proto"
 )
 
 type TraceType uint32

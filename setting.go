@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	scyna_const "github.com/scyna/core/const"
-	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_proto "github.com/scyna/core/proto"
 )
 
 type settings struct {

@@ -3,7 +3,7 @@ package scyna
 import (
 	"log"
 
-	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_proto "github.com/scyna/core/proto"
 	"google.golang.org/protobuf/proto"
 )
 

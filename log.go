@@ -8,7 +8,7 @@ import (
 	"time"
 
 	scyna_const "github.com/scyna/core/const"
-	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_proto "github.com/scyna/core/proto"
 	scyna_utils "github.com/scyna/core/utils"
 )
 

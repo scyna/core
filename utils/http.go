@@ -3,7 +3,7 @@ package scyna_utils
 import (
 	"sync"
 
-	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_proto "github.com/scyna/core/proto"
 )
 
 type HttpContext struct {
@@ -18,6 +18,7 @@ type HttpContextPool struct {
 func (ctx *HttpContext) reset() {
 	ctx.Request.Body = ctx.Request.Body[0:0]
 	ctx.Request.TraceID = uint64(0)
+	ctx.Request.Data = nil
 	ctx.Response.Body = ctx.Response.Body[0:0]
 	ctx.Response.Code = int32(0)
 }

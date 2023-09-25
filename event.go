@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/nats-io/nats.go"
-	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_proto "github.com/scyna/core/proto"
 	scyna_utils "github.com/scyna/core/utils"
 	"google.golang.org/protobuf/proto"
 )

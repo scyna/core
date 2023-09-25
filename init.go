@@ -11,7 +11,7 @@ import (
 	"github.com/nats-io/nats.go"
 	scyna_const "github.com/scyna/core/const"
 	"github.com/scyna/core/internal/base"
-	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_proto "github.com/scyna/core/proto"
 	"google.golang.org/protobuf/proto"
 )
 

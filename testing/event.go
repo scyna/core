@@ -6,7 +6,7 @@ import (
 	"time"
 
 	scyna "github.com/scyna/core"
-	scyna_proto "github.com/scyna/core/proto/generated"
+	scyna_proto "github.com/scyna/core/proto"
 	"google.golang.org/protobuf/proto"
 )
 
