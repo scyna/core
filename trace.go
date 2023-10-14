@@ -28,7 +28,7 @@ type trace struct {
 	Source    string
 }
 
-func CreateTrace(path string, type_ TraceType, parent ...uint64) *trace {
+func createTrace(path string, type_ TraceType, parent ...uint64) *trace {
 	var parent_ uint64 = 0
 	if len(parent) == 1 {
 		parent_ = parent[0]
@@ -44,7 +44,7 @@ func CreateTrace(path string, type_ TraceType, parent ...uint64) *trace {
 	}
 }
 
-func (trace *trace) Record() {
+func (trace *trace) record() {
 	trace.Duration = uint64(time.Now().UnixNano() - trace.Time.UnixNano())
 	EmitSignal(scyna_const.TRACE_CREATED_CHANNEL, &scyna_proto.TraceCreatedSignal{
 		ID:        trace.ID,

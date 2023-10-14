@@ -4,16 +4,15 @@ import (
 	"strings"
 
 	"github.com/nats-io/nats.go"
-	"github.com/scyna/core/internal/base"
 )
 
 var Connection *nats.Conn
 var JetStream nats.JetStreamContext
-var DB *base.DB
+var DB *db
 
 func Init() {
 	initNATS()
-	DB = base.NewDB([]string{"127.0.0.1"}, "", "", "")
+	DB = NewDB([]string{"127.0.0.1"}, "", "", "")
 }
 
 func initNATS() {

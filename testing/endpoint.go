@@ -20,6 +20,7 @@ type endpointTest struct {
 	event              proto.Message
 	exactEventMatch    bool
 	exactResponseMatch bool
+	errorCodeOnly      bool
 }
 
 type endpointTestResult struct {
@@ -53,7 +54,10 @@ func (result *endpointTestResult) DecodeEvent(event proto.Message) *endpointTest
 }
 
 func Endpoint(url string) *endpointTest {
-	return &endpointTest{url: url}
+	return &endpointTest{
+		url:           url,
+		errorCodeOnly: false,
+	}
 }
 
 func (t *endpointTest) WithRequest(request proto.Message) *endpointTest {
@@ -66,6 +70,17 @@ func (t *endpointTest) ExpectError(err scyna.Error) *endpointTest {
 		Code:    err.Code(),
 		Message: err.Message(),
 	}
+	t.errorCodeOnly = false
+	t.status = 400
+	t.response = &e_
+	return t
+}
+
+func (t *endpointTest) ExpectErrorCode(code string) *endpointTest {
+	e_ := scyna_proto.Error{
+		Code: code,
+	}
+	t.errorCodeOnly = true
 	t.status = 400
 	t.response = &e_
 	return t

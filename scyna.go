@@ -9,17 +9,29 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go"
-	"github.com/scyna/core/internal/base"
-	"github.com/scyna/core/internal/eventstore"
-	"google.golang.org/protobuf/proto"
 )
+
+type SetupHandler func()
+
+var setups []SetupHandler
+var testMode bool = false
+
+func RegisterSetup(starter SetupHandler) {
+	setups = append(setups, starter)
+}
+
+func startAll() {
+	for _, starter := range setups {
+		starter()
+	}
+}
 
 const REQUEST_TIMEOUT = 10
 
 var Nats *nats.Conn
 var JetStream nats.JetStreamContext
 var Session *session
-var DB *base.DB
+var DB *db
 var ID generator
 var Settings settings
 
@@ -38,7 +50,7 @@ func Release() {
 }
 
 func Start() {
-	startDomainEventLoop()
+	startDomainEvent()
 	startEventStreams()
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
@@ -57,15 +69,4 @@ func HttpClient() *http.Client {
 		}
 	}
 	return httpClient
-}
-
-type EventStore[T proto.Message] interface {
-	ReadModel(id any) (*eventstore.Model[T], *base.Error)
-	CreateModel(id any) (*eventstore.Model[T], *base.Error)
-	RegisterProjector(event proto.Message, projector eventstore.Projector[T])
-	ListActivity(id any, position int64, count int32) []eventstore.Activity
-}
-
-func NewEventStore[T proto.Message](table string) EventStore[T] {
-	return eventstore.NewEventStore[T](DB, table)
 }

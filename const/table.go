@@ -14,11 +14,5 @@ const (
 	MODULE_HAS_TASK_TABLE     = KEYSPACE + ".module_has_task"
 	TRACE_TABLE               = KEYSPACE + ".trace"
 	ENDPOINT_TRACE_TABLE      = KEYSPACE + ".endpoint_trace"
-	CLIENT_HAS_TRACE_TABLE    = KEYSPACE + ".client_has_trace"
-	SPAN_TABLE                = KEYSPACE + ".span"
-	TAG_TABLE                 = KEYSPACE + ".tag"
 	LOG_TABLE                 = KEYSPACE + ".log"
-	APPLICATION_TABLE         = KEYSPACE + ".application"
-	APP_HAS_TRACE_TABLE       = KEYSPACE + ".app_has_trace"
-	AUTHENTICATION_TABLE      = KEYSPACE + ".authentication"
 )

@@ -10,7 +10,6 @@ import (
 
 	"github.com/nats-io/nats.go"
 	scyna_const "github.com/scyna/core/const"
-	"github.com/scyna/core/internal/base"
 	scyna_proto "github.com/scyna/core/proto"
 	"google.golang.org/protobuf/proto"
 )
@@ -19,6 +18,11 @@ type RemoteConfig struct {
 	ManagerUrl string
 	Name       string
 	Secret     string
+}
+
+func TestInit(config RemoteConfig) {
+	testMode = true
+	RemoteInit(config)
 }
 
 func RemoteInit(config RemoteConfig) {
@@ -87,11 +91,14 @@ func DirectInit(name string, c *scyna_proto.Configuration) {
 	}
 
 	hosts := strings.Split(c.DBHost, ",")
-	DB = base.NewDB(hosts, c.DBUsername, c.DBPassword, c.DBLocation)
+	DB = newDB(hosts, c.DBUsername, c.DBPassword, c.DBLocation)
 
 	Settings.init()
 
 	/*registration*/
-	RegisterSignal(scyna_const.SETTING_UPDATE_CHANNEL+module, updateSettingHandler, SIGNAL_SCOPE_SESSION)
-	RegisterSignal(scyna_const.SETTING_REMOVE_CHANNEL+module, removeSettingHandler, SIGNAL_SCOPE_SESSION)
+	//signal.Register(scyna_const.SETTING_UPDATE_CHANNEL+module, updateSettingHandler, signal.SCOPE_SESSION)
+	//signal.Register(scyna_const.SETTING_REMOVE_CHANNEL+module, removeSettingHandler, signal.SCOPE_SESSION)
+
+	startAll()
+	log.Println("Scyna setup completed")
 }

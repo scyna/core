@@ -28,7 +28,6 @@ type eventStream struct {
 var eventStreams map[string]*eventStream = make(map[string]*eventStream)
 
 func RegisterEvent[R proto.Message](sender string, channel string, handler EventHandler[R]) {
-	assureStreamReady(sender, module)
 	stream := createOrGetEventStream(sender)
 	subject := buildSubject(sender, channel)
 	event := scyna_utils.NewMessageForType[R]()
@@ -41,7 +40,7 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 			Session.Error("Can not parse event data:" + err.Error())
 			return
 		}
-		trace := CreateTrace(subject, TRACE_EVENT, msg.TraceID)
+		trace := createTrace(subject, TRACE_EVENT, msg.TraceID)
 
 		context := &Event{Context: Context{ID: trace.ID}}
 
@@ -50,11 +49,12 @@ func RegisterEvent[R proto.Message](sender string, channel string, handler Event
 		} else {
 			Session.Error("Error in parsing data:" + err.Error())
 		}
-		trace.Record()
+		trace.record()
 	}
 }
 
 func (es *eventStream) start() {
+	assureStreamReady(es.sender, Module())
 	sub, err := JetStream.PullSubscribe("", es.receiver, nats.BindStream(es.sender))
 
 	if err != nil {
@@ -91,7 +91,13 @@ func createOrGetEventStream(sender string) *eventStream {
 	return stream
 }
 
+func init() { RegisterSetup(startEventStreams) }
+
 func startEventStreams() {
+	if testMode {
+		return
+	}
+
 	for _, e := range eventStreams {
 		e.start()
 	}

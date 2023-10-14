@@ -19,7 +19,7 @@ func (ctx *Context) Task(channel string) *taskBuilder {
 	return &taskBuilder{ctx: ctx, channel: channel}
 }
 
-func (ctx *Context) RaiseEvent(event proto.Message) {
+func (ctx *Context) RaiseDomainEvent(event proto.Message) {
 	go func() {
 		eventQueue <- eventItem{Data: event, parentTrace: ctx.ID}
 	}()
@@ -44,7 +44,7 @@ func (ctx *Context) PublishEvent(channel string, data proto.Message) Error {
 }
 
 func (ctx *Context) SendRequest(url string, request proto.Message, response proto.Message) Error {
-	trace := CreateTrace(url, TRACE_ENDPOINT, ctx.ID)
+	trace := createTrace(url, TRACE_ENDPOINT, ctx.ID)
 	return sendRequest_(trace, url, request, response)
 }
 

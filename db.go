@@ -1,4 +1,4 @@
-package base
+package scyna
 
 import (
 	"context"
@@ -9,11 +9,11 @@ import (
 	"github.com/gocql/gocql"
 )
 
-type DB struct {
+type db struct {
 	Session *gocql.Session
 }
 
-func NewDB(host []string, username string, password string, location string) *DB {
+func newDB(host []string, username string, password string, location string) *db {
 	cluster := gocql.NewCluster(host...)
 	cluster.Authenticator = gocql.PasswordAuthenticator{Username: username, Password: password}
 	cluster.PoolConfig.HostSelectionPolicy = gocql.DCAwareRoundRobinPolicy(location)
@@ -25,33 +25,38 @@ func NewDB(host []string, username string, password string, location string) *DB
 	if err != nil {
 		panic(fmt.Sprintf("Can not create session: Host = %s, Error = %s ", host, err.Error()))
 	}
-	return &DB{Session: session}
+	return &db{Session: session}
 }
 
-func (db *DB) Batch() *batch {
+func (db *db) Batch() *batch {
 	return &batch{
 		batch: db.Session.NewBatch(gocql.LoggedBatch),
 		db:    db,
 	}
 }
 
-func (db *DB) QueryOne(query string, args ...interface{}) *gocql.Query {
+func (db *db) QueryOne(query string, args ...interface{}) *gocql.Query {
 	return db.Session.Query(addLimitOne(query), args...).
 		WithContext(context.Background()).
 		Consistency(gocql.One)
 }
 
-func (db *DB) QueryMany(query string, args ...interface{}) gocql.Scanner {
+func (db *db) QueryMany(query string, args ...interface{}) gocql.Scanner {
 	return db.Session.Query(query, args...).
 		WithContext(context.Background()).
 		Iter().Scanner()
 }
 
-func (db *DB) Execute(query string, args ...interface{}) error {
+func (db *db) Execute(query string, args ...interface{}) error {
 	return db.Session.Query(query, args...).Exec()
 }
 
-func (db *DB) AssureExists(query string, args ...interface{}) *Error {
+func (db *db) Apply(query string, args ...interface{}) (bool, error) {
+	dest := make(map[string]interface{})
+	return db.Session.Query(query, args...).MapScanCAS(dest)
+}
+
+func (db *db) AssureExists(query string, args ...interface{}) Error {
 	scanner := db.Session.Query(addLimitOne(query), args...).
 		WithContext(context.Background()).
 		Consistency(gocql.One).Iter().Scanner()
@@ -61,7 +66,7 @@ func (db *DB) AssureExists(query string, args ...interface{}) *Error {
 	return nil
 }
 
-func (db *DB) AssureNotExists(query string, args ...interface{}) *Error {
+func (db *db) AssureNotExists(query string, args ...interface{}) Error {
 	scanner := db.Session.Query(addLimitOne(query), args...).
 		WithContext(context.Background()).
 		Consistency(gocql.One).Iter().Scanner()
@@ -71,7 +76,7 @@ func (db *DB) AssureNotExists(query string, args ...interface{}) *Error {
 	return nil
 }
 
-func (db *DB) Close() {
+func (db *db) Close() {
 	db.Session.Close()
 }
 

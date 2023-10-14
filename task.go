@@ -15,7 +15,6 @@ import (
 type TaskHandler[R proto.Message] func(ctx *Context, data R)
 
 func RegisterTask[R proto.Message](sender string, channel string, handler TaskHandler[R]) {
-	assureStreamReady(sender, module)
 	stream := createOrGetEventStream(sender)
 	subject := buildSubject(sender, channel)
 	task := scyna_utils.NewMessageForType[R]()
@@ -28,7 +27,7 @@ func RegisterTask[R proto.Message](sender string, channel string, handler TaskHa
 			Session.Error("Can not parse task data:" + err.Error())
 			return
 		}
-		trace := CreateTrace(subject, TRACE_TASK, msg.TraceID)
+		trace := createTrace(subject, TRACE_TASK, msg.TraceID)
 
 		context := &Context{ID: trace.ID}
 
@@ -37,7 +36,7 @@ func RegisterTask[R proto.Message](sender string, channel string, handler TaskHa
 		} else {
 			Session.Error("Error in parsing data:" + err.Error())
 		}
-		trace.Record()
+		trace.record()
 	}
 }
 

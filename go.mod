@@ -4,7 +4,6 @@ go 1.20
 
 require (
 	github.com/gocql/gocql v1.0.0
-	github.com/golang/protobuf v1.5.0
 	github.com/nats-io/nats.go v1.14.0
 	google.golang.org/protobuf v1.28.0
 )

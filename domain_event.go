@@ -7,7 +7,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type DomainEventHandler[E any] func(ctx *Event, event E)
+type DomainEventHandler[E proto.Message] func(ctx *Event, event E)
 
 type eventItem struct {
 	parentTrace uint64
@@ -40,12 +40,12 @@ func RegisterDomainEvent[E proto.Message](handler DomainEventHandler[E]) {
 			return
 		}
 
-		trace := CreateTrace(t.Name(), TRACE_DOMAIN_EVENT, event.parentTrace)
+		trace := createTrace(t.Name(), TRACE_DOMAIN_EVENT, event.parentTrace)
 
 		ctx := NewEvent(trace.ID)
 		handler(ctx, val)
 
-		trace.Record()
+		trace.record()
 	})
 }
 
@@ -53,7 +53,10 @@ func EventQueue() chan eventItem {
 	return eventQueue
 }
 
-func startDomainEventLoop() {
+func startDomainEvent() {
+	if testMode {
+		return
+	}
 	log.Print("Starting Domain Event Loop")
 	go func() {
 		for event := range eventQueue {

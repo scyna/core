@@ -10,11 +10,12 @@ import (
 var events []proto.Message = make([]proto.Message, 0)
 
 func Init(module string) {
-	scyna.RemoteInit(scyna.RemoteConfig{
+	scyna.TestInit(scyna.RemoteConfig{
 		ManagerUrl: "http://127.0.0.1:8081",
 		Name:       module,
 		Secret:     "123456",
 	})
+
 	log.Print(scyna.Session.ID())
 	scyna.UseDirectLog(1)
 	startEventLoop()

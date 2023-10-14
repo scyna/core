@@ -1,10 +1,10 @@
-package base
+package scyna
 
 import "github.com/gocql/gocql"
 
 type batch struct {
 	batch *gocql.Batch
-	db    *DB
+	db    *db
 }
 
 func (b *batch) Add(query string, args ...interface{}) *batch {
