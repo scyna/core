@@ -5,6 +5,7 @@ import (
 
 	"github.com/nats-io/nats.go"
 	scyna_utils "github.com/scyna/core/utils"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -49,7 +50,7 @@ func RegisterEndpoint[R proto.Message](url string, handler EndpointHandler[R]) {
 		ctx.ID = ctx.Request.TraceID
 
 		if ctx.Request.JSON {
-			if err := proto.Unmarshal(ctx.Request.Body, request); err != nil {
+			if err := protojson.Unmarshal(ctx.Request.Body, request); err != nil {
 				log.Print("Bad Request: " + err.Error())
 				ctx.flushError(400, BAD_REQUEST)
 			}
